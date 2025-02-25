@@ -66,6 +66,8 @@ function AddPrinter() {
         "14387800-130c-49e7-b877-2881c89cb258",
       ])
     );
+
+    console.log("scanning");
     return;
   }
 
