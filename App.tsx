@@ -1,11 +1,11 @@
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, Button } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { StatusBar } from "expo-status-bar";
+import { StyleSheet } from "react-native";
 
 import IconButton from "./components/UI/IconButton";
-import MainPage from "./screens/MainPage";
 import AddPrinter from "./screens/AddPrinter";
+import MainPage from "./screens/MainPage";
 import Printer from "./screens/Printer";
 
 const Stack = createNativeStackNavigator();
