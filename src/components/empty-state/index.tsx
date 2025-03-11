@@ -1,6 +1,6 @@
 import React from "react";
 import { Image, ImageProps, StyleSheet, View, ViewStyle } from "react-native";
-// import { Images } from "../../config";
+import { Images } from "../../config";
 import Text from "../text";
 import { SD } from "../../utils";
 
@@ -20,14 +20,14 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   return (
     <View style={[styles.emptyState, customStyle]}>
       <View style={[styles.containerStyle, customContainerStyle]}>
-        {/* <Image
+        <Image
           source={src ? src : Images.NoResults}
           style={{ width: "100%", height: "100%" }}
           resizeMode="contain"
-        /> */}
+        />
       </View>
 
-      <Text bold size={20}  centered>
+      <Text bold size={20} centered>
         {text || ""}
       </Text>
     </View>

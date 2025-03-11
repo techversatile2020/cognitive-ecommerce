@@ -12,7 +12,7 @@ import {
   ViewStyle,
 } from "react-native";
 import { Text } from "../../components";
-// import {Images, NavigationService} from '../../config';
+import { Images, NavigationService } from "../../config";
 import { useTheme } from "../../hooks";
 import { SD } from "../../utils";
 
@@ -59,14 +59,14 @@ export const BackHeader: React.FC<BackHeaderProps> = ({
       <View style={[styles.container, customeStyle]}>
         {backArrow ? (
           <TouchableOpacity style={styles.backButton} onPress={backFunction}>
-            {/* <Image
+            <Image
               source={Images.BackBtn}
               style={[
                 styles.backImage,
-                isPrimary && {tintColor: AppTheme.Primary},
+                isPrimary && { tintColor: AppTheme.Primary },
                 backBtnImageStyle,
               ]}
-            /> */}
+            />
           </TouchableOpacity>
         ) : (
           <View style={styles.backButton} />

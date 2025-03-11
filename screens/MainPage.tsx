@@ -2,6 +2,7 @@ import { View, Text, StyleSheet, FlatList } from "react-native";
 import PrinterDescription from "../components/PrinterDescription";
 import ConnectedPrinterItem from "../components/ConnectedPrinterItem";
 import { useEffect, useState } from "react";
+import { MainContainer } from "../src/components";
 
 function MainPage({ route, navigation }) {
   const [connectedPrinters, setConnectedPrinters] = useState([]);
@@ -50,7 +51,7 @@ function MainPage({ route, navigation }) {
   //   },
   // ];
   return (
-    <View>
+    <MainContainer>
       <View style={styles.connectedPrinterContainer}>
         <Text style={styles.title}>Connected printer</Text>
         <FlatList
@@ -79,7 +80,7 @@ function MainPage({ route, navigation }) {
           description="Robust and rugged are the hallmarks of our thermal label printers. The DLXi combines this legendary reliability with the latest communication interfaces and performance."
         />
       </View>
-    </View>
+    </MainContainer>
   );
 }
 
