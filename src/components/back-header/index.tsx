@@ -11,10 +11,10 @@ import {
   ViewProps,
   ViewStyle,
 } from "react-native";
-import { Text } from "../../components";
 import { Images, NavigationService } from "../../config";
 import { useTheme } from "../../hooks";
 import { SD } from "../../utils";
+import Text from "../text";
 
 type BackHeaderProps = {
   heading?: string;

@@ -7,9 +7,10 @@ import {
   View,
   ViewStyle
 } from "react-native";
-import { ToucableFeedback } from "..";
+
 import { useTheme } from "../../hooks";
 import { SD } from "../../utils";
+import { ToucableFeedback } from "../toucableFeedback";
 
 type MainContainerProps = {
   children?: ReactNode;

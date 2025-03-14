@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { Toast } from '.';
+import { toast } from './toast.utils';
 export enum apiDateTimeFormat {
   ISODate = 'YYYY-MM-DD',
   TimeWithOutSeconds = 'LT',
@@ -92,7 +92,7 @@ export const getMinutesDifference = (
 export const formatMinutesToHHMM = (minutes: number): string => {
   if (minutes < 0) {
     // throw new Error('Minutes cannot be negative');
-    Toast.fail('Minutes cannot be negative');
+    toast.fail('Minutes cannot be negative');
     return '';
   }
 
