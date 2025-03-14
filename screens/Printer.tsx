@@ -10,7 +10,9 @@ function Printer() {
         <Text style={styles.label}>Model Number: DB042-2085-G1E</Text>
         <Text style={styles.label}>FW: 195-170-412 V4.12</Text>
         <Text style={styles.label}>Serial number: z060800000</Text>
-        <OutlinedButton icon="add">Set printer configuration</OutlinedButton>
+        <OutlinedButton onPress={() => {}} icon="add">
+          Set printer configuration
+        </OutlinedButton>
       </View>
     </View>
   );
