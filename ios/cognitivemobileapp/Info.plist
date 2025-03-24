@@ -44,6 +44,21 @@
 	</dict>
 	<key>NSBluetoothAlwaysUsageDescription</key>
 	<string>Allow $(PRODUCT_NAME) to connect to bluetooth devices</string>
+	<key>UIAppFonts</key>
+	<array>
+		<string>Lato-Black.ttf</string>
+		<string>Lato-BlackItalic.ttf</string>
+		<string>Lato-Bold.ttf</string>
+		<string>Lato-BoldItalic.ttf</string>
+		<string>Lato-Italic.ttf</string>
+		<string>Lato-Light.ttf</string>
+		<string>Lato-LightItalic.ttf</string>
+		<string>Lato-Medium.ttf</string>
+		<string>Lato-Regular.ttf</string>
+		<string>Lato-SemiBold.ttf</string>
+		<string>Lato-Thin.ttf</string>
+		<string>Lato-ThinItalic.ttf</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>SplashScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>
@@ -70,20 +85,5 @@
 	<string>Light</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>UIAppFonts</key>
-	<array>
-		<string>Lato-Black.ttf</string>
-		<string>Lato-BlackItalic.ttf</string>
-		<string>Lato-Bold.ttf</string>
-		<string>Lato-BoldItalic.ttf</string>
-		<string>Lato-Italic.ttf</string>
-		<string>Lato-Light.ttf</string>
-		<string>Lato-LightItalic.ttf</string>
-		<string>Lato-Medium.ttf</string>
-		<string>Lato-Regular.ttf</string>
-		<string>Lato-SemiBold.ttf</string>
-		<string>Lato-Thin.ttf</string>
-		<string>Lato-ThinItalic.ttf</string>
-	</array>
 </dict>
 </plist>

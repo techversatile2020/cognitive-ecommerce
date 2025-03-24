@@ -1,16 +1,26 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet } from "react-native";
+import { StyleSheet, Text } from "react-native";
+import { ScreenNames } from "./src/config";
 
-import IconButton from "./components/UI/IconButton";
-import AddPrinter from "./screens/AddPrinter";
-import MainPage from "./screens/MainPage";
-import Printer from "./screens/Printer";
-import { Fonts } from "./src/styles";
-import { Images, NavigationService } from "./src/config";
-import { CustomImage, CustomTouchable } from "./src/components";
-import { SD } from "./src/utils";
+import {
+  AdvanceSettingScreen,
+  CompletedScreen,
+  ConnectToWifiPasswordScreen,
+  ConnectWifiScreen,
+  FactoryResetScreen,
+  MainScreen,
+  MediaSettingScreen,
+  NetworkInformationScreen,
+  PrinterConnectedSuccessScreen,
+  PrinterInfoScreen,
+  PrinterSettingNested,
+  PrinterSettingScreen,
+  PrinterSetupScreen,
+  SearchPrinterScreen,
+  WifiConnectedSuccessScreen,
+} from "./src/screens";
 
 const Stack = createNativeStackNavigator();
 
@@ -19,60 +29,64 @@ export default function App() {
     <>
       <StatusBar style="dark" />
       <NavigationContainer>
-        <Stack.Navigator>
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Screen name={ScreenNames.MainScreen} component={MainScreen} />
           <Stack.Screen
-            name="MainPage"
-            component={MainPage}
-            options={({ navigation }) => ({
-              title: "CognitiveTPG",
-              headerRight: ({ tintColor }) => (
-                <IconButton
-                  icon="add"
-                  size={24}
-                  color={tintColor}
-                  onPress={() => navigation.navigate("AddPrinter")}
-                />
-              ),
-            })}
+            name={ScreenNames.PrinterSetupScreen}
+            component={PrinterSetupScreen}
           />
           <Stack.Screen
-            name="AddPrinter"
-            component={AddPrinter}
-            options={({ navigation }) => ({
-              title: "Add and configure a new printer",
-              headerTitleStyle: { fontFamily: Fonts["Bold"] },
-              headerLeft: ({ tintColor }) => (
-                <CustomTouchable
-                  onPress={() => {
-                    navigation.goBack();
-                  }}
-                  style={{
-                    alignItems: "center",
-                    justifyContent: "center",
-                    width: SD.hp(35),
-                    height: SD.hp(35),
-                  }}
-                >
-                  <CustomImage
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                    }}
-                    source={Images.BackBtn}
-                  />
-                </CustomTouchable>
-                // <IconButton
-                //   icon='arrow-back'
-                //   size={24}
-                //   color={tintColor}
-                //   onPress={() => {
-                //     navigation.goBack();
-                //   }}
-                // />
-              ),
-            })}
+            name={ScreenNames.SearchPrinterScreen}
+            component={SearchPrinterScreen}
           />
-          <Stack.Screen name="Printer" component={Printer} />
+          <Stack.Screen
+            name={ScreenNames.ConnectWifiScreen}
+            component={ConnectWifiScreen}
+          />
+          <Stack.Screen
+            name={ScreenNames.PrinterConnectedSuccessScreen}
+            component={PrinterConnectedSuccessScreen}
+          />
+          <Stack.Screen
+            name={ScreenNames.PrinterSettingScreen}
+            component={PrinterSettingScreen}
+          />
+          <Stack.Screen
+            name={ScreenNames.NetworkInformationScreen}
+            component={NetworkInformationScreen}
+          />
+          <Stack.Screen
+            name={ScreenNames.PrinterSettingNested}
+            component={PrinterSettingNested}
+          />
+          <Stack.Screen
+            name={ScreenNames.MediaSettingScreen}
+            component={MediaSettingScreen}
+          />
+          <Stack.Screen
+            name={ScreenNames.PrinterInfoScreen}
+            component={PrinterInfoScreen}
+          />
+          <Stack.Screen
+            name={ScreenNames.AdvanceSettingScreen}
+            component={AdvanceSettingScreen}
+          />
+          <Stack.Screen
+            name={ScreenNames.ConnectToWifiPasswordScreen}
+            component={ConnectToWifiPasswordScreen}
+          />
+          <Stack.Screen
+            name={ScreenNames.FactoryResetScreen}
+            component={FactoryResetScreen}
+          />
+          <Stack.Screen
+            name={ScreenNames.CompletedScreen}
+            component={CompletedScreen}
+          />
+          <Stack.Screen
+            name={ScreenNames.WifiConnectedSuccessScreen}
+            component={WifiConnectedSuccessScreen}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     </>

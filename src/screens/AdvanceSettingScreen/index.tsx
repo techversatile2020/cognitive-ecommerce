@@ -1,0 +1,60 @@
+import { useState } from "react";
+import {
+  CustomTouchable,
+  MainContainer,
+  MainHeader,
+  SectionContainer,
+  Text,
+} from "../../components";
+import { useTheme } from "../../hooks";
+import { styles } from "./styles";
+import {
+  AdvanceSettingConnectComp,
+  AdvanceSettingMediaComp,
+  AdvanceSettingPrinterComp,
+} from "./components";
+const AdvanceSettingScreen = () => {
+  const { AppTheme } = useTheme();
+  const [activeBar, setActiveBar] = useState("Connect");
+  const [barOptions, setBarOptions] = useState(["Connect", "Printer", "Media"]);
+  return (
+    <MainContainer>
+      <MainHeader
+        back
+        title="Advance Printer Setting"
+        mainContainerStyle={{ paddingVertical: 0 }}
+      />
+      <SectionContainer
+        containerStyles={{
+          ...styles.headerContainer,
+        }}
+      >
+        {barOptions.map((item, index) => {
+          return (
+            <CustomTouchable
+              style={{
+                ...styles.headerBtn,
+                backgroundColor: activeBar == item ? AppTheme.White : null,
+              }}
+              onPress={() => setActiveBar(item)}
+              key={index}
+            >
+              <Text
+                bold
+                size={14}
+                color={activeBar == item ? AppTheme.Black : AppTheme.Primary}
+              >
+                {item}
+              </Text>
+            </CustomTouchable>
+          );
+        })}
+      </SectionContainer>
+      {activeBar == "Connect" && <AdvanceSettingConnectComp />}
+      {activeBar == "Media" && <AdvanceSettingMediaComp />}
+      {activeBar == "Printer" && <AdvanceSettingPrinterComp />}
+    </MainContainer>
+  );
+};
+
+export default AdvanceSettingScreen;

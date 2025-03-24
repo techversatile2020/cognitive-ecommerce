@@ -1,4 +1,4 @@
 import Images from "./images";
 import NavigationService from "./navigationService";
-
-export { Images, NavigationService };
+import { ScreenNames } from "./ScreenNames";
+export { Images, NavigationService, ScreenNames };

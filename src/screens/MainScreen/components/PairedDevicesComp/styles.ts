@@ -1,0 +1,57 @@
+import { StyleSheet } from "react-native";
+import { SD } from "../../../../utils";
+
+export const styles = StyleSheet.create({
+  container: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: SD.wp(10),
+    width: "95%",
+    height: SD.hp(48),
+    borderRadius: 10,
+    marginVertical: SD.hp(3),
+    alignSelf: "center",
+  },
+  deviceImageView: {
+    width: SD.wp(40),
+    height: SD.hp(40),
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 6,
+  },
+  deviceImage: {
+    width: "60%",
+    height: "60%",
+    resizeMode: "contain",
+  },
+  textView: {},
+  statusView: {},
+  verticalDots: {
+    width: SD.wp(24),
+    height: SD.hp(24),
+    resizeMode: "contain",
+  },
+  removeCompContainer: {
+    zIndex: 5000,
+    flexDirection: "row",
+    alignItems: "center",
+    width: SD.wp(78),
+    height: SD.hp(30),
+    borderRadius: 5,
+    // top: -20,
+    justifyContent: "center",
+    backgroundColor: "#FFFFFF",
+    // left: 10,
+    position: "absolute",
+    right: 23,
+    top: -7,
+    opacity: 1,
+  },
+  binIcon: {
+    width: SD.wp(12),
+    height: SD.hp(12),
+    resizeMode: "contain",
+    right: SD.wp(5),
+  },
+});

@@ -1,0 +1,17 @@
+export const ScreenNames = {
+  MainScreen: "MainPage",
+  PrinterSetupScreen: "PrinterSetupScreen",
+  SearchPrinterScreen: "SearchPrinterScreen",
+  ConnectWifiScreen: "ConnectWifiScreen",
+  PrinterConnectedSuccessScreen: "PrinterConnectedSuccessScreen",
+  PrinterSettingScreen: "PrinterSettingScreen",
+  NetworkInformationScreen: "NetworkInformationScreen",
+  PrinterSettingNested: "PrinterSettingNested",
+  MediaSettingScreen: "MediaSettingScreen",
+  PrinterInfoScreen: "PrinterInfoScreen",
+  AdvanceSettingScreen: "AdvanceSettingScreen",
+  ConnectToWifiPasswordScreen: "ConnectToWifiPasswordScreen",
+  FactoryResetScreen: "FactoryResetScreen",
+  CompletedScreen: "CompletedScreen",
+  WifiConnectedSuccessScreen: "WifiConnectedSuccessScreen",
+};

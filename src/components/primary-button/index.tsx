@@ -32,7 +32,7 @@ export const PrimaryButton: FC<PrimaryButtonProps> = ({
   color,
   textColor = "#ffffff",
   customStyles,
-  fontSize = 16,
+  fontSize = 20,
   isSecondary = false,
   ...rest
 }) => {
@@ -44,7 +44,7 @@ export const PrimaryButton: FC<PrimaryButtonProps> = ({
       style={[
         styles.buttonContainer,
         {
-          backgroundColor: color || AppTheme.Primary,
+          backgroundColor: color || AppTheme.fontBlueL,
           // backgroundColor: disabled ?AppTheme.Secondary : color,
           // width: width,
         },
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginVertical: SD.hp(10),
-    borderRadius: SD.hp(10),
+    borderRadius: SD.hp(15),
 
     // ...Metrix.createShadow(),
   },

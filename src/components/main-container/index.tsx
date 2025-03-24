@@ -1,11 +1,12 @@
 import React, { ReactNode } from "react";
 import {
+  Platform,
   SafeAreaView,
   StatusBar,
   StyleProp,
   StyleSheet,
   View,
-  ViewStyle
+  ViewStyle,
 } from "react-native";
 
 import { useTheme } from "../../hooks";
@@ -27,7 +28,7 @@ export const MainContainer: React.FC<MainContainerProps> = ({
   customeStyle,
   hidden = false,
   mainContainerStyle,
-  barStyle = 'dark-content',
+  barStyle = "dark-content",
   barBg,
   isFlatList,
 }) => {
@@ -38,26 +39,23 @@ export const MainContainer: React.FC<MainContainerProps> = ({
     //   behavior={Platform.OS == "ios" ? "padding" : "height"}
     //   keyboardVerticalOffset={10}
     // >
-      <SafeAreaView
-        style={[
-          { flex: 1, backgroundColor: AppTheme.Base },
-          mainContainerStyle,
-        ]}
-      >
-        <StatusBar
-          hidden={hidden}
-          barStyle={barStyle}
-          backgroundColor={barBg || AppTheme.Base}
-        />
-        {!isFlatList ? (
-          <ToucableFeedback>
-            <View style={[styles.container, customeStyle]}>{children}</View>
-          </ToucableFeedback>
-        ) : (
+    <SafeAreaView
+      style={[{ flex: 1, backgroundColor: AppTheme.Base }, mainContainerStyle]}
+    >
+      <StatusBar
+        hidden={hidden}
+        barStyle={barStyle}
+        backgroundColor={barBg || AppTheme.Base}
+      />
+      {!isFlatList ? (
+        <ToucableFeedback>
           <View style={[styles.container, customeStyle]}>{children}</View>
-        )}
-      </SafeAreaView>
-      // {/* <NoInternet isOffline={true} /> */}
+        </ToucableFeedback>
+      ) : (
+        <View style={[styles.container, customeStyle]}>{children}</View>
+      )}
+    </SafeAreaView>
+    // {/* <NoInternet isOffline={true} /> */}
     // </KeyboardAvoidingView>
   );
 };
@@ -66,7 +64,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: SD.wp(20),
-    paddingTop: SD.hp(10),
+    paddingVertical: Platform.OS == "android" && SD.hp(10),
+    // paddingTop: SD.hp(10),
     // padding: SD.hp(10),
     // borderWidth: 1,
     // backgroundColor: 'white',
