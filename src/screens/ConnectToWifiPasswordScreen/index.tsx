@@ -15,23 +15,38 @@ import { useTheme } from "../../hooks";
 import { useEffect, useState } from "react";
 import { SD } from "../../utils";
 import { useNavigation } from "@react-navigation/native";
+import { BLEService } from "../../../services";
+import Toast from "react-native-toast-message";
 const ConnectToWifiPasswordScreen = ({ route, navigation }) => {
   const { AppTheme } = useTheme();
   // const navigation = useNavigation();
-  const [routerName, setRouterName] = useState(route?.params?.router);
-  const [wifiPassword, setWifiPassword] = useState(null);
+  const [routerName, setRouterName] = useState(route?.params?.wifi);
+  const [wifiPassword, setWifiPassword] = useState("Swift@2020");
   const [showPassword, setShowPassword] = useState(false);
 
   const handleTriggerShowPassword = () => {
     setShowPassword(!showPassword);
   };
 
-  const handleApply = () => {
-    return navigation.navigate(ScreenNames.WifiConnectedSuccessScreen, {
-      isSuccess: routerName?.id == "3",
-    });
-    route?.params?.onGoBack(routerName);
-    navigation.goBack();
+  const handleApply = async () => {
+    // return navigation.navigate(ScreenNames.WifiConnectedSuccessScreen, {
+    //   isSuccess: routerName?.id == "3",
+    // });
+    // Swift@2020 <-- wifi password
+    // route?.params?.onGoBack(routerName);
+    // navigation.goBack();
+    if (!wifiPassword)
+      return Toast.show({ type: "error", text1: "Please enter wifi password" });
+    try {
+      let device = await BLEService.connectAndSendWifi(
+        routerName,
+        wifiPassword
+      );
+      console.log("WIFI SENDED => ", device);
+      console.log("DEVIE ->", BLEService.device);
+    } catch (error) {
+      console.log("Connect wifi password screen => ", error);
+    }
   };
   return (
     <MainContainer>
@@ -62,7 +77,7 @@ const ConnectToWifiPasswordScreen = ({ route, navigation }) => {
           children={
             <CustomTextInput
               placeholder="Router Name"
-              value={routerName?.name || "Xfinity"}
+              value={routerName || "Xfinity"}
               setValue={(e) => setRouterName(e)}
               backgroundColor={AppTheme.White}
               placeholderTextColor={AppTheme.fontGray}

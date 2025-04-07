@@ -63,7 +63,8 @@ const PrinterSettingScreen = ({ navigation }) => {
   };
 
   return (
-    <MainContainer customeStyle={{ paddingTop: 0 }}>
+    // <MainContainer customeStyle={{ paddingTop: 0 }}>
+    <MainContainer>
       <MainHeader
         title="Printer Setting"
         back
@@ -76,9 +77,10 @@ const PrinterSettingScreen = ({ navigation }) => {
       >
         <CustomImage source={Images.printer2} style={styles.deviceImage} />
         <Pressable
+          style={{ marginVertical: SD.hp(15) }}
           onPress={() => navigation.navigate(ScreenNames.PrinterInfoScreen)}
         >
-          <Text bold size={24} centered>
+          <Text bold size={24} centered color={AppTheme.Black}>
             CTPG5824
           </Text>
           <Text regular size={14} color={AppTheme.fontGray} centered>
@@ -184,20 +186,28 @@ const CalibrationModal = ({ isVisible, onClose }) => {
             // fontFamily={Fonts["Bold"]}
           />
         </View>
-
-        <PrimaryButton
-          title="Calibrate"
-          customStyles={styles.modalBtn}
-          onPress={onClose}
-        />
-        <CustomTouchable
-          onPress={onClose}
-          style={{ marginVertical: SD.hp(12) }}
+        <View
+          style={{
+            width: "100%",
+            paddingHorizontal: SD.wp(10),
+            justifyContent: "center",
+            alignItems: "center",
+          }}
         >
-          <Text bold size={12} color={AppTheme.fontGray}>
-            Skip
-          </Text>
-        </CustomTouchable>
+          <PrimaryButton
+            title="Calibrate"
+            customStyles={styles.modalBtn}
+            onPress={onClose}
+          />
+          <CustomTouchable
+            onPress={onClose}
+            style={{ marginVertical: SD.hp(12) }}
+          >
+            <Text bold size={12} color={AppTheme.fontGray}>
+              Skip
+            </Text>
+          </CustomTouchable>
+        </View>
       </View>
     </CustomModal>
   );

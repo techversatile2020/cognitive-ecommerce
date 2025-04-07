@@ -1,8 +1,8 @@
-import React, {ReactNode} from 'react';
-import {Text as RNText, StyleSheet, TextProps, TextStyle} from 'react-native';
-import {useTheme} from '../../hooks';
-import {FontWeight, Fonts, ThemeColors} from '../../styles';
-import {FontSize, SD} from '../../utils';
+import React, { ReactNode } from "react";
+import { Text as RNText, StyleSheet, TextProps, TextStyle } from "react-native";
+import { useTheme } from "../../hooks";
+import { FontWeight, Fonts, ThemeColors } from "../../styles";
+import { FontSize, SD } from "../../utils";
 
 export type TextComponentProps = TextProps & {
   regular?: boolean;
@@ -91,7 +91,7 @@ const Text: React.FC<TextComponentProps> = ({
   style = {},
   ...textProps
 }) => {
-  const {isDarkTheme, AppTheme} = useTheme();
+  const { isDarkTheme, AppTheme } = useTheme();
 
   const FontFamily = Fonts;
 
@@ -100,44 +100,45 @@ const Text: React.FC<TextComponentProps> = ({
       style={[
         style,
         styles.default(AppTheme),
-        {fontFamily: FontFamily.Regular},
-        blackBold && {fontFamily: FontFamily.BlackBold},
-        medium && {fontFamily: FontFamily.Medium},
-        bold && {fontFamily: FontFamily.Bold},
-        semiBold && {fontFamily: FontFamily.SemiBold},
-        light && FontFamily?.Light && {fontFamily: FontFamily.Light},
+        { fontFamily: FontFamily.Regular },
+        blackBold && { fontFamily: FontFamily.BlackBold },
+        medium && { fontFamily: FontFamily.Medium },
+        bold && { fontFamily: FontFamily.Bold },
+        semiBold && { fontFamily: FontFamily.SemiBold },
+        light && FontFamily?.Light && { fontFamily: FontFamily.Light },
         centered && styles.centered,
         end && styles.alignEnd,
         right && styles.right,
         left && styles.left,
         underlined && styles.underlined,
         strikeThrough && styles.strikeThrough,
-        secondaryColor && {color: AppTheme.SecondaryTextColor},
-        tertiaryColor && {color: AppTheme.TertiaryTextColor},
-        primartColor && {color: AppTheme.Primary},
+        secondaryColor && { color: AppTheme.SecondaryTextColor },
+        tertiaryColor && { color: AppTheme.TertiaryTextColor },
+        primartColor && { color: AppTheme.Primary },
         underLineWithColor && {
           color: AppTheme.UnderLineTextColor,
-          textDecorationLine: 'underline',
+          textDecorationLine: "underline",
         },
-        !!opacity && {opacity},
-        !!size && {fontSize: SD.wp(size)},
-        !!weight && {FontWeight: weight},
+        !!opacity && { opacity },
+        !!size && { fontSize: SD.wp(size) },
+        !!weight && { FontWeight: weight },
         !!capitalize && styles.capitalize,
-        !!leftSpacing && {marginLeft: SD.wp(leftSpacing)},
-        !!rightSpacing && {marginRight: SD.wp(rightSpacing)},
-        !!topSpacing && {marginTop: SD.hp(topSpacing)},
-        !!bottomSpacing && {marginBottom: SD.hp(bottomSpacing)},
-        !!letterSpacing && {letterSpacing: SD.wp(letterSpacing)},
-        !!width && {width: SD.wp(width)},
-        FontExtraSmall && {fontSize: FontSize.FontExtraSmall},
-        FontSmall && {fontSize: FontSize.FontSmall},
-        FontRegular && {fontSize: FontSize.FontRegular},
-        FontMedium && {fontSize: FontSize.FontMedium},
-        FontLarge && {fontSize: FontSize.FontLarge},
-        FontExtraLarge && {fontSize: FontSize.FontExtraLarge},
-        !!color && {color},
+        !!leftSpacing && { marginLeft: SD.wp(leftSpacing) },
+        !!rightSpacing && { marginRight: SD.wp(rightSpacing) },
+        !!topSpacing && { marginTop: SD.hp(topSpacing) },
+        !!bottomSpacing && { marginBottom: SD.hp(bottomSpacing) },
+        !!letterSpacing && { letterSpacing: SD.wp(letterSpacing) },
+        !!width && { width: SD.wp(width) },
+        FontExtraSmall && { fontSize: FontSize.FontExtraSmall },
+        FontSmall && { fontSize: FontSize.FontSmall },
+        FontRegular && { fontSize: FontSize.FontRegular },
+        FontMedium && { fontSize: FontSize.FontMedium },
+        FontLarge && { fontSize: FontSize.FontLarge },
+        FontExtraLarge && { fontSize: FontSize.FontExtraLarge },
+        !!color && { color },
       ]}
-      {...textProps}>
+      {...textProps}
+    >
       {children}
     </RNText>
   );
@@ -149,25 +150,25 @@ const styles = StyleSheet.create<any>({
     color: AppTheme.PrimaryTextColor,
   }),
   centered: {
-    textAlign: 'center',
+    textAlign: "center",
   },
   alignEnd: {
-    alignSelf: 'flex-end',
+    alignSelf: "flex-end",
   },
   right: {
-    textAlign: 'right',
+    textAlign: "right",
   },
   left: {
-    textAlign: 'left',
+    textAlign: "left",
   },
   underlined: {
-    textDecorationLine: 'underline',
+    textDecorationLine: "underline",
   },
   capitalize: {
-    textTransform: 'capitalize',
+    textTransform: "capitalize",
   },
   strikeThrough: {
-    textDecorationLine: 'line-through',
+    textDecorationLine: "line-through",
   },
 });
 

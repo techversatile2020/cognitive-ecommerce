@@ -15,6 +15,8 @@ import CustomDropdown from "./custom-dropdown";
 import InfoFieldComp from "./InfoFieldComp";
 import { CustomTextInput } from "./custom-textinput";
 import { IncreamentDecreamentComp } from "./increament-decreament";
+import { ConnectionStatusModal } from "./connect-status-modal";
+import Loader from "./Loader";
 export {
   BackHeader,
   CardContainer,
@@ -33,4 +35,6 @@ export {
   InfoFieldComp,
   CustomTextInput,
   IncreamentDecreamentComp,
+  ConnectionStatusModal,
+  Loader,
 };

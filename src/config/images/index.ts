@@ -44,6 +44,11 @@ const Images = {
   phone: require("./../../assets/icons/phone.png"),
   crossRed: require("./../../assets/icons/cross-red.png"),
   printerWithCross: require("./../../assets/icons/printerWithCross.png"),
+  printerWithClip: require("./../../assets/icons/printerWithClip.png"),
+  successPrinter2: require("./../../assets/icons/printerSuccess2.png"),
+  failBluetooth: require("./../../assets/icons/failBluetooth.png"),
+  failWifi: require("./../../assets/icons/failWifi.png"),
+  genralError: require("./../../assets/icons/genralError.png"),
 };
 
 export default Images;

@@ -21,7 +21,7 @@ export const AdvanceSettingMediaComp = () => {
     >
       <View style={{ flex: 1 }}>
         <InfoFieldComp
-          title="Print Width (Inches)"
+          title="Top Of Form Adjust"
           children={
             <IncreamentDecreamentComp
               value={formAdjust}

@@ -31,6 +31,7 @@ export const styles = StyleSheet.create({
     width: SD.wp(24),
     height: SD.hp(24),
     resizeMode: "contain",
+    // zIndex: 5000,
   },
   removeCompContainer: {
     zIndex: 5000,

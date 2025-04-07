@@ -23,7 +23,7 @@ const PrinterSettingScreenCard: React.FC<Props> = ({
       style={[styles.cardContainer, { backgroundColor: AppTheme.skyBlue }]}
     >
       <CustomImage source={icon} style={styles.cardIcon} />
-      <Text bold size={12} topSpacing={10} centered>
+      <Text bold size={12} topSpacing={10} centered color={AppTheme.Black}>
         {title}
       </Text>
     </CustomTouchable>

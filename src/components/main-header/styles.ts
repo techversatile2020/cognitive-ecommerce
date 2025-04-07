@@ -8,6 +8,7 @@ export const styles = StyleSheet.create({
     paddingBottom: SD.hp(20),
     // paddingTop: SD.hp(10),
     // alignItems: "center",
+    // borderWidth: 1,
   },
   logoStyles: {
     width: SD.wp(167),

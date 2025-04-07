@@ -1,6 +1,7 @@
 import { ScrollView, View } from "react-native";
 import { styles } from "./styles";
 import {
+  ConnectionStatusModal,
   CustomImage,
   MainContainer,
   MainHeader,
@@ -14,13 +15,23 @@ import { useTheme } from "../../hooks";
 import { useEffect, useState } from "react";
 import { SD } from "../../utils";
 import { knownDevices, newDevices } from "./extra/dummyData";
+import { wifiService } from "../../../services";
+import WifiManager from "react-native-wifi-reborn";
+
 export default function ConnectWifiScreen({ navigation, route }) {
-  const [connectedWifi, setConnectedWifi] = useState(1);
+  const [connectedWifi, setConnectedWifi] = useState(null);
+  const [showWifiError, setShowWifiError] = useState(false);
+  const [showGenralError, setShowGenralError] = useState(false);
   const { AppTheme } = useTheme();
+  const [wifiList, setWifiList] = useState([]);
 
   const handleNext = () => {
-    navigation.navigate(ScreenNames.PrinterConnectedSuccessScreen, {
-      isSuccess: true,
+    // navigation.navigate(ScreenNames.PrinterConnectedSuccessScreen, {
+    //   isSuccess: !!connectedWifi,
+    // });
+    navigation.navigate(ScreenNames.ConnectToWifiPasswordScreen, {
+      isSuccess: !!connectedWifi,
+      wifi: connectedWifi,
     });
   };
 
@@ -28,10 +39,31 @@ export default function ConnectWifiScreen({ navigation, route }) {
     console.log(route?.params);
   }, [route]);
 
+  useEffect(() => {
+    const fetchNetworks = async () => {
+      await wifiService.scanWiFiNetworks((res) => {
+        setWifiList(res);
+        setConnectedWifi(res[0]?.SSID);
+      });
+    };
+
+    fetchNetworks();
+  }, []);
+
   const handleConnectWifi = (e) => {
-    navigation.navigate(ScreenNames.ConnectToWifiPasswordScreen, {
-      router: e,
-    });
+    if (e.id == "3") {
+      setShowWifiError(true);
+    } else if (e.id == "4") {
+      setShowGenralError(true);
+    }
+    // navigation.navigate(ScreenNames.ConnectToWifiPasswordScreen, {
+    //   router: e,
+    // });
+  };
+
+  const handleOnClose = () => {
+    setShowWifiError(false);
+    setShowGenralError(false);
   };
 
   return (
@@ -54,15 +86,15 @@ export default function ConnectWifiScreen({ navigation, route }) {
             <Text bold size={14} color={AppTheme.Black}>
               Known Devices
             </Text>
-            {knownDevices.map((item, index) => {
+            {wifiList.map((item, index) => {
               return (
                 <ParingConnectionCard
-                  isActive={item.id == connectedWifi}
-                  heading={item.name}
-                  subHeading={item.subheading}
-                  onPress={() => setConnectedWifi(item.id)}
+                  isActive={item.SSID == connectedWifi}
+                  heading={item.SSID}
+                  subHeading={""}
+                  onPress={() => setConnectedWifi(item.SSID)}
                   key={index}
-                  icon={item.icon}
+                  icon={Images.wifiRound}
                 />
               );
             })}
@@ -84,6 +116,28 @@ export default function ConnectWifiScreen({ navigation, route }) {
           </ScrollView>
         </SectionContainer>
       </View>
+      <ConnectionStatusModal
+        icon={Images.failWifi}
+        title={"Unable to Connect Wifi"}
+        description={
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore."
+        }
+        onCancel={handleOnClose}
+        onRetry={handleOnClose}
+        onClose={handleOnClose}
+        isVisible={showWifiError}
+      />
+      <ConnectionStatusModal
+        icon={Images.genralError}
+        title={"General Error"}
+        description={
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore."
+        }
+        onCancel={handleOnClose}
+        onRetry={handleOnClose}
+        onClose={handleOnClose}
+        isVisible={showGenralError}
+      />
       <PrimaryButton
         title="Next"
         customStyles={styles.nextBtn}

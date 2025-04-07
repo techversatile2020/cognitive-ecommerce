@@ -46,6 +46,7 @@ const PrinterInfoScreen = () => {
           <InforTextTable title="Firmware Version" value="195170.898" />
           <InforTextTable title="Wifi Firm Version" value="1.0.0" />
           <InforTextTable title="Index Setting" value="tt mode" />
+          <InforTextTable title="Print Statistics" value="20 inches printed" />
         </SectionContainer>
       </View>
 

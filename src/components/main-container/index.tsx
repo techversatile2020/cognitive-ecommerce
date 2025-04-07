@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: SD.wp(20),
-    paddingVertical: Platform.OS == "android" && SD.hp(10),
+    paddingVertical: Platform.OS == "android" && SD.hp(50),
     // paddingTop: SD.hp(10),
     // padding: SD.hp(10),
     // borderWidth: 1,

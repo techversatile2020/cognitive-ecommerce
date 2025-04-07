@@ -22,8 +22,8 @@ export const styles = StyleSheet.create({
     resizeMode: "contain",
   },
   connectedTextView: {
-    width: SD.wp(80),
-    height: SD.hp(22),
+    width: SD.wp(105),
+    height: SD.hp(31),
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 50,

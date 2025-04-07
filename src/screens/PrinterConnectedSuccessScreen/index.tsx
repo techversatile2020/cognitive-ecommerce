@@ -40,7 +40,7 @@ export default function PrinterConnectedSuccessScreen({ navigation, route }) {
           Your printer connection has been established
         </Text>
         <CustomImage
-          source={isSuccess ? Images.printerWithCheck : Images.printerWithCross}
+          source={isSuccess ? Images.printerWithClip : Images.printerWithCross}
           style={styles.printerImage}
         />
         <View style={styles.stepsSection}>

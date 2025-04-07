@@ -24,7 +24,7 @@ function MainScreen({ navigation, route }) {
   };
 
   return (
-    <MainContainer>
+    <MainContainer isFlatList>
       <MainHeader logo showPlusIcon={setup} />
       <ScrollView
         style={{ flex: 1 }}

@@ -25,7 +25,12 @@ const PrinterSetupStepsCard = ({ isActive, icon, text }: printerSetupSteps) => {
           ]}
         />
       </View>
-      <Text semiBold size={16} color={AppTheme.fontGray} topSpacing={5}>
+      <Text
+        semiBold
+        size={16}
+        color={isActive ? AppTheme.Black : AppTheme.fontGray}
+        topSpacing={5}
+      >
         {text}
       </Text>
     </View>

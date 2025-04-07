@@ -30,7 +30,7 @@ const NetworkInformationScreen = () => {
             backgroundColor: AppTheme.lightGreen,
           }}
         >
-          <Text bold size={10} color={AppTheme.White} centered>
+          <Text bold size={16} color={AppTheme.White} centered>
             Connected
           </Text>
         </View>

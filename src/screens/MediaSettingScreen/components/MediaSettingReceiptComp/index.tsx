@@ -63,7 +63,7 @@ const MediaSettingReceiptComp = () => {
             }
           />
           <InfoFieldComp
-            title="Print Width (Hundreds of an Inch)"
+            title="Print Width (Hundredths of an Inch)"
             children={
               <CustomTextInput
                 placeholder="Enter width"
@@ -82,7 +82,7 @@ const MediaSettingReceiptComp = () => {
             }
           />
           <InfoFieldComp
-            title="Shift Left (Hundreds of an Inch)"
+            title="Shift Left (Hundredths of an Inch)"
             children={
               <IncreamentDecreamentComp
                 value={shiftLeft}

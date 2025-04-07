@@ -48,6 +48,7 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     flex: 1,
     width: "100%",
+    paddingHorizontal: SD.wp(10),
   },
   modalBtn: {
     width: "100%",

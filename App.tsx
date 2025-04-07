@@ -21,6 +21,7 @@ import {
   SearchPrinterScreen,
   WifiConnectedSuccessScreen,
 } from "./src/screens";
+import Toast from "react-native-toast-message";
 
 const Stack = createNativeStackNavigator();
 
@@ -89,6 +90,7 @@ export default function App() {
           />
         </Stack.Navigator>
       </NavigationContainer>
+      <Toast />
     </>
   );
 }

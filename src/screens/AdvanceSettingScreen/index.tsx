@@ -15,8 +15,12 @@ import {
 } from "./components";
 const AdvanceSettingScreen = () => {
   const { AppTheme } = useTheme();
-  const [activeBar, setActiveBar] = useState("Connect");
-  const [barOptions, setBarOptions] = useState(["Connect", "Printer", "Media"]);
+  const [activeBar, setActiveBar] = useState("Connection");
+  const [barOptions, setBarOptions] = useState([
+    "Connection",
+    "Printer",
+    "Media",
+  ]);
   return (
     <MainContainer>
       <MainHeader
@@ -50,7 +54,7 @@ const AdvanceSettingScreen = () => {
           );
         })}
       </SectionContainer>
-      {activeBar == "Connect" && <AdvanceSettingConnectComp />}
+      {activeBar == "Connection" && <AdvanceSettingConnectComp />}
       {activeBar == "Media" && <AdvanceSettingMediaComp />}
       {activeBar == "Printer" && <AdvanceSettingPrinterComp />}
     </MainContainer>
