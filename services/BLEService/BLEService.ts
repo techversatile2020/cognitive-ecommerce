@@ -15,6 +15,25 @@ import {
 import { PermissionsAndroid, Platform } from "react-native";
 import Toast from "react-native-toast-message";
 import { Buffer } from "buffer";
+import * as Request from "./../../protos/request_pb";
+import * as Common from "./../../protos/common_pb";
+import * as Response from "./../../protos/response_pb";
+import { CHARACTERISTIC_UUID, SERVICE_UUID } from "../../src/utils/UUIDS";
+import { rejects } from "assert";
+import { setCurrentConnectedPrinter } from "../../src/redux/reducers";
+import { useDispatch } from "react-redux";
+
+// import {
+//   WifiInfo,
+//   DeviceStatus,
+//   ConnectionFailureReason,
+//   ConnectionState,
+//   Status,
+//   WifiConfig,
+//   ConnectionInfo,
+// } from "./../../protos/response_pb";
+// import * as Result from "./../../protos/result_pb";
+// import * as Version from "./../../protos/version_pb";
 
 const deviceNotConnectedErrorText = "Device is not connected";
 const WIFI_SERVICE_UUID = "14387800-130c-49e7-b877-2881c89cb258";
@@ -45,13 +64,17 @@ class BLEServiceInstance {
   getDevice = () => this.device;
 
   initializeBLE = () =>
-    new Promise<void>((resolve) => {
+    new Promise<void>((resolve, reject) => {
       const subscription = this.manager.onStateChange((state) => {
         switch (state) {
           case BluetoothState.Unsupported:
             this.showErrorToast("");
+            reject("Unsupported bluetooth device!");
             break;
           case BluetoothState.PoweredOff:
+            this.showErrorToast("Enable bluetooth");
+
+            // dispatch(setCurrentConnectedPrinter(null));
             this.onBluetoothPowerOff();
             this.manager.enable().catch((error: BleError) => {
               if (error.errorCode === BleErrorCode.BluetoothUnauthorized) {
@@ -67,9 +90,7 @@ class BLEServiceInstance {
             subscription.remove();
             break;
           default:
-            console.error("Unsupported state: ", state);
-          // resolve()
-          // subscription.remove()
+            reject(state);
         }
       }, true);
     });
@@ -121,6 +142,7 @@ class BLEServiceInstance {
       }
       if (device) {
         // onDeviceFound(Array.from(this.discoveredDevices.values()));
+
         if (
           device &&
           !this.discoveredDevices.has(device.id) &&
@@ -145,6 +167,12 @@ class BLEServiceInstance {
         .connectToDevice(deviceId)
         .then((device) => {
           this.device = device;
+          this.onDeviceDisconnected((error, device) => {
+            if (error) {
+              this.showErrorToast(error?.message);
+            }
+          });
+
           resolve(device);
         })
         .catch((error) => {
@@ -207,22 +235,19 @@ class BLEServiceInstance {
   writeCharacteristicWithResponseForDevice = async (
     serviceUUID: UUID,
     characteristicUUID: UUID,
-    time: Base64
+    base64Value: Base64
   ) => {
     if (!this.device) {
       this.showErrorToast(deviceNotConnectedErrorText);
       throw new Error(deviceNotConnectedErrorText);
     }
-    return this.manager
-      .writeCharacteristicWithResponseForDevice(
-        this.device.id,
-        serviceUUID,
-        characteristicUUID,
-        time
-      )
-      .catch((error) => {
-        this.onError(error);
-      });
+
+    return this.manager.writeCharacteristicWithResponseForDevice(
+      this.device.id,
+      serviceUUID,
+      characteristicUUID,
+      base64Value
+    );
   };
 
   writeCharacteristicWithoutResponseForDevice = async (
@@ -295,6 +320,30 @@ class BLEServiceInstance {
     this.characteristicMonitor?.remove();
   };
 
+  turnOnLED = async () => {
+    if (!this.device) {
+      this.showErrorToast(deviceNotConnectedErrorText);
+      throw new Error(deviceNotConnectedErrorText);
+    }
+
+    try {
+      const base64Value = Buffer.from([0x01]).toString("base64"); // Assuming 0x01 turns the LED on
+
+      await this.manager.writeCharacteristicWithoutResponseForDevice(
+        this.device.id,
+        SERVICE_UUID,
+        CHARACTERISTIC_UUID,
+        base64Value
+      );
+      console.log("TRUNED ON");
+
+      this.showSuccessToast("Turned LED ON");
+    } catch (error) {
+      this.onError(error as BleError);
+      console.error("Error turning LED ON:", error);
+    }
+  };
+
   writeDescriptorForDevice = async (
     serviceUUID: UUID,
     characteristicUUID: UUID,
@@ -351,6 +400,27 @@ class BLEServiceInstance {
       this.showErrorToast(deviceNotConnectedErrorText);
       throw new Error(deviceNotConnectedErrorText);
     }
+    this.characteristicMonitor = this.manager.monitorCharacteristicForDevice(
+      this.device.id,
+      serviceUUID,
+      characteristicUUID,
+      listener
+    );
+    return;
+  };
+  monitorCharacteristicForServiceDevice = async (
+    serviceUUID: UUID,
+    characteristicUUID: UUID,
+    listener: (
+      error: BleError | null,
+      characteristic: Characteristic | null
+    ) => void
+  ) => {
+    if (!this.device) {
+      this.showErrorToast(deviceNotConnectedErrorText);
+      throw new Error(deviceNotConnectedErrorText);
+    }
+
     return this.manager.monitorCharacteristicForDevice(
       this.device.id,
       serviceUUID,
@@ -358,6 +428,74 @@ class BLEServiceInstance {
       listener
     );
   };
+  // Modify requestMTUForDevice to handle iOS better
+  async requestMTUForDevice_(mtu: number) {
+    if (!this.device) {
+      this.showErrorToast(deviceNotConnectedErrorText);
+      throw new Error(deviceNotConnectedErrorText);
+    }
+
+    try {
+      const result = await this.manager.requestMTUForDevice(
+        this.device.id,
+        mtu
+      );
+
+      // iOS workaround: Sometimes needs multiple attempts
+      if (Platform.OS === "ios" && result.mtu < mtu) {
+        return await this.manager.requestMTUForDevice(this.device.id, mtu);
+      }
+
+      return result;
+    } catch (error) {
+      console.error("MTU request failed:", error);
+      throw error;
+    }
+  }
+  async writeDescriptorForCharacteristic(
+    serviceUUID: UUID,
+    characteristicUUID: UUID,
+    descriptorUUID: UUID,
+    value: Base64
+  ) {
+    if (!this.device) {
+      this.showErrorToast(deviceNotConnectedErrorText);
+      throw new Error(deviceNotConnectedErrorText);
+    }
+
+    return this.manager.writeDescriptorForDevice(
+      this.device.id,
+      serviceUUID,
+      characteristicUUID,
+      descriptorUUID,
+      value
+    );
+  }
+
+  // Add this new method to handle iOS-specific CCCD configuration
+  async enableNotificationsIOS(
+    serviceUUID: UUID,
+    characteristicUUID: UUID,
+    listener
+  ) {
+    // Check if characteristic is notifiable or indicatable before monitoring
+    const char = await this.device.readCharacteristicForService(
+      serviceUUID,
+      characteristicUUID
+    );
+
+    if (char.isNotifiable || char.isIndicatable) {
+      // Monitor the characteristic for notifications or indications
+      await this.device.monitorCharacteristicForService(
+        serviceUUID,
+        characteristicUUID,
+        listener // Pass the listener to handle data updates
+      );
+      console.log(`Notifications enabled for ${characteristicUUID}`);
+    } else {
+      console.warn("Characteristic is not notifiable or indicatable");
+    }
+  }
 
   getServicesForDevice = () => {
     if (!this.device) {
@@ -433,6 +571,7 @@ class BLEServiceInstance {
       this.showErrorToast(deviceNotConnectedErrorText);
       throw new Error(deviceNotConnectedErrorText);
     }
+    // dispatch(setCurrentConnectedPrinter(null));
     return this.manager.onDeviceDisconnected(this.device.id, listener);
   };
 
@@ -444,6 +583,7 @@ class BLEServiceInstance {
       this.showErrorToast(deviceNotConnectedErrorText);
       throw new Error(deviceNotConnectedErrorText);
     }
+
     return this.manager.readRSSIForDevice(this.device.id).catch((error) => {
       this.onError(error);
     });
@@ -510,82 +650,85 @@ class BLEServiceInstance {
     return (this.device = null);
   };
 
-  connectAndSendWifi = async (ssid: string, password: string) => {
-    try {
-      // const device = await bleManager.connectToDevice(deviceId);
-      const device = this.device;
-      const manager = this.manager;
-      // 1. Enable notifications FIRST
-      await manager?.startCharacteristicNotificationsForDevice(
-        this.device.id,
-        WIFI_SERVICE_UUID,
-        DATA_OUT_CHAR_UUID
-      );
+  // async connectAndSendWifi(ssid: string, password: string) {
+  //   // const response = Response.deserializeBinary(binary);
 
-      // 2. Setup monitor
-      this.setupMonitor(
-        WIFI_SERVICE_UUID,
-        DATA_OUT_CHAR_UUID,
-        (characteristic) => {
-          if (!characteristic.value) {
-            console.log("Empty value received");
-            return;
-          }
-          const raw = Buffer.from(characteristic.value, "base64");
-          console.log("Raw data (hex):", raw.toString("hex")); // Debug raw bytes
-          console.log("Status:", raw.toString("utf8"));
-        },
-        (error) => console.error("Monitor error:", error)
-      );
-      await manager.discoverAllServicesAndCharacteristicsForDevice(device?.id);
-      await device.characteristicsForService(WIFI_SERVICE_UUID);
+  //   if (!this.device) {
+  //     this.showErrorToast("No device found. Please scan and connect first.");
+  //     return;
+  //   }
+  //   try {
+  //     // Step 1: Use custom method to check if connected
+  //     const isConnected = await this.manager.isDeviceConnected(this.device.id);
+  //     if (!isConnected) {
+  //       this.showErrorToast("Device disconnected. Reconnecting...");
+  //       // Step 2: Reconnect using existing methods
+  //       this.device = await this.connectToDevice(this.device.id);
+  //       await this.discoverAllServicesAndCharacteristicsForDevice();
+  //     }
+  //   } catch (err) {
+  //     this.showErrorToast("Reconnection failed: " + (err as Error).message);
+  //     return;
+  //   }
 
-      if (!this.device || !(await this.manager.isDeviceConnected(device.id))) {
-        this.device = await this.manager.connectToDevice(device.id);
-        await this.manager.discoverAllServicesAndCharacteristicsForDevice(
-          device.id
-        );
-      }
+  //   let Wifi = new Common.WifiInfo();
+  //   const RequestWifi = new Request.WifiConfig();
+  //   Wifi.setSsid(ssid);
+  //   RequestWifi.setWifi(Wifi);
+  //   RequestWifi.setPassphrase(password);
 
-      // Write to Control Point
+  //   // request.setType(1);
+  //   const request = new Request.Request();
+  //   const payload = request.serializeBinary();
+  //   const base64Payload = Buffer.from(payload).toString("base64");
 
-      // try {
-      //   const transactionId = "wifi-monitor-" + Date.now(); // or uuid()
+  //   this.manager.monitorCharacteristicForDevice(
+  //     this.device?.id,
+  //     WIFI_SERVICE_UUID,
+  //     CONTROL_POINT_CHAR_UUID,
+  //     (error, characteristic) => {
+  //       console.log("EVENT RUNNING...");
 
-      //   // Listen for response (optional)
-      //   device.monitorCharacteristicForService(
-      //     WIFI_SERVICE_UUID,
-      //     "14387803-130c-49e7-b877-2881c89cb258",
-      //     (error, characteristic) => {
-      //       if (error) {
-      //         console.error("Notification error:", error.message);
-      //         return;
-      //       }
-      //       const data = Buffer.from(
-      //         characteristic?.value ?? "",
-      //         "base64"
-      //       ).toString("utf8");
-      //       console.log("Response from nRF7002: ", data);
-      //     },
-      //     transactionId
-      //   );
-      // } catch (err) {
-      //   console.log("Notificaiton error ", err);
-      // }
+  //       if (error) {
+  //         console.error("🚨 Error monitoring response:", error);
+  //         return;
+  //       }
 
-      const payload = JSON.stringify({ ssid: ssid, password: password });
-      const encoded = Buffer.from(payload, "utf8").toString("base64");
+  //       const base64Value = characteristic.value;
+  //       console.log("base64Value ", base64Value);
 
-      await this.writeCharacteristicWithResponseForDevice(
-        WIFI_SERVICE_UUID,
-        CONTROL_POINT_CHAR_UUID,
-        encoded
-      );
-    } catch (error) {
-      console.error("Provisioning error: ", error.message);
-      throw error;
-    }
-  };
+  //       const buffer = Buffer.from(base64Value, "base64");
+  //       console.log("📦 Buffer length:", buffer.length);
+  //       console.log("🧬 Hex preview:", buffer.toString("hex").slice(0, 50));
+  //       console.log("🧬 Full Hex:", buffer.toString("hex"));
+
+  //       try {
+  //         // const res = Response.Response();
+  //         // console.log(Object.keys(res));
+  //         console.log("555");
+
+  //         const response = Response.Response.deserializeBinary(buffer);
+  //         console.log("558");
+  //         // console.log("🔍 State from object:", response.toObject().state);
+  //         console.log("Response from ble => ", response.toObject());
+  //       } catch (err) {
+  //         console.error("❌ Failed to decode response:", err);
+  //       }
+  //     }
+  //   );
+  //   await this.device
+  //     .writeCharacteristicWithResponseForService(
+  //       WIFI_SERVICE_UUID,
+  //       CONTROL_POINT_CHAR_UUID,
+  //       base64Payload
+  //     )
+  //     .then((res) => {
+  //       console.log("WiFi credentials sent successfully", res);
+  //     })
+  //     .catch((err) => {
+  //       console.log("ERROR WRITTING => ", err);
+  //     });
+  // }
 
   requestBluetoothPermission = async () => {
     if (Platform.OS === "ios") {
@@ -627,12 +770,11 @@ class BLEServiceInstance {
   };
 
   showErrorToast = (error: string) => {
-    Toast.show({
+    return Toast.show({
       type: "error",
       text1: "Error",
       text2: error,
     });
-    console.error(error);
   };
 
   showSuccessToast = (info: string) => {

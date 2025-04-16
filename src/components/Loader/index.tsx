@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
   },
   loaderBox: {
-    backgroundColor: "rgba(255, 255, 255, 0.85)",
+    backgroundColor: "white",
     padding: 20,
     borderRadius: 20,
     alignItems: "center",

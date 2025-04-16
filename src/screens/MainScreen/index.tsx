@@ -14,10 +14,14 @@ import { MainScreenOptionsCard, PairedDevicesComp } from "./components";
 import { opetionsData } from "./extra/data";
 import { useTheme } from "../../hooks";
 import { pairedDevicesData } from "./extra/pairedDevicesData";
+import { useSelector } from "react-redux";
 
 function MainScreen({ navigation, route }) {
   const { isDarkTheme, AppTheme } = useTheme();
-  const setup = route?.params?.setup || null;
+  const { connectedPrinters } = useSelector((state: any) => state.printer);
+  const { printerDetailsByIp } = useSelector((state: any) => state.printer);
+  const printerList = Object.values(printerDetailsByIp ?? {});
+  const setup = printerList.length > 0;
 
   const handleAddNow = () => {
     navigation.navigate(ScreenNames.PrinterSetupScreen);
@@ -42,12 +46,12 @@ function MainScreen({ navigation, route }) {
             },
           ]}
         >
-          {setup == "completed" ? (
+          {setup ? (
             <ScrollView
               showsVerticalScrollIndicator={false}
               style={{ flex: 1 }}
             >
-              {pairedDevicesData.map((item, index) => {
+              {printerList.map((item, index) => {
                 return <PairedDevicesComp data={item} key={index} />;
               })}
             </ScrollView>

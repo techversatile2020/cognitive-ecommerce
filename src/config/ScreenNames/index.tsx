@@ -14,4 +14,5 @@ export const ScreenNames = {
   FactoryResetScreen: "FactoryResetScreen",
   CompletedScreen: "CompletedScreen",
   WifiConnectedSuccessScreen: "WifiConnectedSuccessScreen",
+  HttpServerWebVIew: "HttpServerWebView",
 };

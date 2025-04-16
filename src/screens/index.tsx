@@ -13,6 +13,7 @@ import ConnectToWifiPasswordScreen from "./ConnectToWifiPasswordScreen";
 import FactoryResetScreen from "./FactoryResetScreen";
 import CompletedScreen from "./CompletedScreen";
 import WifiConnectedSuccessScreen from "./WifiConnectedSuccessScreen";
+import HttpServerWebView from "./HttpServerWebView";
 export {
   MainScreen,
   PrinterSetupScreen,
@@ -29,4 +30,5 @@ export {
   FactoryResetScreen,
   CompletedScreen,
   WifiConnectedSuccessScreen,
+  HttpServerWebView,
 };

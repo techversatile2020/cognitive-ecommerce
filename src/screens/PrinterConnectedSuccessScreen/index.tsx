@@ -10,16 +10,18 @@ import { styles } from "./styles";
 import { useTheme } from "../../hooks";
 import { PrinterSetupStepsCard } from "./components";
 
-export default function PrinterConnectedSuccessScreen({ navigation, route }) {
+const PrinterConnectedSuccessScreen = ({ navigation, route }) => {
   const { AppTheme } = useTheme();
   const isSuccess = route?.params?.isSuccess || false;
+  console.log("Screen printed connedted Success screen ");
+
   const handleNext = () => {
-    navigation.navigate(ScreenNames.MainScreen, {
+    navigation.replace(ScreenNames.MainScreen, {
       setup: isSuccess ? "completed" : null,
     });
   };
   return (
-    <MainContainer mainContainerStyle={{ backgroundColor: "#FFFFFF" }}>
+    <MainContainer mainContainerStyle={{ backgroundColor: "#FFFFFF", flex: 1 }}>
       <Text medium size={14} right primartColor>
         Skip
       </Text>
@@ -83,6 +85,7 @@ export default function PrinterConnectedSuccessScreen({ navigation, route }) {
       </View>
     </MainContainer>
   );
-}
+};
 
 const VerticalLine = () => <View style={styles.verticalLine} />;
+export default PrinterConnectedSuccessScreen;

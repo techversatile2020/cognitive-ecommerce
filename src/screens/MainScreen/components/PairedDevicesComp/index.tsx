@@ -2,10 +2,20 @@ import { Pressable, View } from "react-native";
 import { CustomImage, Text } from "../../../../components";
 import { styles } from "./styles";
 import { Images, ScreenNames } from "../../../../config";
-import { useTheme } from "../../../../hooks";
-import React, { useState } from "react";
+import { usePrinter, useTheme } from "../../../../hooks";
+import React, { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import {
+  base64ToArrayBuffer,
+  bin2String,
+  converBase64Obj,
+  decodeIpFromBase64,
+} from "../../../../utils/ble.util";
+import { store } from "../../../../redux";
+import { getPrinterStatus } from "../../../../api";
+import { useDispatch } from "react-redux";
+import { removePrinterByIp } from "../../../../redux/reducers";
 type propsObj = {
   id: number;
   title: string;
@@ -14,17 +24,31 @@ type propsObj = {
   connected: string;
 };
 
-const PairedDevicesComp = ({ data }: { data: propsObj }) => {
+const PairedDevicesComp = ({ data }: { data: any }) => {
   const { AppTheme } = useTheme();
-  const { title, subTitlel, status, connected } = data;
+  const { HostName, model, Status, statusCategory, IP_Address } = data;
+  const connected = statusCategory == "OK";
+  const dispatch = useDispatch();
   const [showRemoveBtn, setShowRemoveBtn] = useState(false);
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
-
+  usePrinter(IP_Address);
   const handleNavigation = () => {
-    navigation.navigate(ScreenNames.PrinterSettingScreen);
+    navigation.navigate(ScreenNames.PrinterSettingScreen, { IP_Address });
   };
+
+  const handleRemovePrinter = () => {
+    dispatch(removePrinterByIp(IP_Address));
+  };
+
+  const colorOnStatusChange =
+    statusCategory == "OK"
+      ? AppTheme.lightGreen
+      : statusCategory == "WARNING"
+      ? AppTheme.Yellow
+      : AppTheme.Red;
+
   return (
-    <View style={[styles.container, { backgroundColor: AppTheme.White }]}>
+    <View style={[styles.container, { backgroundColor: colorOnStatusChange }]}>
       <Pressable
         style={[
           {
@@ -32,7 +56,7 @@ const PairedDevicesComp = ({ data }: { data: propsObj }) => {
             alignItems: "center",
             justifyContent: "space-between",
             width: "100%",
-            opacity: status == "Ready" ? 1 : 0.5,
+            // opacity: status == "Ready" ? 1 : 0.5,
           },
         ]}
         onPress={handleNavigation}
@@ -46,24 +70,25 @@ const PairedDevicesComp = ({ data }: { data: propsObj }) => {
           <CustomImage source={Images.printer2} style={styles.deviceImage} />
         </View>
         <View style={styles.textView}>
-          <Text bold size={12} color={AppTheme.Black}>
-            {title}
+          <Text
+            bold
+            size={12}
+            color={AppTheme.Black}
+            style={{ textTransform: "uppercase" }}
+          >
+            {HostName}
           </Text>
           <Text regular size={10} color={AppTheme.fontGray}>
-            {subTitlel}
+            {/* {subTitlel} */}
+            Congnitive Printers
           </Text>
         </View>
         <View style={styles.statusView}>
           <Text bold size={10} color={AppTheme.Black} centered>
             Status
           </Text>
-          <Text
-            regular
-            size={10}
-            color={status == "Ready" ? AppTheme.lightGreen : AppTheme.fontGray}
-            centered
-          >
-            {status}
+          <Text regular size={10} color={AppTheme.Black} centered>
+            {Status}
           </Text>
         </View>
         <View>
@@ -71,7 +96,9 @@ const PairedDevicesComp = ({ data }: { data: propsObj }) => {
           Connected
           </Text> */}
           <Text bold size={10} color={AppTheme.Black} centered>
-            {connected}
+            {/* {connected} */}
+            {/* {Status ? "Connected" : "Disconnected"} */}
+            {statusCategory == "OK" ? "Connected" : "Disconnected"}
           </Text>
         </View>
         <Pressable onPress={() => setShowRemoveBtn(!showRemoveBtn)}>
@@ -81,15 +108,15 @@ const PairedDevicesComp = ({ data }: { data: propsObj }) => {
           />
         </Pressable>
       </Pressable>
-      {showRemoveBtn && <RemoveComp />}
+      {showRemoveBtn && <RemoveComp handleRemove={handleRemovePrinter} />}
     </View>
   );
 };
 
-const RemoveComp = () => {
+const RemoveComp = ({ handleRemove }) => {
   const { AppTheme } = useTheme();
   return (
-    <View style={styles.removeCompContainer}>
+    <Pressable style={styles.removeCompContainer} onPress={handleRemove}>
       <CustomImage
         source={Images.bin}
         style={[styles.binIcon, { backgroundColor: "#FFFFFF" }]}
@@ -97,7 +124,7 @@ const RemoveComp = () => {
       <Text regular size={10}>
         Remove
       </Text>
-    </View>
+    </Pressable>
   );
 };
 

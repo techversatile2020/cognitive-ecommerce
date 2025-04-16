@@ -8,11 +8,19 @@ import {
   SectionContainer,
   Text,
 } from "../../components";
-import { Images } from "../../config";
+import { Images, ScreenNames } from "../../config";
 import { styles } from "./styles";
 import { useTheme } from "../../hooks";
-const NetworkInformationScreen = () => {
+import { useSelector } from "react-redux";
+const NetworkInformationScreen = ({ route, navigation }) => {
   const { AppTheme } = useTheme();
+  const { statusCategory, Status, IP_Address, RSSI, SSID } = useSelector(
+    (state: any) => state.printer.printerDetailsByIp[route?.params?.IP_Address]
+  );
+
+  const handleConnectOtherWifi = () => {
+    return navigation.navigate(ScreenNames.PrinterSetupScreen);
+  };
   return (
     <MainContainer>
       <MainHeader
@@ -31,13 +39,14 @@ const NetworkInformationScreen = () => {
           }}
         >
           <Text bold size={16} color={AppTheme.White} centered>
-            Connected
+            {/* Connected */}
+            {statusCategory == "OK" ? "Connected" : "Disconnected"}
           </Text>
         </View>
         <View style={styles.infoFieldSection}>
-          <InfoFieldComp title="Router Name" value="Xfinity" />
-          <InfoFieldComp title="Signal Strength" value="Good" />
-          <InfoFieldComp title="IP Address" value="192.168.0.0" />
+          <InfoFieldComp title="Router Name" value={SSID} />
+          <InfoFieldComp title="Signal Strength" value={RSSI} />
+          <InfoFieldComp title="IP Address" value={IP_Address} />
         </View>
       </View>
       <PrimaryButton
@@ -45,6 +54,7 @@ const NetworkInformationScreen = () => {
         customStyles={{
           borderRadius: 15,
         }}
+        onPress={handleConnectOtherWifi}
       />
     </MainContainer>
   );

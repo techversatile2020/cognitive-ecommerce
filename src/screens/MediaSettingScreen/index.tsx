@@ -10,10 +10,14 @@ import { styles } from "./styles";
 import { useTheme } from "../../hooks";
 import { useState } from "react";
 import { MediaSettingLabelComp, MediaSettingReceiptComp } from "./components";
+import { useSelector } from "react-redux";
 
-const MediaSettingScreen = () => {
+const MediaSettingScreen = ({ route }) => {
   const { AppTheme } = useTheme();
   const [activeBar, setActiveBar] = useState("label");
+  const { ModelNum, PrintWidth, ShiftLeft, IndexV } = useSelector(
+    (state: any) => state.printer.printerDetailsByIp[route?.params?.IP_Address]
+  );
   return (
     <MainContainer mainContainerStyle={{ paddingTop: 0 }}>
       <MainHeader
@@ -57,8 +61,12 @@ const MediaSettingScreen = () => {
           </Text>
         </CustomTouchable>
       </SectionContainer>
-      {activeBar == "label" && <MediaSettingLabelComp />}
-      {activeBar == "receipt" && <MediaSettingReceiptComp />}
+      {activeBar == "label" && (
+        <MediaSettingLabelComp data={{ ip: route?.params?.IP_Address }} />
+      )}
+      {activeBar == "receipt" && (
+        <MediaSettingReceiptComp data={{ ip: route?.params?.IP_Address }} />
+      )}
     </MainContainer>
   );
 };

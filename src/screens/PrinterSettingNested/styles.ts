@@ -20,6 +20,7 @@ export const styles = StyleSheet.create({
   sliderStyles: {
     width: "100%",
     marginTop: SD.hp(10),
+    height: SD.hp(50),
     // height: 1,
   },
 });

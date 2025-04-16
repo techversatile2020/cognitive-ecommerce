@@ -13,102 +13,202 @@ import {
   Text,
 } from "../../components";
 import { Images, ScreenNames } from "../../config";
-import { useTheme } from "../../hooks";
+import { usePrinter, useTheme } from "../../hooks";
 import { useEffect, useState } from "react";
-import { dummyData } from "./extra/dummyData";
-import { SD } from "../../utils";
+import { ConnectButtonHandler, SD } from "../../utils";
 import { BLEService } from "../../../services";
 import Toast from "react-native-toast-message";
 
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addConnectedPrinter,
+  addScannedWifi,
+  setCurrentConnectedPrinter,
+  setScannedWifis,
+} from "../../redux/reducers";
+import { toast } from "../../utils/toast.utils";
+import { base64ToArrayBuffer, bin2String } from "../../utils/ble.util";
+import navigationService from "../../config/navigationService";
+import { fetchPrinterDetails } from "../../services/printerServices";
+import { setPrinterDetailsByIp } from "../../redux/reducers";
+import { fetchPrinterVars } from "../../api";
+
+const version_pb = require("./../../../protos/version_pb");
+const request_pb = require("./../../../protos/request_pb");
+const common_pb = require("./../../../protos/common_pb");
+const response_pb = require("./../../../protos/response_pb");
+const result_pb = require("./../../../protos/result_pb");
+
 const SearchPrinterScreen = ({ navigation }) => {
   const ble = BLEService;
-
   const { AppTheme } = useTheme();
   const [printerSelected, setPrinterSelected] = useState(ble?.device || null);
   const [showPrinterErrorModal, setShowPrinterErrorModal] = useState(null);
-  const [devices, setDevices] = useState<any>([]);
   const [loading, setLoading] = useState(null);
-  const [sortedDevices, setSortedDevices] = useState([]);
-
-  const fetchBleDevices = async () => {
-    try {
-      await ble.initializeBLE();
-      ble.scanDevices(setDevices);
-
-      // let isDeviceConnected = await ble.isDeviceConnected();
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const [bleScannedDevices, setBleScannedDevices] = useState([]);
+  const { scannedWifis, currentConnectedPrinter } = useSelector(
+    (state: any) => state.printer
+  );
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    fetchBleDevices();
-    setLoading("Scanning devices...");
-    setTimeout(() => {
-      setLoading(null);
-    }, 2000);
-
+    ScanButtonHandler();
     return () => {
       ble.stopScan();
     };
   }, []);
 
+  const ScanButtonHandler = async () => {
+    try {
+      dispatch(setCurrentConnectedPrinter(null));
+      setLoading("Scanning...");
+
+      await ble.scanDevices(setBleScannedDevices, [
+        "14387800-130c-49e7-b877-2881c89cb258",
+      ]);
+      setLoading(null);
+    } catch (error) {
+      setLoading(null);
+      console.log(error);
+    }
+  };
+
   const handleNext = async () => {
-    if (!printerSelected) {
+    if (!currentConnectedPrinter) {
       return Toast.show({
         text1: "Please connect printer first",
         type: "error",
       });
     }
-    await ble.discoverAllServicesAndCharacteristicsForDevice();
     navigation.navigate(ScreenNames.ConnectWifiScreen);
-  };
-
-  const handlePrinterConnect = async (it) => {
-    try {
-      if (loading) return; // Prevent double-tap or rapid calls
-      const connectedDevice = ble.device;
-      // If device is already connected, disconnect it
-      if (connectedDevice?.id === it?.id) {
-        setLoading("Disconnecting from device...");
-        let isConnected = await ble.isDeviceWithIdConnected(
-          connectedDevice?.id
-        );
-        console.log("DISCONNECT ", isConnected);
-
-        await ble.disconnectDevice();
-
-        setPrinterSelected(null);
-      } else {
-        // First disconnect any existing connection before connecting to new device
-        if (connectedDevice?.id) {
-          await ble.disconnectDevice();
-        }
-        setLoading("Connecting...");
-        await ble.connectToDevice(it?.id);
-        setPrinterSelected(ble.device);
-      }
-
-      setLoading(null);
-    } catch (error) {
-      console.log("ERROR => ", error);
-      setLoading(null);
-      setShowPrinterErrorModal(error?.message || "Connection error");
-    }
   };
 
   const handleOnClose = () => {
     setShowPrinterErrorModal(null);
   };
 
-  useEffect(() => {
-    const sorted = [...devices].sort((a, b) => {
-      if (a.id === printerSelected?.id) return -1;
-      if (b.id === printerSelected?.id) return 1;
-      return 0;
-    });
-    setSortedDevices(sorted);
-  }, [devices, printerSelected]);
+  const handleApply = async (device) => {
+    try {
+      await ConnectButtonHandler({
+        device,
+        setLoading,
+        scannedWifis,
+        dispatch,
+        listener1,
+        listener2,
+      });
+    } catch (error) {
+      console.log("HandleApply Error => ", error);
+    }
+  };
+  function listener1(error, characteristic) {
+    console.log("==========listener1========== ");
+    if (error) {
+      setLoading(false);
+      // dispatch(setCurrentConnectedPrinter(null));
+      return toast.fail("Disconnected", error?.message);
+    }
+    try {
+      if (characteristic.value) {
+        const response = response_pb.Response.deserializeBinary(
+          base64ToArrayBuffer(characteristic.value)
+        );
+        if (response.hasDeviceStatus()) {
+          const deviceStatus = response.getDeviceStatus();
+          const connectionInfo = deviceStatus.getConnectionInfo();
+
+          const ipBytes = connectionInfo?.getIp4Addr?.(); // optional chaining in case undefined
+          // if (ipBytes && ipBytes.length === 4) {
+          const ipAddr = `${ipBytes[0]}.${ipBytes[1]}.${ipBytes[2]}.${ipBytes[3]}`;
+          console.log("apAddr => ", ipAddr);
+          console.log("Connection info: ", response.toObject());
+          // setConnectedPrinters([...connectedPrinters, response.toObject()]);
+          // dispatch(setCurrentConnectedPrinter(response));
+          // dispatch(addConnectedPrinter(response.toObject()));
+          fetchPrinterDetails(ipAddr)
+            .then((details) => {
+              console.log("Got Details", details);
+
+              dispatch(setPrinterDetailsByIp({ ip: ipAddr, details }));
+            })
+            .catch((err) => console.log("Got err => ", err));
+
+          // usePrinter({ ip: ipAddr });
+
+          setLoading(null);
+          navigation.navigate(ScreenNames.PrinterSetupScreen, {
+            isSuccess: true,
+          });
+          // }
+        }
+      }
+    } catch (err) {
+      // Toast.show({
+      //   type: "error",
+      //   text1: "Fail to connect",
+      //   text2: "Fail to connect to WIFI, Retype your password!",
+      // });
+      setShowPrinterErrorModal(
+        "Unable to connect to Device, Retype your password!"
+      );
+      console.log("ERROR => ", err);
+      const isSafeToIgnore =
+        err?.message?.includes("Invalid record in scannedWifis") ||
+        err?.toString()?.includes("non-serializable");
+
+      if (!isSafeToIgnore) {
+        console.log("Unexpected error in Wifi handler:", err);
+        // Optionally show toast or handle error
+      }
+    }
+  }
+
+  function listener2(error, characteristic) {
+    console.log("=====Listener2======");
+
+    if (error) {
+      setLoading(false);
+      return console.log("Listner 2 => ", error);
+    }
+    console.log("Recieved char => ", characteristic.value);
+    try {
+      const resultVal = base64ToArrayBuffer(characteristic.value);
+      const result = result_pb.Result.deserializeBinary(resultVal);
+      if (result.hasScanRecord()) {
+        const scanRecord = result.getScanRecord();
+        const ssid = bin2String(scanRecord.getWifi().getSsid());
+        if (ssid) {
+          const alreadyExists =
+            Array.isArray(scannedWifis) &&
+            scannedWifis.some((record) => {
+              try {
+                return bin2String(record?.getWifi?.().getSsid?.()) === ssid;
+              } catch (err) {
+                console.warn("Invalid record in scannedWifis:", record);
+                return false;
+              }
+            });
+
+          const updatedWifi = alreadyExists
+            ? scannedWifis
+            : [...(scannedWifis || []), scanRecord];
+
+          // handleWifiScanner(updatedWifi);
+          dispatch(addScannedWifi(scanRecord));
+        }
+      }
+    } catch (error) {
+      console.log("Unable to get wifi list: ", error);
+    }
+  }
+
+  // useEffect(() => {
+  //   try {
+  //     BLEService.getConnectedDevices(currentConnectedPrinter?.serviceUUIDs);
+  //   } catch (error) {
+  //     dispatch(setCurrentConnectedPrinter(null));
+  //   }
+  // }, []);
 
   return (
     <MainContainer customeStyle={{ paddingTop: SD.hp(0) }}>
@@ -137,20 +237,14 @@ const SearchPrinterScreen = ({ navigation }) => {
             Printers
           </Text>
           <ScrollView showsVerticalScrollIndicator={false}>
-            {sortedDevices.map((item, index) => {
+            {bleScannedDevices.map((item, index) => {
               return (
                 <ParingConnectionCard
                   circle
-                  // isActive={item.id == printerSelected}
-                  // heading={item.name}
-                  // subHeading={item.subheading}
-                  // onPress={() => handlePrinterConnect(item.id)}
-                  // key={index}
-                  // icon={item.icon}
-                  isActive={item?.id == printerSelected?.id}
+                  isActive={item?.id == currentConnectedPrinter?.id}
                   heading={item?.name || "Unamed device"}
                   subHeading={item?.id || ""}
-                  onPress={() => handlePrinterConnect(item)}
+                  onPress={() => handleApply(item)}
                   key={index}
                   icon={Images.printerOutlineWithoutBg}
                 />
@@ -159,15 +253,11 @@ const SearchPrinterScreen = ({ navigation }) => {
           </ScrollView>
         </SectionContainer>
       </View>
-      {/* <PrinterConnectionErrorModal
-        isVisible={showPrinterErrorModal}
-        onClose={() => setShowPrinterErrorModal(false)}
-      /> */}
       <ConnectionStatusModal
         isVisible={!!showPrinterErrorModal}
         onClose={handleOnClose}
         icon={Images.failBluetooth}
-        title="Unable to Connect Bluetooth"
+        title="Unable to Connect to Device"
         description={showPrinterErrorModal}
         onCancel={handleOnClose}
         onRetry={handleOnClose}
@@ -181,47 +271,4 @@ const SearchPrinterScreen = ({ navigation }) => {
     </MainContainer>
   );
 };
-
-// const PrinterConnectionErrorModal = ({ isVisible, onClose }) => {
-//   const { AppTheme } = useTheme();
-//   return (
-//     <CustomModal isVisible={isVisible} onClose={onClose}>
-//       <View
-//         style={{ ...styles.modalContainer, backgroundColor: AppTheme.White }}
-//       >
-//         <CustomImage source={Images.failPrinter} style={styles.deviceIcon} />
-//         <Text bold size={18} color={AppTheme.Black}>
-//           Unable to Connect Printer
-//         </Text>
-//         <Text
-//           regular
-//           size={14}
-//           color={AppTheme.fontGray}
-//           centered
-//           width={270}
-//           topSpacing={20}
-//           bottomSpacing={20}
-//         >
-//           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-//           eiusmod tempor incididunt ut labore et dolore.
-//         </Text>
-//         <View style={styles.modalBtnsView}>
-//           <PrimaryButton
-//             title="Cancel"
-//             customStyles={{
-//               flex: 2,
-//               marginHorizontal: SD.wp(5),
-//               borderRadius: 15,
-//             }}
-//             onPress={onClose}
-//           />
-//           <PrimaryButton
-//             title="Retry"
-//             customStyles={{ flex: 2, borderRadius: 15 }}
-//           />
-//         </View>
-//       </View>
-//     </CustomModal>
-//   );
-// };
 export default SearchPrinterScreen;

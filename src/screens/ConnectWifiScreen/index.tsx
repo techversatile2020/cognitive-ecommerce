@@ -12,53 +12,44 @@ import {
 } from "../../components";
 import { Images, ScreenNames } from "../../config";
 import { useTheme } from "../../hooks";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { SD } from "../../utils";
 import { knownDevices, newDevices } from "./extra/dummyData";
+import { base64ToArrayBuffer, bin2String } from "../../utils/ble.util";
+import { useSelector } from "react-redux";
 import { wifiService } from "../../../services";
-import WifiManager from "react-native-wifi-reborn";
+// import ver from './../../../protos'
+const version_pb = require("./../../../protos/version_pb");
+const request_pb = require("./../../../protos/request_pb");
+const common_pb = require("./../../../protos/common_pb");
+const response_pb = require("./../../../protos/response_pb");
+const result_pb = require("./../../../protos/result_pb");
 
 export default function ConnectWifiScreen({ navigation, route }) {
   const [connectedWifi, setConnectedWifi] = useState(null);
   const [showWifiError, setShowWifiError] = useState(false);
   const [showGenralError, setShowGenralError] = useState(false);
+  const { scannedWifis } = useSelector((state: any) => state.printer);
   const { AppTheme } = useTheme();
-  const [wifiList, setWifiList] = useState([]);
 
   const handleNext = () => {
-    // navigation.navigate(ScreenNames.PrinterConnectedSuccessScreen, {
-    //   isSuccess: !!connectedWifi,
-    // });
+    console.log(connectedWifi);
+
+    if (!connectedWifi) return;
     navigation.navigate(ScreenNames.ConnectToWifiPasswordScreen, {
       isSuccess: !!connectedWifi,
       wifi: connectedWifi,
     });
   };
 
-  useEffect(() => {
-    console.log(route?.params);
-  }, [route]);
-
-  useEffect(() => {
-    const fetchNetworks = async () => {
-      await wifiService.scanWiFiNetworks((res) => {
-        setWifiList(res);
-        setConnectedWifi(res[0]?.SSID);
-      });
-    };
-
-    fetchNetworks();
-  }, []);
-
   const handleConnectWifi = (e) => {
-    if (e.id == "3") {
-      setShowWifiError(true);
-    } else if (e.id == "4") {
-      setShowGenralError(true);
+    if (e?.id == "3") {
+      return setShowWifiError(true);
+    } else if (e?.id == "4") {
+      return setShowGenralError(true);
     }
-    // navigation.navigate(ScreenNames.ConnectToWifiPasswordScreen, {
-    //   router: e,
-    // });
+
+    setConnectedWifi(e);
   };
 
   const handleOnClose = () => {
@@ -86,25 +77,41 @@ export default function ConnectWifiScreen({ navigation, route }) {
             <Text bold size={14} color={AppTheme.Black}>
               Known Devices
             </Text>
-            {wifiList.map((item, index) => {
-              return (
-                <ParingConnectionCard
-                  isActive={item.SSID == connectedWifi}
-                  heading={item.SSID}
-                  subHeading={""}
-                  onPress={() => setConnectedWifi(item.SSID)}
-                  key={index}
-                  icon={Images.wifiRound}
-                />
-              );
-            })}
+            {scannedWifis?.length < 1 ? (
+              <Text bold size={14} color={AppTheme.Black}>
+                Scanning...
+              </Text>
+            ) : (
+              <>
+                {scannedWifis.map((item, index) => {
+                  let ssid = bin2String(item.getWifi().getSsid());
+
+                  return (
+                    <ParingConnectionCard
+                      isActive={
+                        connectedWifi
+                          ? ssid ===
+                            bin2String(connectedWifi.getWifi().getSsid())
+                          : false
+                      }
+                      heading={ssid}
+                      subHeading={""}
+                      onPress={() => handleConnectWifi(item)}
+                      key={index}
+                      icon={Images.wifiRound}
+                    />
+                  );
+                })}
+              </>
+            )}
+
             <Text bold size={14} color={AppTheme.Black} topSpacing={10}>
               New Devices
             </Text>
-            {newDevices.map((item, index) => {
+            {/* {newDevices.map((item, index) => {
               return (
                 <ParingConnectionCard
-                  isActive={item.id == connectedWifi}
+                  isActive={item.id === connectedWifi?.SSID}
                   heading={item.name}
                   subHeading={item.subheading}
                   onPress={() => handleConnectWifi(item)}
@@ -112,7 +119,7 @@ export default function ConnectWifiScreen({ navigation, route }) {
                   icon={item.icon}
                 />
               );
-            })}
+            })} */}
           </ScrollView>
         </SectionContainer>
       </View>

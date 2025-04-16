@@ -42,7 +42,12 @@ function success(message: string) {
   });
 }
 
-function fail(message: string, isAlert?: boolean, alertTitle?: string) {
+function fail(
+  message: string,
+  message2?: string,
+  isAlert?: boolean,
+  alertTitle?: string
+) {
   if (isAlert) {
     Alert.alert(
       alertTitle ? `Error (${alertTitle})` : "Error",
@@ -52,6 +57,7 @@ function fail(message: string, isAlert?: boolean, alertTitle?: string) {
     Toast.show({
       type: "error",
       text1: message || "Error",
+      text2: message2,
       position: "top",
       visibilityTime: 2000,
       topOffset: 30,

@@ -1183,7 +1183,7 @@ PODS:
   - React-Mapbuffer (0.74.5):
     - glog
     - React-debug
-  - react-native-ble-plx (3.2.1):
+  - react-native-ble-plx (3.5.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1231,6 +1231,27 @@ PODS:
   - react-native-safe-area-context (4.10.5):
     - React-Core
   - react-native-slider (4.5.6):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.01.01.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Codegen
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
+  - react-native-webview (13.13.5):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1480,6 +1501,8 @@ PODS:
     - React-logger (= 0.74.5)
     - React-perflogger (= 0.74.5)
     - React-utils (= 0.74.5)
+  - RNCAsyncStorage (2.1.2):
+    - React-Core
   - RNPermissions (5.3.0):
     - React-Core
   - RNScreens (3.31.1):
@@ -1561,6 +1584,7 @@ DEPENDENCIES:
   - react-native-network-info (from `../node_modules/react-native-network-info`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - "react-native-slider (from `../node_modules/@react-native-community/slider`)"
+  - react-native-webview (from `../node_modules/react-native-webview`)
   - React-nativeconfig (from `../node_modules/react-native/ReactCommon`)
   - React-NativeModulesApple (from `../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)
   - React-perflogger (from `../node_modules/react-native/ReactCommon/reactperflogger`)
@@ -1584,6 +1608,7 @@ DEPENDENCIES:
   - React-runtimescheduler (from `../node_modules/react-native/ReactCommon/react/renderer/runtimescheduler`)
   - React-utils (from `../node_modules/react-native/ReactCommon/react/utils`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
+  - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - RNPermissions (from `../node_modules/react-native-permissions`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNWifi (from `../node_modules/react-native-wifi-reborn`)
@@ -1694,6 +1719,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-safe-area-context"
   react-native-slider:
     :path: "../node_modules/@react-native-community/slider"
+  react-native-webview:
+    :path: "../node_modules/react-native-webview"
   React-nativeconfig:
     :path: "../node_modules/react-native/ReactCommon"
   React-NativeModulesApple:
@@ -1740,6 +1767,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/react/utils"
   ReactCommon:
     :path: "../node_modules/react-native/ReactCommon"
+  RNCAsyncStorage:
+    :path: "../node_modules/@react-native-async-storage/async-storage"
   RNPermissions:
     :path: "../node_modules/react-native-permissions"
   RNScreens:
@@ -1795,11 +1824,12 @@ SPEC CHECKSUMS:
   React-jsitracing: f8367edacc50bb3f9f056a5aeafb8cee5849fafb
   React-logger: 780b9ee9cec7d44eabc4093de90107c379078cb6
   React-Mapbuffer: f544f00b98dbdd8cbae96dd2bdb8b47f719976e0
-  react-native-ble-plx: 6bf58dc54bd2695b3caeb746a934ce6c830dbce8
+  react-native-ble-plx: e5aa8ba581f674146ccb631a1f7f21fea5fdeb2c
   react-native-blur: 207ec2bf853b9a3b7751e3a29f7f497e69010b44
   react-native-network-info: 23b4f34419d7998727c9e50bf8dee3c1bd3f975a
   react-native-safe-area-context: df9763c5de6fa38883028e243a0b60123acb8858
   react-native-slider: bcfc4f2683c072497b157a3c3f00e514a05feec5
+  react-native-webview: f1c37a2047ac0a9493c6de67c7301a39d5a3a6ad
   React-nativeconfig: ba9a2e54e2f0882cf7882698825052793ed4c851
   React-NativeModulesApple: 84aaad2b0e546d7b839837ca537f6e72804a4cad
   React-perflogger: ed4e0c65781521e0424f2e5e40b40cc7879d737e
@@ -1823,6 +1853,7 @@ SPEC CHECKSUMS:
   React-runtimescheduler: 2cbd0f3625b30bba08e8768776107f6f0203159b
   React-utils: 9fa4e5d0b5e6c6c85c958f19d6ef854337886417
   ReactCommon: 9f285823dbe955099978d9bff65a7653ca029256
+  RNCAsyncStorage: b9f5f78da5d16a853fe3dc22e8268d932fc45a83
   RNPermissions: 696cf3a18f94d73ef4e32c059d178e538ef3d0c3
   RNScreens: a2d8a2555b4653d7a19706eb172f855657ac30d7
   RNWifi: 525b9a07514cfae3fef83635a3521d30041dbc92

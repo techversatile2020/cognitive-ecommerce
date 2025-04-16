@@ -13,14 +13,21 @@ import {
   AdvanceSettingMediaComp,
   AdvanceSettingPrinterComp,
 } from "./components";
-const AdvanceSettingScreen = () => {
+import { useSelector } from "react-redux";
+const AdvanceSettingScreen = ({ route }) => {
   const { AppTheme } = useTheme();
+  const { IPConfig, IP_Address, NetMask, GatewayIP, LanguageV, TOFAdj } =
+    useSelector(
+      (state: any) =>
+        state.printer.printerDetailsByIp[route?.params?.IP_Address]
+    );
   const [activeBar, setActiveBar] = useState("Connection");
   const [barOptions, setBarOptions] = useState([
     "Connection",
     "Printer",
     "Media",
   ]);
+
   return (
     <MainContainer>
       <MainHeader
@@ -54,9 +61,17 @@ const AdvanceSettingScreen = () => {
           );
         })}
       </SectionContainer>
-      {activeBar == "Connection" && <AdvanceSettingConnectComp />}
-      {activeBar == "Media" && <AdvanceSettingMediaComp />}
-      {activeBar == "Printer" && <AdvanceSettingPrinterComp />}
+      {activeBar == "Connection" && (
+        <AdvanceSettingConnectComp
+          data={{ IPConfig, IP_Address, NetMask, GatewayIP, LanguageV }}
+        />
+      )}
+      {activeBar == "Media" && (
+        <AdvanceSettingMediaComp data={{ TOFAdj, IP_Address, LanguageV }} />
+      )}
+      {activeBar == "Printer" && (
+        <AdvanceSettingPrinterComp data={{ LanguageV, IP_Address }} />
+      )}
     </MainContainer>
   );
 };

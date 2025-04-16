@@ -1,5 +1,6 @@
 import React, { ReactNode } from "react";
 import {
+  KeyboardAvoidingView,
   Platform,
   SafeAreaView,
   StatusBar,
@@ -54,9 +55,9 @@ export const MainContainer: React.FC<MainContainerProps> = ({
       ) : (
         <View style={[styles.container, customeStyle]}>{children}</View>
       )}
+      {/* <NoInternet isOffline={true} />
+    </KeyboardAvoidingView> */}
     </SafeAreaView>
-    // {/* <NoInternet isOffline={true} /> */}
-    // </KeyboardAvoidingView>
   );
 };
 

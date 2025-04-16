@@ -6,11 +6,11 @@ import {
   PrimaryButton,
   Text,
 } from "../../components";
-import { Images } from "../../config";
+import { Images, ScreenNames } from "../../config";
 import { SD } from "../../utils";
 import { useTheme } from "../../hooks";
 
-const CompletedScreen = () => {
+const CompletedScreen = ({ navigation, route }) => {
   const { AppTheme } = useTheme();
   return (
     <MainContainer>
@@ -24,7 +24,15 @@ const CompletedScreen = () => {
           style={styles.deviceImage}
         />
       </View>
-      <PrimaryButton title="Next" customStyles={{ borderRadius: 15 }} />
+      <PrimaryButton
+        title="Next"
+        customStyles={{ borderRadius: 15 }}
+        onPress={() =>
+          navigation.replace(ScreenNames.PrinterSettingScreen, {
+            IP_Address: route?.params?.IP_Address,
+          })
+        }
+      />
     </MainContainer>
   );
 };

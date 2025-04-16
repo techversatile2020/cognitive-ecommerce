@@ -9,12 +9,27 @@ import { Images, ScreenNames } from "../../config";
 import { styles } from "./styles";
 import { useTheme } from "../../hooks";
 import { PrinterSetupStepsCard } from "./components";
+import { BLEService } from "../../../services";
+import { toast } from "../../utils/toast.utils";
 
-const PrinterSetupScreen = ({ navigation }) => {
+const PrinterSetupScreen = ({ navigation, route }) => {
   const { AppTheme } = useTheme();
-  const handleNext = () => {
-    navigation.navigate(ScreenNames.SearchPrinterScreen);
+  const isSuccess = route?.params?.isSuccess || false;
+  const handleNext = async () => {
+    if (isSuccess) {
+      return navigation.replace(ScreenNames.MainScreen);
+    }
+    try {
+      await BLEService.initializeBLE();
+
+      navigation.navigate(ScreenNames.SearchPrinterScreen);
+    } catch (error) {
+      console.log(error);
+
+      toast.fail("Fail", error?.message || "Check your bluetooth!!!");
+    }
   };
+
   return (
     <MainContainer mainContainerStyle={{ backgroundColor: "#FFFFFF" }}>
       <Text medium size={14} right primartColor>
@@ -34,9 +49,14 @@ const PrinterSetupScreen = ({ navigation }) => {
           leftSpacing={15}
           rightSpacing={15}
         >
-          First we’ll pair your printer to you phone using bluetooth.
+          {isSuccess
+            ? `Your printer connection has been established`
+            : `First we’ll pair your printer to you phone using bluetooth.`}
         </Text>
-        <CustomImage source={Images.printer2} style={styles.printerImage} />
+        <CustomImage
+          source={isSuccess ? Images.printerWithClip : Images.printer2}
+          style={styles.printerImage}
+        />
         <View style={styles.stepsSection}>
           <PrinterSetupStepsCard
             isActive={true}
@@ -45,19 +65,19 @@ const PrinterSetupScreen = ({ navigation }) => {
           />
           <VerticalLine />
           <PrinterSetupStepsCard
-            isActive={false}
+            isActive={isSuccess}
             icon={Images.bluetooth}
             text={"Connect to Bluetooth"}
           />
           <VerticalLine />
           <PrinterSetupStepsCard
-            isActive={false}
+            isActive={isSuccess}
             icon={Images.wifi}
             text={"Connect to Wi-Fi"}
           />
           <VerticalLine />
           <PrinterSetupStepsCard
-            isActive={false}
+            isActive={isSuccess}
             text={""}
             icon={Images.printerFilled}
           />
@@ -66,7 +86,7 @@ const PrinterSetupScreen = ({ navigation }) => {
 
       <View style={styles.footer}>
         <PrimaryButton
-          title="Next"
+          title={isSuccess ? "Finish setup" : "Next"}
           customStyles={styles.nextBtn}
           textColor="#FFFFFF"
           onPress={handleNext}

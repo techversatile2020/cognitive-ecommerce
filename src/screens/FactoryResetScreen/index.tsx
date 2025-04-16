@@ -1,6 +1,7 @@
 import { View } from "react-native";
 import {
   CustomImage,
+  Loader,
   MainContainer,
   MainHeader,
   PrimaryButton,
@@ -11,11 +12,44 @@ import { Images, ScreenNames } from "../../config";
 import { styles } from "./styles";
 import { useTheme } from "../../hooks";
 import { SD } from "../../utils";
+import { useState } from "react";
+import { sendRequest } from "../../services/printerServices";
+import { toast } from "../../utils/toast.utils";
 
-const FactoryResetScreen = ({ navigation }) => {
+const FactoryResetScreen = ({ navigation, route }) => {
   const { AppTheme } = useTheme();
-  const handleYes = () => {
-    navigation.navigate(ScreenNames.CompletedScreen);
+  const [loading, setLoading] = useState(null);
+  const handleYes = async () => {
+    // navigation.navigate(ScreenNames.CompletedScreen);
+    setLoading("Reseting...");
+    try {
+      const responseHtml = await sendRequest({
+        ip: route?.params?.IP_Address,
+        endpoint: "factoryreset.cgi",
+        method: "POST",
+        responseType: "text", // since it returns HTML
+      });
+
+      if (responseHtml.includes("Factory Reset Completed")) {
+        setTimeout(() => {
+          setLoading(null);
+          navigation.replace(ScreenNames.CompletedScreen, {
+            IP_Address: route?.params?.IP_Address,
+          });
+        }, 2000);
+      } else {
+        throw new Error("Unexpected response from device");
+      }
+    } catch (err) {
+      setLoading(null);
+
+      console.log(err);
+
+      toast.fail(
+        "Fail",
+        "Factory reset failed. Please check device connection."
+      );
+    }
   };
   const handleGoBack = () => {
     navigation.goBack();
@@ -52,6 +86,7 @@ const FactoryResetScreen = ({ navigation }) => {
         customStyles={{ borderRadius: 15 }}
         onPress={handleGoBack}
       />
+      <Loader visible={!!loading} text={loading} />
     </MainContainer>
   );
 };
