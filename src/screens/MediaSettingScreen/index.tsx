@@ -19,7 +19,11 @@ const MediaSettingScreen = ({ route }) => {
     (state: any) => state.printer.printerDetailsByIp[route?.params?.IP_Address]
   );
   return (
-    <MainContainer mainContainerStyle={{ paddingTop: 0 }}>
+    <MainContainer
+      mainContainerStyle={{
+        paddingTop: 0,
+      }}
+    >
       <MainHeader
         mainContainerStyle={{ paddingTop: 0 }}
         back

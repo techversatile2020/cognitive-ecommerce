@@ -1,4 +1,4 @@
-import { View, ScrollView } from "react-native";
+import { View, ScrollView, Pressable } from "react-native";
 import {
   CustomImage,
   MainContainer,
@@ -15,87 +15,102 @@ import { opetionsData } from "./extra/data";
 import { useTheme } from "../../hooks";
 import { pairedDevicesData } from "./extra/pairedDevicesData";
 import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
 
 function MainScreen({ navigation, route }) {
   const { isDarkTheme, AppTheme } = useTheme();
   const { connectedPrinters } = useSelector((state: any) => state.printer);
   const { printerDetailsByIp } = useSelector((state: any) => state.printer);
   const printerList = Object.values(printerDetailsByIp ?? {});
-  const setup = printerList.length > 0;
+  const [setup, setSetup] = useState(false);
+  const [showRemoveButton, setShowRemoveButton] = useState(null);
+  useEffect(() => {
+    setSetup(Object.values(printerDetailsByIp).length > 0);
+  }, [printerDetailsByIp]);
 
   const handleAddNow = () => {
     navigation.navigate(ScreenNames.PrinterSetupScreen);
   };
 
   return (
-    <MainContainer isFlatList>
-      <MainHeader logo showPlusIcon={setup} />
-      <ScrollView
-        style={{ flex: 1 }}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ marginTop: SD.hp(30) }}
-      >
-        <SectionContainer
-          containerStyles={[
-            styles.sectionContainerStyles,
-            setup && {
-              flexDirection: "column",
-              justifyContent: "flex-start",
-              paddingHorizontal: SD.wp(0),
-              alignItems: "center",
-            },
-          ]}
+    <Pressable style={{ flex: 1 }} onPress={() => setShowRemoveButton(null)}>
+      <MainContainer isFlatList>
+        <MainHeader logo showPlusIcon={setup} />
+        <ScrollView
+          style={{ flex: 1 }}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ marginTop: SD.hp(30) }}
         >
-          {setup ? (
-            <ScrollView
-              showsVerticalScrollIndicator={false}
-              style={{ flex: 1 }}
-            >
-              {printerList.map((item, index) => {
-                return <PairedDevicesComp data={item} key={index} />;
-              })}
-            </ScrollView>
-          ) : (
-            <>
-              <View style={styles.leftView}>
-                <Text bold size={22} blackBold>
-                  Add Your {"\n"}First Printer
-                </Text>
-                <Text
-                  regular
-                  size={12}
-                  color={AppTheme.fontGray}
-                  topSpacing={10}
-                  bottomSpacing={10}
-                >
-                  Add Your printer add see the listing of your printer fast
-                </Text>
-                <PrimaryButton
-                  title="+ Add Now"
-                  fontSize={12}
-                  customStyles={styles.AddNowBtn}
-                  onPress={handleAddNow}
+          <SectionContainer
+            onPress={() => setShowRemoveButton(null)}
+            containerStyles={[
+              styles.sectionContainerStyles,
+              setup && {
+                flexDirection: "column",
+                justifyContent: "flex-start",
+                paddingHorizontal: SD.wp(0),
+                alignItems: "center",
+              },
+            ]}
+          >
+            {setup ? (
+              <ScrollView
+                showsVerticalScrollIndicator={false}
+                style={{ flex: 1 }}
+              >
+                {printerList.map((item, index) => {
+                  return (
+                    <PairedDevicesComp
+                      data={item}
+                      key={index}
+                      showRemoveButton={showRemoveButton}
+                      setShowRemoveButton={setShowRemoveButton}
+                    />
+                  );
+                })}
+              </ScrollView>
+            ) : (
+              <>
+                <View style={styles.leftView}>
+                  <Text bold size={22} blackBold>
+                    Add Your {"\n"}First Printer
+                  </Text>
+                  <Text
+                    regular
+                    size={12}
+                    color={AppTheme.fontGray}
+                    topSpacing={10}
+                    bottomSpacing={10}
+                  >
+                    Add Your printer add see the listing of your printer fast
+                  </Text>
+                  <PrimaryButton
+                    title="+ Add Now"
+                    fontSize={12}
+                    customStyles={styles.AddNowBtn}
+                    onPress={handleAddNow}
+                  />
+                </View>
+                <CustomImage
+                  source={Images.printer}
+                  style={styles.printerImage}
                 />
-              </View>
-              <CustomImage
-                source={Images.printer}
-                style={styles.printerImage}
+              </>
+            )}
+          </SectionContainer>
+          <View style={styles.optionsSection}>
+            {opetionsData.map((item, index) => (
+              <MainScreenOptionsCard
+                icon={item.icon}
+                heading={item.heading}
+                subHeading={item.subHeading}
+                key={index}
               />
-            </>
-          )}
-        </SectionContainer>
-        <View style={styles.optionsSection}>
-          {opetionsData.map((item, index) => (
-            <MainScreenOptionsCard
-              icon={item.icon}
-              heading={item.heading}
-              subHeading={item.subHeading}
-              key={index}
-            />
-          ))}
-        </View>
-      </ScrollView>
-    </MainContainer>
+            ))}
+          </View>
+        </ScrollView>
+      </MainContainer>
+    </Pressable>
   );
 }
 

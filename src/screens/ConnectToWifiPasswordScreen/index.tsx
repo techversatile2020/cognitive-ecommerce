@@ -1,4 +1,4 @@
-import { ScrollView, View } from "react-native";
+import { KeyboardAvoidingView, Platform, ScrollView, View } from "react-native";
 import {
   CustomImage,
   CustomTextInput,
@@ -73,76 +73,87 @@ const ConnectToWifiPasswordScreen = ({ route, navigation }) => {
           paddingVertical: 0,
         }}
       />
-      <ScrollView
+      <KeyboardAvoidingView
         style={{ flex: 1 }}
-        contentContainerStyle={{ flex: 1 }}
-        showsVerticalScrollIndicator={false}
-        automaticallyAdjustKeyboardInsets
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 60 : 0}
       >
-        <View style={styles.container}>
-          <SectionContainer containerStyles={styles.networkIconView}>
-            <CustomImage source={Images.wifiRound} style={styles.networkIcon} />
-          </SectionContainer>
-          <Text
-            bold
-            size={18}
-            color={AppTheme.Black}
-            centered
-            width={281}
-            topSpacing={15}
-            bottomSpacing={15}
-          >
-            Enter password for the selected WiFi network
-          </Text>
-          <InfoFieldComp
-            title="Router Name"
-            children={
-              <CustomTextInput
-                placeholder="Router Name"
-                value={bin2String(routerName.getWifi().getSsid()) || "Xfinity"}
-                setValue={(e) => setRouterName(e)}
-                backgroundColor={AppTheme.White}
-                placeholderTextColor={AppTheme.fontGray}
-                bold
-                fontSize={12}
-                textColor={AppTheme.fontGray}
-                topSpacing={10}
-                radius={10}
-                height={50}
-                //   style={{ padding: SD.wp(15) }}
-                disable={true}
+        <ScrollView
+          style={{ flex: 1 }}
+          // contentContainerStyle={{ flex: 1 }}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={styles.container}>
+            <SectionContainer containerStyles={styles.networkIconView}>
+              <CustomImage
+                source={Images.wifiRound}
+                style={styles.networkIcon}
               />
-            }
+            </SectionContainer>
+            <Text
+              bold
+              size={18}
+              color={AppTheme.Black}
+              centered
+              width={281}
+              topSpacing={15}
+              bottomSpacing={15}
+            >
+              Enter password for the selected WiFi network
+            </Text>
+            <InfoFieldComp
+              title="Router Name"
+              children={
+                <CustomTextInput
+                  placeholder="Router Name"
+                  value={
+                    bin2String(routerName.getWifi().getSsid()) || "Xfinity"
+                  }
+                  setValue={(e) => setRouterName(e)}
+                  backgroundColor={AppTheme.White}
+                  placeholderTextColor={AppTheme.fontGray}
+                  bold
+                  fontSize={12}
+                  textColor={AppTheme.fontGray}
+                  topSpacing={10}
+                  radius={10}
+                  height={50}
+                  //   style={{ padding: SD.wp(15) }}
+                  disable={true}
+                />
+              }
+            />
+            <InfoFieldComp
+              title="Password"
+              children={
+                <CustomTextInput
+                  placeholder="Enter Password"
+                  value={wifiPassword}
+                  setValue={(e) => setWifiPassword(e)}
+                  backgroundColor={AppTheme.White}
+                  placeholderTextColor={AppTheme.fontGray}
+                  bold
+                  fontSize={12}
+                  textColor={AppTheme.fontGray}
+                  topSpacing={10}
+                  radius={10}
+                  height={50}
+                  //   style={{ padding: SD.wp(15) }}
+                  secureText={showPassword}
+                  icon={showPassword ? Images.eye : Images.eyeClose}
+                  onIconPress={handleTriggerShowPassword}
+                />
+              }
+            />
+          </View>
+          <PrimaryButton
+            title="Apply"
+            customStyles={{ borderRadius: 15 }}
+            onPress={() => handleApply()}
           />
-          <InfoFieldComp
-            title="Password"
-            children={
-              <CustomTextInput
-                placeholder="Enter Password"
-                value={wifiPassword}
-                setValue={(e) => setWifiPassword(e)}
-                backgroundColor={AppTheme.White}
-                placeholderTextColor={AppTheme.fontGray}
-                bold
-                fontSize={12}
-                textColor={AppTheme.fontGray}
-                topSpacing={10}
-                radius={10}
-                height={50}
-                //   style={{ padding: SD.wp(15) }}
-                secureText={showPassword}
-                icon={showPassword ? Images.eye : Images.eyeClose}
-                onIconPress={handleTriggerShowPassword}
-              />
-            }
-          />
-        </View>
-        <PrimaryButton
-          title="Apply"
-          customStyles={{ borderRadius: 15 }}
-          onPress={() => handleApply()}
-        />
-      </ScrollView>
+        </ScrollView>
+      </KeyboardAvoidingView>
 
       <Loader visible={!!loading} text={loading} />
     </MainContainer>

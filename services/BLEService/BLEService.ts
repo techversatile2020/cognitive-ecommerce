@@ -64,36 +64,63 @@ class BLEServiceInstance {
   getDevice = () => this.device;
 
   initializeBLE = () =>
-    new Promise<void>((resolve, reject) => {
-      const subscription = this.manager.onStateChange((state) => {
-        switch (state) {
-          case BluetoothState.Unsupported:
-            this.showErrorToast("");
-            reject("Unsupported bluetooth device!");
-            break;
-          case BluetoothState.PoweredOff:
-            this.showErrorToast("Enable bluetooth");
+    new Promise((resolve, reject) => {
+      const subscription = this.manager.onStateChange(async (state) => {
+        try {
+          switch (state) {
+            case BluetoothState.Unsupported:
+              this.showErrorToast("Bluetooth not supported on this device.");
+              subscription.remove();
+              return reject(new Error("Bluetooth unsupported"));
 
-            // dispatch(setCurrentConnectedPrinter(null));
-            this.onBluetoothPowerOff();
-            this.manager.enable().catch((error: BleError) => {
-              if (error.errorCode === BleErrorCode.BluetoothUnauthorized) {
-                this.requestBluetoothPermission();
+            case BluetoothState.PoweredOff:
+              this.showErrorToast("Bluetooth is off. Please enable it.");
+              this.onBluetoothPowerOff();
+
+              try {
+                await this.manager.enable(); // for Android
+              } catch (error: any) {
+                if (error?.errorCode === BleErrorCode.BluetoothUnauthorized) {
+                  await this.handleBluetoothUnauthorized(reject);
+                } else {
+                  this.showErrorToast("Failed to enable Bluetooth");
+                  return reject(error);
+                }
               }
-            });
-            break;
-          case BluetoothState.Unauthorized:
-            this.requestBluetoothPermission();
-            break;
-          case BluetoothState.PoweredOn:
-            resolve();
-            subscription.remove();
-            break;
-          default:
-            reject(state);
+              break;
+
+            case BluetoothState.Unauthorized:
+              await this.handleBluetoothUnauthorized(reject);
+              break;
+
+            case BluetoothState.PoweredOn:
+              subscription.remove();
+              return resolve("Bluetooth Ready");
+
+            default:
+              this.showErrorToast("Unhandled Bluetooth state");
+              subscription.remove();
+              return reject(new Error(`Unhandled Bluetooth state: ${state}`));
+          }
+        } catch (err) {
+          subscription.remove();
+          reject(err);
         }
       }, true);
     });
+
+  handleBluetoothUnauthorized = async (reject: (err: any) => void) => {
+    try {
+      await this.requestBluetoothPermission();
+      this.showErrorToast("Bluetooth permission granted. Please retry.");
+      reject(
+        new Error("Bluetooth permission was unauthorized but is now requested.")
+      );
+    } catch {
+      this.showErrorToast("Bluetooth permission denied.");
+      reject(new Error("Bluetooth permission denied by user."));
+    }
+  };
 
   disconnectDevice = () => {
     if (!this.device) {
@@ -136,9 +163,10 @@ class BLEServiceInstance {
     this.manager.startDeviceScan(UUIDs, { legacyScan }, (error, device) => {
       if (error) {
         this.onError(error);
-        console.error(error.message);
+        // console.error(error.message);
         this.manager.stopDeviceScan();
-        throw new Error(error?.message);
+        return error?.message;
+        // throw new Error(error?.message);
       }
       if (device) {
         // onDeviceFound(Array.from(this.discoveredDevices.values()));

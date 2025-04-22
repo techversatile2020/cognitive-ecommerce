@@ -18,6 +18,7 @@ import { knownDevices, newDevices } from "./extra/dummyData";
 import { base64ToArrayBuffer, bin2String } from "../../utils/ble.util";
 import { useSelector } from "react-redux";
 import { wifiService } from "../../../services";
+import { toast } from "../../utils/toast.utils";
 // import ver from './../../../protos'
 const version_pb = require("./../../../protos/version_pb");
 const request_pb = require("./../../../protos/request_pb");
@@ -35,7 +36,7 @@ export default function ConnectWifiScreen({ navigation, route }) {
   const handleNext = () => {
     console.log(connectedWifi);
 
-    if (!connectedWifi) return;
+    if (!connectedWifi) return toast.fail("Fial", "Please select network!");
     navigation.navigate(ScreenNames.ConnectToWifiPasswordScreen, {
       isSuccess: !!connectedWifi,
       wifi: connectedWifi,

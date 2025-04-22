@@ -21,10 +21,9 @@ const PrinterSetupScreen = ({ navigation, route }) => {
     }
     try {
       await BLEService.initializeBLE();
-
       navigation.navigate(ScreenNames.SearchPrinterScreen);
     } catch (error) {
-      console.log(error);
+      console.log("Error => ", error);
 
       toast.fail("Fail", error?.message || "Check your bluetooth!!!");
     }

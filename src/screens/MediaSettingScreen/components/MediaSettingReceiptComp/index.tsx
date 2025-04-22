@@ -1,4 +1,10 @@
-import { ScrollView, View } from "react-native";
+import {
+  Dimensions,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  View,
+} from "react-native";
 import {
   CustomDropdown,
   CustomTextInput,
@@ -7,6 +13,7 @@ import {
   Loader,
   MainContainer,
   PrimaryButton,
+  SectionContainer,
   Text,
 } from "../../../../components";
 import { SD } from "../../../../utils";
@@ -17,6 +24,8 @@ import { useSelector } from "react-redux";
 import { sendRequest } from "../../../../services/printerServices";
 import { toast } from "../../../../utils/toast.utils";
 import { generateTestLabelScript } from "../../../../utils/printer.utls";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+
 const MediaSettingReceiptComp = ({ data }) => {
   const [selectedType, setSelectedType] = useState<string | number>("1");
   const { ip } = data;
@@ -158,23 +167,35 @@ const MediaSettingReceiptComp = ({ data }) => {
       toast.fail("Failed", "Test failed.");
     }
   };
-
+  const { height } = Dimensions.get("window");
   return (
-    <MainContainer
-      customeStyle={{
-        marginTop: SD.hp(20),
-        paddingHorizontal: 0,
-        paddingVertical: 0,
-        padding: 0,
-      }}
+    // <MainContainer
+    //   customeStyle={{
+    //     marginTop: SD.hp(20),
+    //     paddingHorizontal: 0,
+    //     paddingVertical: 0,
+    //     padding: 0,
+    //     borderWidth: 1,
+    //   }}
+    // >
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 60 : 0}
     >
       <ScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={{ flex: 1 }}
         showsVerticalScrollIndicator={false}
-        automaticallyAdjustKeyboardInsets
+        keyboardShouldPersistTaps="handled"
+        style={{ flex: 1 }}
+        // contentContainerStyle={{ flex: 1 }}
       >
-        <View style={{ flex: 1 }}>
+        <View
+          style={{
+            flex: 1,
+            height: height / 1.7,
+            marginTop: SD.hp(20),
+          }}
+        >
           <InfoFieldComp
             title="Type"
             children={
@@ -235,7 +256,6 @@ const MediaSettingReceiptComp = ({ data }) => {
             </Text>
           )}
         </View>
-
         <PrimaryButton
           title="Apply"
           customStyles={{ borderRadius: 15 }}
@@ -246,9 +266,10 @@ const MediaSettingReceiptComp = ({ data }) => {
           customStyles={{ borderRadius: 15, marginVertical: 0 }}
           onPress={handleTestPrint}
         />
+        <Loader visible={!!loading} text={loading} />
       </ScrollView>
-      <Loader visible={!!loading} text={loading} />
-    </MainContainer>
+    </KeyboardAvoidingView>
+    // </MainContainer>
   );
 };
 export default MediaSettingReceiptComp;

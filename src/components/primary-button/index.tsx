@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginVertical: SD.hp(10),
     borderRadius: SD.hp(15),
-
+    // verticalAlign: "bottom",
     // ...Metrix.createShadow(),
   },
   // titleText:{

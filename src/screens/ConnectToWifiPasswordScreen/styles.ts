@@ -1,12 +1,13 @@
-import { StyleSheet } from "react-native";
+import { Dimensions, StyleSheet } from "react-native";
 import { SD } from "../../utils";
-
+const { height } = Dimensions.get("window");
 export const styles = StyleSheet.create({
   container: {
     // justifyContent: "center",
     alignItems: "center",
     flex: 1,
     marginTop: SD.hp(20),
+    height: height / 1.4,
   },
   networkIconView: {
     borderRadius: 100,

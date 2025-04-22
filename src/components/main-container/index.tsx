@@ -13,6 +13,7 @@ import {
 import { useTheme } from "../../hooks";
 import { SD } from "../../utils";
 import { ToucableFeedback } from "../toucableFeedback";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 type MainContainerProps = {
   children?: ReactNode;
@@ -68,7 +69,6 @@ const styles = StyleSheet.create({
     paddingVertical: Platform.OS == "android" && SD.hp(50),
     // paddingTop: SD.hp(10),
     // padding: SD.hp(10),
-    // borderWidth: 1,
     // backgroundColor: 'white',
   },
 });

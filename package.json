@@ -33,6 +33,7 @@
     "react-native": "0.74.5",
     "react-native-ble-plx": "^3.2.1",
     "react-native-element-dropdown": "^2.12.4",
+    "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-modal": "^14.0.0-rc.1",
     "react-native-network-info": "^5.2.1",
     "react-native-permissions": "^5.3.0",

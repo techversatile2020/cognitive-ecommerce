@@ -69,7 +69,7 @@ const SearchPrinterScreen = ({ navigation }) => {
       setLoading(null);
     } catch (error) {
       setLoading(null);
-      console.log(error);
+      console.log("EERRR", error);
     }
   };
 
@@ -128,17 +128,26 @@ const SearchPrinterScreen = ({ navigation }) => {
           fetchPrinterDetails(ipAddr)
             .then((details) => {
               console.log("Got Details", details);
+              toast.success(
+                `Printer ${details?.HostName?.toUpperCase()} connected successfully`
+              );
 
               dispatch(setPrinterDetailsByIp({ ip: ipAddr, details }));
+              navigation.navigate(ScreenNames.PrinterSetupScreen, {
+                isSuccess: true,
+              });
             })
-            .catch((err) => console.log("Got err => ", err));
+            .catch((err) =>
+              toast.fail(
+                "Unable to connect",
+                err?.message || "Something went wrong!"
+              )
+            );
 
           // usePrinter({ ip: ipAddr });
 
           setLoading(null);
-          navigation.navigate(ScreenNames.PrinterSetupScreen, {
-            isSuccess: true,
-          });
+
           // }
         }
       }

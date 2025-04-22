@@ -1,5 +1,11 @@
 import React, { Component, useState } from "react";
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  Platform,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { WebView } from "react-native-webview";
 import { Loader, MainContainer, MainHeader } from "../../components";
 import { SD } from "../../utils";
@@ -14,7 +20,7 @@ const HttpServerWebView = ({ route }) => {
         padding: 0,
         paddingVertical: 0,
         paddingHorizontal: 0,
-        paddingTop: SD.hp(50),
+        paddingTop: Platform.OS !== "ios" && SD.hp(50),
       }}
     >
       <MainHeader
@@ -27,6 +33,7 @@ const HttpServerWebView = ({ route }) => {
           paddingBottom: 0,
           marginBottom: 0,
           marginVertical: 0,
+          paddingTop: 0,
         }}
       />
       {loading && (

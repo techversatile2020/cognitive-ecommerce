@@ -24,7 +24,15 @@ type propsObj = {
   connected: string;
 };
 
-const PairedDevicesComp = ({ data }: { data: any }) => {
+const PairedDevicesComp = ({
+  data,
+  showRemoveButton,
+  setShowRemoveButton,
+}: {
+  data: any;
+  showRemoveButton: any;
+  setShowRemoveButton: any;
+}) => {
   const { AppTheme } = useTheme();
   const { HostName, model, Status, statusCategory, IP_Address } = data;
   const connected = statusCategory == "OK";
@@ -33,8 +41,11 @@ const PairedDevicesComp = ({ data }: { data: any }) => {
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   usePrinter(IP_Address);
   const handleNavigation = () => {
+    setShowRemoveButton(null);
     navigation.navigate(ScreenNames.PrinterSettingScreen, { IP_Address });
   };
+
+  // hideShowRemoreButton(setShowRemoveBtn);
 
   const handleRemovePrinter = () => {
     dispatch(removePrinterByIp(IP_Address));
@@ -101,14 +112,16 @@ const PairedDevicesComp = ({ data }: { data: any }) => {
             {statusCategory == "OK" ? "Connected" : "Disconnected"}
           </Text>
         </View>
-        <Pressable onPress={() => setShowRemoveBtn(!showRemoveBtn)}>
+        <Pressable onPress={() => setShowRemoveButton(IP_Address)}>
           <CustomImage
             source={Images.verticalDots}
             style={styles.verticalDots}
           />
         </Pressable>
       </Pressable>
-      {showRemoveBtn && <RemoveComp handleRemove={handleRemovePrinter} />}
+      {showRemoveButton == IP_Address && (
+        <RemoveComp handleRemove={handleRemovePrinter} />
+      )}
     </View>
   );
 };
@@ -121,7 +134,7 @@ const RemoveComp = ({ handleRemove }) => {
         source={Images.bin}
         style={[styles.binIcon, { backgroundColor: "#FFFFFF" }]}
       />
-      <Text regular size={10}>
+      <Text regular size={12}>
         Remove
       </Text>
     </Pressable>

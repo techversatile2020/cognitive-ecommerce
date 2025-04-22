@@ -112,6 +112,7 @@ export async function ConnectButtonHandler({
     console.log("WiFi scan initiated successfully");
   } catch (error) {
     console.error("Connection process failed:", error);
+    return error;
   } finally {
     setLoading(null);
   }

@@ -23,6 +23,7 @@ type MainContainerProps = {
   barBg?: string;
   isFlatList?: boolean;
   bgColor?: ColorValue;
+  onPress?: any;
 };
 
 export const SectionContainer: React.FC<MainContainerProps> = ({
@@ -33,6 +34,7 @@ export const SectionContainer: React.FC<MainContainerProps> = ({
   barBg,
   isFlatList,
   bgColor,
+  onPress = null,
 }) => {
   const { AppTheme } = useTheme();
   return (
@@ -44,6 +46,9 @@ export const SectionContainer: React.FC<MainContainerProps> = ({
     <CardContainer
       onPress={() => {
         console.log("dadada");
+        if (onPress) {
+          onPress();
+        }
       }}
       customStyles={[
         styles.container,
