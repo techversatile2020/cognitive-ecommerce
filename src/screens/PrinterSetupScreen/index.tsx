@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { View, Linking } from "react-native";
 import {
   CustomImage,
   MainContainer,
@@ -11,27 +11,34 @@ import { useTheme } from "../../hooks";
 import { PrinterSetupStepsCard } from "./components";
 import { BLEService } from "../../../services";
 import { toast } from "../../utils/toast.utils";
+import { useEffect, useState } from "react";
 
 const PrinterSetupScreen = ({ navigation, route }) => {
   const { AppTheme } = useTheme();
   const isSuccess = route?.params?.isSuccess || false;
+  const [isBluetoothOn, setIsBluetoothOn] = useState(false);
   const handleNext = async () => {
     if (isSuccess) {
       return navigation.replace(ScreenNames.MainScreen);
     }
     try {
       await BLEService.initializeBLE();
+
       navigation.navigate(ScreenNames.SearchPrinterScreen);
     } catch (error) {
-      console.log("Error => ", error);
-
       toast.fail("Fail", error?.message || "Check your bluetooth!!!");
     }
   };
+  const handleSkip = () => {
+    return navigation.replace(ScreenNames.MainScreen);
+  };
 
+  const handleSetupGuide = () => {
+    return Linking.openURL("https://www.cognitivetpg.com/");
+  };
   return (
     <MainContainer mainContainerStyle={{ backgroundColor: "#FFFFFF" }}>
-      <Text medium size={14} right primartColor>
+      <Text medium size={14} right primartColor onPress={handleSkip}>
         Skip
       </Text>
       <View style={styles.section}>
@@ -90,7 +97,13 @@ const PrinterSetupScreen = ({ navigation, route }) => {
           textColor="#FFFFFF"
           onPress={handleNext}
         />
-        <Text primartColor centered semiBold size={14}>
+        <Text
+          primartColor
+          centered
+          semiBold
+          size={14}
+          onPress={handleSetupGuide}
+        >
           Watch Setup Video
         </Text>
       </View>

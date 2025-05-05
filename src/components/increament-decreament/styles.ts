@@ -23,4 +23,10 @@ export const styles = StyleSheet.create({
     height: "50%",
     resizeMode: "contain",
   },
+  inputView: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    flex: 1,
+  },
 });

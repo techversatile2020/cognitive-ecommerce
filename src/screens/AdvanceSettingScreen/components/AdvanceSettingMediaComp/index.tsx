@@ -19,7 +19,8 @@ export const AdvanceSettingMediaComp = ({ data }) => {
   const [loading, setLoading] = useState(null);
   const { refetch } = usePrinter(IP_Address);
   useEffect(() => {
-    setFormAdjust(Number(TOFAdj));
+    // setFormAdjust(Number(TOFAdj));
+    setFormAdjust(Number(TOFAdj) / 1000);
   }, [TOFAdj]);
 
   const handleSetValues = async () => {
@@ -29,7 +30,7 @@ export const AdvanceSettingMediaComp = ({ data }) => {
         ip: IP_Address,
         endpoint: "saveprintervarvalues.cgi",
         method: "POST",
-        data: `TOFAdj=${Number(formAdjust)}`,
+        data: `TOFAdj=${Math.round(Number(formAdjust) * 1000)}`,
       });
       refetch();
       console.log("values setter response => ", response);
@@ -47,7 +48,7 @@ export const AdvanceSettingMediaComp = ({ data }) => {
       setLoading("Sending test command...");
 
       let script = generateTestLabelScript(LanguageV, {
-        topOfForm: formAdjust,
+        topOfForm: Math.round(Number(formAdjust) * 1000),
       });
 
       let response = await sendRequest({

@@ -14,6 +14,8 @@ type EmptyStateProps = {
   isActive?: boolean;
   circle?: boolean;
   onPress?: () => void;
+  containerStyles?: any;
+  isCurrent?: any;
 };
 export const ParingConnectionCard: React.FC<EmptyStateProps> = ({
   icon,
@@ -22,12 +24,21 @@ export const ParingConnectionCard: React.FC<EmptyStateProps> = ({
   isActive,
   circle,
   onPress,
+  containerStyles,
+  isCurrent,
 }) => {
   const { AppTheme } = useTheme();
   return (
     <CardContainer
-      customStyles={styles.cardContainer}
-      backgroundColor={isActive ? AppTheme.Primary : AppTheme.White}
+      customStyles={{
+        ...styles.cardContainer,
+        ...containerStyles,
+        backgroundColor: isActive
+          ? AppTheme.Primary
+          : isCurrent
+          ? AppTheme.disableGray
+          : AppTheme.White,
+      }}
       onPress={onPress}
     >
       <View

@@ -6,7 +6,7 @@ import {
   SectionContainer,
   Text,
 } from "../../components";
-import { useTheme } from "../../hooks";
+import { usePrinter, useTheme } from "../../hooks";
 import { styles } from "./styles";
 import {
   AdvanceSettingConnectComp,
@@ -21,6 +21,13 @@ const AdvanceSettingScreen = ({ route }) => {
       (state: any) =>
         state.printer.printerDetailsByIp[route?.params?.IP_Address]
     );
+  usePrinter(IP_Address, [
+    "IPConfig",
+    "NetMask",
+    "GatewayIP",
+    "LanguageV",
+    "TOFAdj",
+  ]);
   const [activeBar, setActiveBar] = useState("Connection");
   const [barOptions, setBarOptions] = useState([
     "Connection",

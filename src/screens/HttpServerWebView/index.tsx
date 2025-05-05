@@ -2,6 +2,7 @@ import React, { Component, useState } from "react";
 import {
   ActivityIndicator,
   Platform,
+  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -49,6 +50,10 @@ const HttpServerWebView = ({ route }) => {
         renderLoading={() => <Text>Loading....</Text>}
         onLoadStart={() => setLoading(true)}
         onLoadEnd={() => setLoading(false)}
+        scrollEnabled={true}
+        javaScriptEnabled={true}
+        nestedScrollEnabled
+        domStorageEnabled={true}
       />
     </MainContainer>
   );

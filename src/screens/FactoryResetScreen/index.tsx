@@ -56,9 +56,9 @@ const FactoryResetScreen = ({ navigation, route }) => {
   };
   return (
     <MainContainer>
-      <MainHeader back title="Reset Password" />
+      <MainHeader back title="Factory Reset" />
       <SectionContainer containerStyles={styles.networkIconView}>
-        <CustomImage source={Images.wifiRound} style={styles.networkIcon} />
+        <CustomImage source={Images.factoryReset} style={styles.networkIcon} />
       </SectionContainer>
       <View style={{ flex: 1, paddingHorizontal: SD.wp(40) }}>
         <Text bold size={18} color={AppTheme.Black} centered topSpacing={20}>

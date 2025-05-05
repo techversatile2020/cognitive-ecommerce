@@ -1,7 +1,9 @@
-// src/services/printerService.ts
-export const fetchPrinterDetails = async (ip: string) => {
+export const fetchPrinterDetails = async (
+  ip: string,
+  initialVar?: string[] | null
+) => {
   try {
-    const variables = [
+    const variables = initialVar || [
       "LanguageV",
       "HostName",
       "ModelNum",
@@ -24,28 +26,25 @@ export const fetchPrinterDetails = async (ip: string) => {
       "TOFAdj",
     ];
     const query = variables.join(";");
-
-    const response = await fetch(
-      `http://${ip}/cgi-bin/buildprintervarvalues.cgi?${query}`
+    const response = await axios.get(
+      `http://${ip}/cgi-bin/buildprintervarvalues.cgi?${query}`,
+      {
+        timeout: 5000,
+      }
     );
-    const text = await response.text();
+    const text = await response.data;
+
     const result = {};
 
-    // const data = response.data;
     for (const key of variables) {
       const value = extractVarValue(text, key);
       if (key === "RSSI") {
         result[key] = getRssiString(Number(value));
       } else if (key === "Status") {
-        // if (getPrinterStatusDetails(Number(value)).code == 14) {
-        //   result[key] = "Ready";
-        //   result["statusCategory"] = "OK";
-        // } else {
-        result[key] = getPrinterStatusDetails(Number(value)).label; // set readable label
+        result[key] = getPrinterStatusDetails(Number(value)).label;
         result["statusCategory"] = getPrinterStatusDetails(
           Number(value)
-        ).category; // optional: also store category
-        // }
+        ).category;
       } else {
         result[key] = value;
       }
@@ -54,16 +53,6 @@ export const fetchPrinterDetails = async (ip: string) => {
     return result;
   } catch (e) {
     throw new Error(e);
-
-    // return {
-    //   ip,
-    //   hostname: null,
-    //   model: null,
-    //   statusCode: NaN,
-    //   statusLabel: "Disconnected",
-    //   language: null,
-    //   connected: false,
-    // };
   }
 };
 const getRssiString = (rssi: number): string => {
@@ -136,7 +125,6 @@ export const getPrinterStatusDetails = (code: number): PrinterStatusDetails => {
   };
 };
 
-// utils/axiosRequest.ts
 import axios, { AxiosRequestConfig, Method } from "axios";
 import { toast } from "../utils/toast.utils";
 

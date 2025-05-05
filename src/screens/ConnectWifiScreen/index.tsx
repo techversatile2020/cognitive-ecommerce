@@ -1,4 +1,4 @@
-import { ScrollView, View } from "react-native";
+import { ScrollView, View, PermissionsAndroid } from "react-native";
 import { styles } from "./styles";
 import {
   ConnectionStatusModal,
@@ -19,6 +19,8 @@ import { base64ToArrayBuffer, bin2String } from "../../utils/ble.util";
 import { useSelector } from "react-redux";
 import { wifiService } from "../../../services";
 import { toast } from "../../utils/toast.utils";
+import WifiManager from "react-native-wifi-reborn";
+
 // import ver from './../../../protos'
 const version_pb = require("./../../../protos/version_pb");
 const request_pb = require("./../../../protos/request_pb");
@@ -32,7 +34,8 @@ export default function ConnectWifiScreen({ navigation, route }) {
   const [showGenralError, setShowGenralError] = useState(false);
   const { scannedWifis } = useSelector((state: any) => state.printer);
   const { AppTheme } = useTheme();
-
+  const [deviceConnectedWifi, setDeviceConnectedWifi] = useState(null);
+  const [selectedWifi, setSelectedWifi] = useState(null);
   const handleNext = () => {
     console.log(connectedWifi);
 
@@ -42,6 +45,30 @@ export default function ConnectWifiScreen({ navigation, route }) {
       wifi: connectedWifi,
     });
   };
+
+  useEffect(() => {
+    const fetchCurrentWifi = async () => {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        {
+          title: "Location permission is required for WiFi connections",
+          message:
+            "This app needs location permission as this is required  " +
+            "to scan for wifi networks.",
+          buttonNegative: "DENY",
+          buttonPositive: "ALLOW",
+        }
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        const ssid = await WifiManager.getCurrentWifiSSID();
+        setDeviceConnectedWifi(ssid);
+      } else {
+        // Permission denied
+        // toast.fail('Fail','User denied wifi ')
+      }
+    };
+    fetchCurrentWifi();
+  }, [scannedWifis]);
 
   const handleConnectWifi = (e) => {
     if (e?.id == "3") {
@@ -58,6 +85,16 @@ export default function ConnectWifiScreen({ navigation, route }) {
     setShowGenralError(false);
   };
 
+  function getReadableBand(bandValue) {
+    switch (bandValue) {
+      case 1:
+        return "2.4 GHz";
+      case 2:
+        return "5 GHz";
+      default:
+        return "Unknown";
+    }
+  }
   return (
     <MainContainer customeStyle={{ paddingTop: SD.hp(0) }}>
       <MainHeader back={true} title="Connect to Wifi" />
@@ -75,9 +112,9 @@ export default function ConnectWifiScreen({ navigation, route }) {
       <View style={{ flex: 1 }}>
         <SectionContainer containerStyles={styles.wifiSectionContainer}>
           <ScrollView showsVerticalScrollIndicator={false}>
-            <Text bold size={14} color={AppTheme.Black}>
+            {/* <Text bold size={14} color={AppTheme.Black}>
               Known Devices
-            </Text>
+            </Text> */}
             {scannedWifis?.length < 1 ? (
               <Text bold size={14} color={AppTheme.Black}>
                 Scanning...
@@ -85,19 +122,27 @@ export default function ConnectWifiScreen({ navigation, route }) {
             ) : (
               <>
                 {scannedWifis.map((item, index) => {
+                  const ssidCounts = scannedWifis.reduce((acc, item) => {
+                    const ssid = bin2String(item.getWifi().getSsid());
+                    acc[ssid] = (acc[ssid] || 0) + 1;
+                    return acc;
+                  }, {});
                   let ssid = bin2String(item.getWifi().getSsid());
-
+                  const wifiInfo = item.getWifi();
+                  const band = wifiInfo.getBand(); // e.g., 1 or 2
+                  const readableBand = getReadableBand(band);
+                  const displayName =
+                    ssidCounts[ssid] > 1 ? `${ssid} (${readableBand})` : ssid;
                   return (
                     <ParingConnectionCard
-                      isActive={
-                        connectedWifi
-                          ? ssid ===
-                            bin2String(connectedWifi.getWifi().getSsid())
-                          : false
-                      }
-                      heading={ssid}
+                      isActive={selectedWifi == displayName}
+                      isCurrent={deviceConnectedWifi == ssid}
+                      heading={displayName}
                       subHeading={""}
-                      onPress={() => handleConnectWifi(item)}
+                      onPress={() => {
+                        setSelectedWifi(displayName);
+                        handleConnectWifi(item);
+                      }}
                       key={index}
                       icon={Images.wifiRound}
                     />
@@ -106,9 +151,9 @@ export default function ConnectWifiScreen({ navigation, route }) {
               </>
             )}
 
-            <Text bold size={14} color={AppTheme.Black} topSpacing={10}>
+            {/* <Text bold size={14} color={AppTheme.Black} topSpacing={10}>
               New Devices
-            </Text>
+            </Text> */}
             {/* {newDevices.map((item, index) => {
               return (
                 <ParingConnectionCard

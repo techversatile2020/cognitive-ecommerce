@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { TextInput, View } from "react-native";
 import Text from "../text";
 import { styles } from "./styles";
 import { CustomTouchable } from "../custom-touchable";
@@ -9,7 +9,7 @@ import React from "react";
 
 type Props = {
   value: number;
-  setValue: (e: number | string) => void;
+  setValue: (e: any) => void;
   sign?: string;
 };
 
@@ -19,20 +19,36 @@ export const IncreamentDecreamentComp: React.FC<Props> = ({
   sign,
 }) => {
   const { AppTheme } = useTheme();
+
+  const handleInputChange = (text: string) => {
+    const numeric = text.replace(/[^0-9]/g, ""); // Only keep digits
+    setValue(numeric ? parseInt(numeric) : 0);
+  };
   return (
     <View style={{ ...styles.container, backgroundColor: AppTheme.White }}>
       <CustomTouchable
         style={{ ...styles.btn, backgroundColor: AppTheme.skyBlue }}
-        onPress={(e) => setValue(Number(value - 1))}
+        onPress={(e) => setValue(value - 1)}
       >
         <CustomImage source={Images.minus} style={styles.btnIcon} />
       </CustomTouchable>
-      <Text bold size={12} color={AppTheme.fontGray} centered>
+      {/* <Text bold size={12} color={AppTheme.fontGray} centered>
         {value} {sign}
-      </Text>
+      </Text> */}
+      <View style={styles.inputView}>
+        <TextInput
+          value={value.toString()}
+          style={styles.input}
+          onChangeText={handleInputChange}
+          keyboardType="numeric"
+        />
+        <Text bold size={12} color={AppTheme.fontGray} centered>
+          {sign}
+        </Text>
+      </View>
       <CustomTouchable
         style={{ ...styles.btn, backgroundColor: AppTheme.skyBlue }}
-        onPress={(e) => setValue(Number(value + 1))}
+        onPress={(e) => setValue(value + 1)}
       >
         <CustomImage source={Images.plus} style={styles.btnIcon} />
       </CustomTouchable>

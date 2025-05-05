@@ -110,11 +110,15 @@ export async function ConnectButtonHandler({
     // 8. Update application state
     dispatch(setCurrentConnectedPrinter(device));
     console.log("WiFi scan initiated successfully");
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    setLoading(null);
+
+    return {};
   } catch (error) {
     console.error("Connection process failed:", error);
-    return error;
-  } finally {
     setLoading(null);
+
+    return { error: error?.message, status: "fail" };
   }
 }
 

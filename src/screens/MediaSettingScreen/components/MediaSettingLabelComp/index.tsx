@@ -19,14 +19,32 @@ import { toast } from "../../../../utils/toast.utils";
 import { generateTestLabelScript } from "../../../../utils/printer.utls";
 const MediaSettingLabelComp = ({ data }: any) => {
   const { ip } = data;
-  const { ModelNum, PrintWidth, ShiftLeft, IndexV, LanguageV } = useSelector(
-    (state: any) => state.printer.printerDetailsByIp[ip]
-  );
+  const { ModelNum, PrintWidth, ShiftLeft, IndexV, LanguageV, MediaTypeV } =
+    useSelector((state: any) => state.printer.printerDetailsByIp[ip]);
+  usePrinter(ip, [
+    "ModelNum",
+    "PrintWidth",
+    "ShiftLeft",
+    "IndexV",
+    "LanguageV",
+    "MediaTypeV",
+  ]);
   const [selectedSpeed, setSelectedSpeed] = useState<string | number>(
     IndexV || "1"
   );
   const [loading, setLoading] = useState(null);
   const { refetch } = usePrinter(ip);
+
+  const [typeData, setTypeData] = useState([
+    {
+      label: "Direct thermal",
+      value: "0",
+    },
+    {
+      label: "Thermal Transfer",
+      value: "1",
+    },
+  ]);
 
   const [speedData, setSpeedData] = useState([
     {
@@ -48,10 +66,11 @@ const MediaSettingLabelComp = ({ data }: any) => {
   ]);
   const { AppTheme } = useTheme();
   const [modelNumber, setModelNumber] = useState(null);
-  const [printWidth, setPrintWidth] = useState<any>(Number(PrintWidth));
-  const [shiftLeft, setShiftLeft] = useState<any>(Number(ShiftLeft));
+  const [printWidth, setPrintWidth] = useState<any>(Number(PrintWidth || 0));
+  const [shiftLeft, setShiftLeft] = useState<any>(Number(ShiftLeft || 0));
   const [printWidthError, setPrintWidthError] = useState<string | null>(null);
   const [shiftLeftError, setShiftLeftError] = useState<string | null>(null);
+  const [selectedType, setSelectedType] = useState<string | number>(MediaTypeV);
 
   const getPrintWidthRange = () => {
     if (
@@ -220,7 +239,7 @@ const MediaSettingLabelComp = ({ data }: any) => {
               />
             }
           />
-          <InfoFieldComp
+          {/* <InfoFieldComp
             title="Model Number"
             children={
               <CustomTextInput
@@ -237,6 +256,26 @@ const MediaSettingLabelComp = ({ data }: any) => {
                 height={50}
                 disable
                 // style={{ padding: SD.wp(15) }}
+              />
+            }
+          /> */}
+          <InfoFieldComp
+            title="Type"
+            children={
+              <CustomDropdown
+                iconColor={AppTheme.Primary}
+                data={typeData}
+                onChange={setSelectedType}
+                value={selectedType}
+                dropdownStyle={styles.dropdownStyles}
+                itemStyle={{
+                  ...styles.customItemStyle,
+                  backgroundColor: AppTheme.White,
+                }}
+                containerStyle={{
+                  ...styles.itemContainerStyle,
+                  backgroundColor: AppTheme.White,
+                }}
               />
             }
           />

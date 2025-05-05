@@ -27,22 +27,30 @@ import { generateTestLabelScript } from "../../../../utils/printer.utls";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 const MediaSettingReceiptComp = ({ data }) => {
-  const [selectedType, setSelectedType] = useState<string | number>("1");
   const { ip } = data;
-  const { ModelNum, PrintWidth, ShiftLeft, IndexV, LanguageV } = useSelector(
-    (state: any) => state.printer.printerDetailsByIp[ip]
-  );
+  const { ModelNum, PrintWidth, ShiftLeft, IndexV, LanguageV, MediaTypeV } =
+    useSelector((state: any) => state.printer.printerDetailsByIp[ip]);
+  usePrinter(ip, [
+    "ModelNum",
+    "PrintWidth",
+    "ShiftLeft",
+    "IndexV",
+    "LanguageV",
+    "MediaTypeV",
+  ]);
+  const [selectedType, setSelectedType] = useState<string | number>(MediaTypeV);
   const { refetch } = usePrinter(ip);
   const [typeData, setTypeData] = useState([
     {
       label: "Direct thermal",
-      value: "1",
+      value: "0",
     },
     {
       label: "Thermal Transfer",
-      value: "2",
+      value: "1",
     },
   ]);
+
   const { AppTheme } = useTheme();
   const [printWidth, setPrintWidth] = useState<any>(null);
   const [shiftLeft, setShiftLeft] = useState<any>(0);

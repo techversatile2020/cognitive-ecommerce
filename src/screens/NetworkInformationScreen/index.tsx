@@ -10,13 +10,14 @@ import {
 } from "../../components";
 import { Images, ScreenNames } from "../../config";
 import { styles } from "./styles";
-import { useTheme } from "../../hooks";
+import { usePrinter, useTheme } from "../../hooks";
 import { useSelector } from "react-redux";
 const NetworkInformationScreen = ({ route, navigation }) => {
   const { AppTheme } = useTheme();
   const { statusCategory, Status, IP_Address, RSSI, SSID } = useSelector(
     (state: any) => state.printer.printerDetailsByIp[route?.params?.IP_Address]
   );
+  usePrinter(IP_Address, ["Status", "RSSI", "SSID"]);
 
   const handleConnectOtherWifi = () => {
     return navigation.navigate(ScreenNames.PrinterSetupScreen);

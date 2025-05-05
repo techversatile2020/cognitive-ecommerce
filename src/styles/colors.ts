@@ -34,6 +34,7 @@ export enum ThemeColors {
   fontBlueL = "#294E95",
   skyBlue = "#EAEEF5",
   lightGreen = "#5CB85C",
+  disableGray = "#D1D5DB",
 }
 
 export enum DarkTheme {

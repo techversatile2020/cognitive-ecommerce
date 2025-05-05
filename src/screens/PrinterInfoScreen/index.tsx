@@ -11,6 +11,7 @@ import { styles } from "./styles";
 import { Images } from "../../config";
 import { useTheme } from "../../hooks";
 import { useSelector } from "react-redux";
+import navigationService from "../../config/navigationService";
 const indexValues = [
   {
     label: "None",
@@ -38,7 +39,17 @@ const printStValues = [
   { label: "6 Inches / Second", value: "6" },
   { label: "8 Inches / Second", value: "8" },
 ];
-const PrinterInfoScreen = ({ route }) => {
+const modes = [
+  {
+    label: "Direct thermal",
+    value: "0",
+  },
+  {
+    label: "Thermal Transfer",
+    value: "1",
+  },
+];
+const PrinterInfoScreen = ({ route, navigation }) => {
   const { AppTheme } = useTheme();
   const {
     ModelNum,
@@ -49,17 +60,28 @@ const PrinterInfoScreen = ({ route }) => {
     IndexV,
     HostName,
     statusCategory,
+    Darkness,
+    MediaTypeV,
   } = useSelector(
     (state: any) => state.printer.printerDetailsByIp[route?.params?.IP_Address]
   );
   const indexSetting = indexValues?.find((val) => val.value == IndexV);
   const printSt = printStValues?.find((val) => val.value == SpeedV);
+  const printerMode = modes?.find((val) => val.value == MediaTypeV);
   const colorOnStatusChange =
     statusCategory == "OK"
       ? AppTheme.lightGreen
       : statusCategory == "WARNING"
       ? AppTheme.Yellow
-      : AppTheme.Red;
+      : statusCategory == "ERROR"
+      ? AppTheme.Red
+      : AppTheme.disableGray;
+
+  const handleGoBack = () => {
+    navigation.goBack();
+  };
+  console.log(MediaTypeV);
+
   return (
     <MainContainer>
       <MainHeader
@@ -101,11 +123,18 @@ const PrinterInfoScreen = ({ route }) => {
           <InforTextTable title="Firmware Version" value={FirmwareVersion} />
           <InforTextTable title="Wifi Firm Version" value={WiFiFwVersion} />
           <InforTextTable title="Index Setting" value={indexSetting.label} />
-          <InforTextTable title="Print Statistics" value={printSt.label} />
+          {/* <InforTextTable title="Print Speed" value={SpeedV} /> */}
+          <InforTextTable title="Print Darkness" value={Darkness} />
+          <InforTextTable title="Print Speed" value={printSt.label} />
+          <InforTextTable title="Print Mode" value={printerMode.label} />
         </SectionContainer>
       </View>
 
-      <PrimaryButton title="Remove" customStyles={{ borderRadius: 15 }} />
+      <PrimaryButton
+        title="Back"
+        customStyles={{ borderRadius: 15 }}
+        onPress={handleGoBack}
+      />
     </MainContainer>
   );
 };

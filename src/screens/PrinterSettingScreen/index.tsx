@@ -64,8 +64,8 @@ const PrinterSettingScreen = ({ navigation, route }) => {
         navigation.navigate(ScreenNames.HttpServerWebVIew, { IP_Address });
         break;
       case "start calibration":
-        handlePrinterSetting("calibrate");
-        // setShowCalibrationModal(true);
+        // handlePrinterSetting("calibrate");
+        setShowCalibrationModal(true);
         break;
       case "print diagnostic label":
         // console.log(el.title);
@@ -106,6 +106,7 @@ const PrinterSettingScreen = ({ navigation, route }) => {
   };
 
   const triggerCalibrationModal = () => {
+    handlePrinterSetting("calibrate");
     setShowCalibrationModal(!showCalibrationModal);
   };
 
@@ -200,13 +201,13 @@ const PrinterSettingScreen = ({ navigation, route }) => {
       <SectionContainer
         containerStyles={{ marginTop: SD.hp(100), paddingBottom: SD.hp(10) }}
       >
-        <CustomImage source={Images.printer2} style={styles.deviceImage} />
         <Pressable
           style={{ marginVertical: SD.hp(15) }}
           onPress={() =>
             navigation.navigate(ScreenNames.PrinterInfoScreen, { IP_Address })
           }
         >
+          <CustomImage source={Images.printer2} style={styles.deviceImage} />
           <Text
             bold
             size={24}
@@ -217,7 +218,13 @@ const PrinterSettingScreen = ({ navigation, route }) => {
             {/* CTPG5824 */}
             {HostName}
           </Text>
-          <Text regular size={14} color={AppTheme.fontGray} centered>
+          <Text
+            regular
+            size={14}
+            color={AppTheme.fontGray}
+            centered
+            style={{ paddingBottom: 5 }}
+          >
             Printer Cognitive
           </Text>
         </Pressable>

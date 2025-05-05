@@ -49,6 +49,8 @@ const SearchPrinterScreen = ({ navigation }) => {
   const { scannedWifis, currentConnectedPrinter } = useSelector(
     (state: any) => state.printer
   );
+  const [connectionError, setConnectionError] = useState(null);
+  const [goNext, setGoNext] = useState(false);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -57,6 +59,14 @@ const SearchPrinterScreen = ({ navigation }) => {
       ble.stopScan();
     };
   }, []);
+
+  // useEffect(() => {
+  //   setTimeout(async () => {
+  //     if (bleScannedDevices?.length == 1) {
+  //       await handleApply(bleScannedDevices[0], true);
+  //     }
+  //   }, 5000);
+  // }, [bleScannedDevices]);
 
   const ScanButtonHandler = async () => {
     try {
@@ -76,7 +86,7 @@ const SearchPrinterScreen = ({ navigation }) => {
   const handleNext = async () => {
     if (!currentConnectedPrinter) {
       return Toast.show({
-        text1: "Please connect printer first",
+        text1: "Please select a printer before proceeding.",
         type: "error",
       });
     }
@@ -87,9 +97,11 @@ const SearchPrinterScreen = ({ navigation }) => {
     setShowPrinterErrorModal(null);
   };
 
-  const handleApply = async (device) => {
+  const handleApply = async (device, goNext?) => {
+    console.log("HandleApply running...");
+
     try {
-      await ConnectButtonHandler({
+      let response = await ConnectButtonHandler({
         device,
         setLoading,
         scannedWifis,
@@ -97,12 +109,20 @@ const SearchPrinterScreen = ({ navigation }) => {
         listener1,
         listener2,
       });
+
+      if (response?.status == "fail") {
+        setShowPrinterErrorModal("Unable to Connect to Device");
+        setConnectionError(`${response?.error} \n Your device lost connection`);
+      }
     } catch (error) {
       console.log("HandleApply Error => ", error);
+      showPrinterErrorModal("Unable to Connect to Device");
+      setConnectionError(
+        error?.message || "Unexpected error, please try again"
+      );
     }
   };
   function listener1(error, characteristic) {
-    console.log("==========listener1========== ");
     if (error) {
       setLoading(false);
       // dispatch(setCurrentConnectedPrinter(null));
@@ -118,15 +138,10 @@ const SearchPrinterScreen = ({ navigation }) => {
           const connectionInfo = deviceStatus.getConnectionInfo();
 
           const ipBytes = connectionInfo?.getIp4Addr?.(); // optional chaining in case undefined
-          // if (ipBytes && ipBytes.length === 4) {
           const ipAddr = `${ipBytes[0]}.${ipBytes[1]}.${ipBytes[2]}.${ipBytes[3]}`;
-          console.log("apAddr => ", ipAddr);
-          console.log("Connection info: ", response.toObject());
-          // setConnectedPrinters([...connectedPrinters, response.toObject()]);
-          // dispatch(setCurrentConnectedPrinter(response));
-          // dispatch(addConnectedPrinter(response.toObject()));
+
           fetchPrinterDetails(ipAddr)
-            .then((details) => {
+            .then((details: any) => {
               console.log("Got Details", details);
               toast.success(
                 `Printer ${details?.HostName?.toUpperCase()} connected successfully`
@@ -152,11 +167,6 @@ const SearchPrinterScreen = ({ navigation }) => {
         }
       }
     } catch (err) {
-      // Toast.show({
-      //   type: "error",
-      //   text1: "Fail to connect",
-      //   text2: "Fail to connect to WIFI, Retype your password!",
-      // });
       setShowPrinterErrorModal(
         "Unable to connect to Device, Retype your password!"
       );
@@ -173,8 +183,6 @@ const SearchPrinterScreen = ({ navigation }) => {
   }
 
   function listener2(error, characteristic) {
-    console.log("=====Listener2======");
-
     if (error) {
       setLoading(false);
       return console.log("Listner 2 => ", error);
@@ -266,8 +274,8 @@ const SearchPrinterScreen = ({ navigation }) => {
         isVisible={!!showPrinterErrorModal}
         onClose={handleOnClose}
         icon={Images.failBluetooth}
-        title="Unable to Connect to Device"
-        description={showPrinterErrorModal}
+        title={showPrinterErrorModal}
+        description={connectionError}
         onCancel={handleOnClose}
         onRetry={handleOnClose}
       />

@@ -4,23 +4,21 @@ import { fetchPrinterDetails } from "../../../services/printerServices";
 import { setPrinterDetailsByIp } from "../../../redux/reducers";
 import { toast } from "../../../utils/toast.utils";
 
-export const usePrinter = (ip) => {
+export const usePrinter = (ip, initialVar = null) => {
   const dispatch = useDispatch();
   return useQuery({
     queryKey: ["printer-status", ip],
     queryFn: async () => {
       if (!ip) throw new Error("IP not set");
-      console.log(`Background fetching for ${ip}`);
-
       try {
-        const result = await fetchPrinterDetails(ip);
+        const result = await fetchPrinterDetails(ip, initialVar);
         dispatch(setPrinterDetailsByIp({ ip, details: result }));
         return result;
       } catch (error) {
         dispatch(
           setPrinterDetailsByIp({
             ip,
-            details: { Status: "Offline", statusCategory: "WARNING" },
+            details: { Status: "Disconnected", statusCategory: "Disconnected" },
           })
         );
         throw new Error(error);

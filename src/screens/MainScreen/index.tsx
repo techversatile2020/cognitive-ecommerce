@@ -1,4 +1,4 @@
-import { View, ScrollView, Pressable } from "react-native";
+import { View, ScrollView, Pressable, Linking } from "react-native";
 import {
   CustomImage,
   MainContainer,
@@ -18,10 +18,23 @@ import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 
 function MainScreen({ navigation, route }) {
-  const { isDarkTheme, AppTheme } = useTheme();
-  const { connectedPrinters } = useSelector((state: any) => state.printer);
+  const { AppTheme } = useTheme();
   const { printerDetailsByIp } = useSelector((state: any) => state.printer);
   const printerList = Object.values(printerDetailsByIp ?? {});
+
+  const sortPrintersByConnection = (printers) => {
+    return printers.sort((a, b) => {
+      const aIsConnected = a.statusCategory !== "Disconnected";
+      const bIsConnected = b.statusCategory !== "Disconnected";
+
+      if (aIsConnected !== bIsConnected) {
+        return aIsConnected ? -1 : 1;
+      }
+
+      return a.HostName.localeCompare(b.HostName);
+    });
+  };
+
   const [setup, setSetup] = useState(false);
   const [showRemoveButton, setShowRemoveButton] = useState(null);
   useEffect(() => {
@@ -30,6 +43,10 @@ function MainScreen({ navigation, route }) {
 
   const handleAddNow = () => {
     navigation.navigate(ScreenNames.PrinterSetupScreen);
+  };
+
+  const handleOpenLink = () => {
+    return Linking.openURL(`https://www.cognitivetpg.com/`);
   };
 
   return (
@@ -58,7 +75,7 @@ function MainScreen({ navigation, route }) {
                 showsVerticalScrollIndicator={false}
                 style={{ flex: 1 }}
               >
-                {printerList.map((item, index) => {
+                {sortPrintersByConnection(printerList).map((item, index) => {
                   return (
                     <PairedDevicesComp
                       data={item}
@@ -105,6 +122,7 @@ function MainScreen({ navigation, route }) {
                 heading={item.heading}
                 subHeading={item.subHeading}
                 key={index}
+                onPress={handleOpenLink}
               />
             ))}
           </View>

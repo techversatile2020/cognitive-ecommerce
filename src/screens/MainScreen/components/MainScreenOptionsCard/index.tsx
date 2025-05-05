@@ -2,10 +2,13 @@ import { CustomImage, SectionContainer, Text } from "../../../../components";
 import { useTheme } from "../../../../hooks";
 import { styles } from "./styles";
 
-export function MainScreenOptionsCard({ icon, heading, subHeading }) {
+export function MainScreenOptionsCard({ icon, heading, subHeading, onPress }) {
   const { AppTheme } = useTheme();
   return (
-    <SectionContainer containerStyles={styles.mainScreenOptionCard}>
+    <SectionContainer
+      containerStyles={styles.mainScreenOptionCard}
+      onPress={onPress}
+    >
       <CustomImage source={icon} style={styles.cardIcon} />
       <Text bold size={12} centered bottomSpacing={0} color={AppTheme.Black}>
         {heading}

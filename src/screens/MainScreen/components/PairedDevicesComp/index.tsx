@@ -34,12 +34,10 @@ const PairedDevicesComp = ({
   setShowRemoveButton: any;
 }) => {
   const { AppTheme } = useTheme();
-  const { HostName, model, Status, statusCategory, IP_Address } = data;
-  const connected = statusCategory == "OK";
+  const { HostName, Status, statusCategory, IP_Address } = data;
   const dispatch = useDispatch();
-  const [showRemoveBtn, setShowRemoveBtn] = useState(false);
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
-  usePrinter(IP_Address);
+  usePrinter(IP_Address, ["Status"]);
   const handleNavigation = () => {
     setShowRemoveButton(null);
     navigation.navigate(ScreenNames.PrinterSettingScreen, { IP_Address });
@@ -56,10 +54,21 @@ const PairedDevicesComp = ({
       ? AppTheme.lightGreen
       : statusCategory == "WARNING"
       ? AppTheme.Yellow
-      : AppTheme.Red;
+      : statusCategory == "ERROR"
+      ? AppTheme.Red
+      : AppTheme.disableGray;
 
   return (
-    <View style={[styles.container, { backgroundColor: colorOnStatusChange }]}>
+    <View
+      style={[
+        styles.container,
+        {
+          backgroundColor: colorOnStatusChange,
+          opacity: statusCategory == "Disconnected" ? 0.5 : 1,
+          // opacity: 0.2,
+        },
+      ]}
+    >
       <Pressable
         style={[
           {
@@ -109,7 +118,7 @@ const PairedDevicesComp = ({
           <Text bold size={10} color={AppTheme.Black} centered>
             {/* {connected} */}
             {/* {Status ? "Connected" : "Disconnected"} */}
-            {statusCategory == "OK" ? "Connected" : "Disconnected"}
+            {statusCategory == "Disconnected" ? "Disconnected" : "Connected"}
           </Text>
         </View>
         <Pressable onPress={() => setShowRemoveButton(IP_Address)}>

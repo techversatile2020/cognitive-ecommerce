@@ -27,6 +27,13 @@ const PrinterSettingNested = ({ route }) => {
       (state: any) =>
         state.printer.printerDetailsByIp[route?.params?.IP_Address]
     );
+  usePrinter(IP_Address, [
+    "ModelNum",
+    "Darkness",
+    "SpeedV",
+    "statusCategory",
+    "LanguageV",
+  ]);
   const { refetch } = usePrinter(IP_Address);
   const [sliderValue, setSliderValue] = useState(Number(Darkness) || 20);
   const { AppTheme } = useTheme();

@@ -22,6 +22,7 @@ import { CHARACTERISTIC_UUID, SERVICE_UUID } from "../../src/utils/UUIDS";
 import { rejects } from "assert";
 import { setCurrentConnectedPrinter } from "../../src/redux/reducers";
 import { useDispatch } from "react-redux";
+import { store } from "../../src/redux";
 
 // import {
 //   WifiInfo,
@@ -196,8 +197,10 @@ class BLEServiceInstance {
         .then((device) => {
           this.device = device;
           this.onDeviceDisconnected((error, device) => {
+            store.dispatch(setCurrentConnectedPrinter(null));
             if (error) {
-              this.showErrorToast(error?.message);
+              // this.showErrorToast(error?.message);
+              reject(error);
             }
           });
 
@@ -210,8 +213,7 @@ class BLEServiceInstance {
           ) {
             resolve(this.device);
           } else {
-            this.onError(error);
-            console.log("ERROR 154");
+            // this.onError(error);
             reject(error);
           }
         });

@@ -15,9 +15,6 @@ import { useSelector } from "react-redux";
 const MediaSettingScreen = ({ route }) => {
   const { AppTheme } = useTheme();
   const [activeBar, setActiveBar] = useState("label");
-  const { ModelNum, PrintWidth, ShiftLeft, IndexV } = useSelector(
-    (state: any) => state.printer.printerDetailsByIp[route?.params?.IP_Address]
-  );
   return (
     <MainContainer
       mainContainerStyle={{
