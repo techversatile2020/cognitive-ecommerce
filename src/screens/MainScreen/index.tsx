@@ -45,8 +45,8 @@ function MainScreen({ navigation, route }) {
     navigation.navigate(ScreenNames.PrinterSetupScreen);
   };
 
-  const handleOpenLink = () => {
-    return Linking.openURL(`https://www.cognitivetpg.com/`);
+  const handleOpenLink = (link) => {
+    return Linking.openURL(link);
   };
 
   return (
@@ -122,7 +122,7 @@ function MainScreen({ navigation, route }) {
                 heading={item.heading}
                 subHeading={item.subHeading}
                 key={index}
-                onPress={handleOpenLink}
+                onPress={handleOpenLink.bind(this, item.link)}
               />
             ))}
           </View>
