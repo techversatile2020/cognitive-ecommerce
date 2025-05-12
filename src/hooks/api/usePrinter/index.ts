@@ -18,7 +18,7 @@ export const usePrinter = (ip, initialVar = null) => {
         dispatch(
           setPrinterDetailsByIp({
             ip,
-            details: { Status: "Disconnected", statusCategory: "Disconnected" },
+            details: { Status: "Disconnected", statusCategory: "Disconnected", IP_Addr: ip },
           })
         );
         throw new Error(error);
