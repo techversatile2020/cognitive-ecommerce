@@ -21,14 +21,15 @@ export const IncreamentDecreamentComp: React.FC<Props> = ({
   const { AppTheme } = useTheme();
 
   const handleInputChange = (text: string) => {
-    const numeric = text.replace(/[^0-9]/g, ""); // Only keep digits
-    setValue(numeric ? parseInt(numeric) : 0);
+    // const numeric = text.replace(/[^0-9]/g, ""); // Only keep digits
+    // setValue(numeric ? parseInt(numeric) : 0);
+    setValue(text);
   };
   return (
     <View style={{ ...styles.container, backgroundColor: AppTheme.White }}>
       <CustomTouchable
         style={{ ...styles.btn, backgroundColor: AppTheme.skyBlue }}
-        onPress={(e) => setValue(value - 1)}
+        onPress={(e) => setValue(parseFloat(value) - 1)}
       >
         <CustomImage source={Images.minus} style={styles.btnIcon} />
       </CustomTouchable>
@@ -40,7 +41,7 @@ export const IncreamentDecreamentComp: React.FC<Props> = ({
           value={value.toString()}
           style={styles.input}
           onChangeText={handleInputChange}
-          keyboardType="numeric"
+          keyboardType="decimal-pad"
         />
         <Text bold size={12} color={AppTheme.fontGray} centered>
           {sign}
@@ -48,7 +49,7 @@ export const IncreamentDecreamentComp: React.FC<Props> = ({
       </View>
       <CustomTouchable
         style={{ ...styles.btn, backgroundColor: AppTheme.skyBlue }}
-        onPress={(e) => setValue(value + 1)}
+        onPress={(e) => setValue(parseFloat(value) + 1)}
       >
         <CustomImage source={Images.plus} style={styles.btnIcon} />
       </CustomTouchable>

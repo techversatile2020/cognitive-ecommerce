@@ -38,7 +38,15 @@ function MainScreen({ navigation, route }) {
   const [setup, setSetup] = useState(false);
   const [showRemoveButton, setShowRemoveButton] = useState(null);
   useEffect(() => {
-    setSetup(Object.values(printerDetailsByIp).length > 0);
+    const sortedPrinters: any = [...Object.values(printerDetailsByIp)].sort(
+      (a: any, b: any) => {
+        if (a.Status === "Connected" && b.Status !== "Connected") return -1;
+        if (a.Status !== "Connected" && b.Status === "Connected") return 1;
+
+        return a.HostName.localeCompare(b.HostName);
+      }
+    );
+    setSetup(sortedPrinters);
   }, [printerDetailsByIp]);
 
   const handleAddNow = () => {

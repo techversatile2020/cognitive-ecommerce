@@ -14,7 +14,7 @@ import {
 } from "../../components";
 import { Images, ScreenNames } from "../../config";
 import { usePrinter, useTheme } from "../../hooks";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ConnectButtonHandler, SD } from "../../utils";
 import { BLEService } from "../../../services";
 import Toast from "react-native-toast-message";
@@ -32,6 +32,7 @@ import navigationService from "../../config/navigationService";
 import { fetchPrinterDetails } from "../../services/printerServices";
 import { setPrinterDetailsByIp } from "../../redux/reducers";
 import { fetchPrinterVars } from "../../api";
+import { useNavigation } from "@react-navigation/native";
 
 const version_pb = require("./../../../protos/version_pb");
 const request_pb = require("./../../../protos/request_pb");
@@ -49,8 +50,9 @@ const SearchPrinterScreen = ({ navigation }) => {
   const { scannedWifis, currentConnectedPrinter } = useSelector(
     (state: any) => state.printer
   );
+
   const [connectionError, setConnectionError] = useState(null);
-  const [goNext, setGoNext] = useState(false);
+  const hasUserClicked = useRef(false);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -60,13 +62,14 @@ const SearchPrinterScreen = ({ navigation }) => {
     };
   }, []);
 
-  // useEffect(() => {
-  //   setTimeout(async () => {
-  //     if (bleScannedDevices?.length == 1) {
-  //       await handleApply(bleScannedDevices[0], true);
-  //     }
-  //   }, 5000);
-  // }, [bleScannedDevices]);
+  useEffect(() => {
+    let timeout = setTimeout(async () => {
+      if (!hasUserClicked.current && bleScannedDevices?.length === 1) {
+        await handleApply(bleScannedDevices[0], true);
+      }
+    }, 5000);
+    return () => clearTimeout(timeout);
+  }, [bleScannedDevices]);
 
   const ScanButtonHandler = async () => {
     try {
@@ -97,9 +100,10 @@ const SearchPrinterScreen = ({ navigation }) => {
     setShowPrinterErrorModal(null);
   };
 
-  const handleApply = async (device, goNext?) => {
-    console.log("HandleApply running...");
-
+  const handleApply = async (device, goNext = false) => {
+    if (!goNext) {
+      hasUserClicked.current = true;
+    }
     try {
       let response = await ConnectButtonHandler({
         device,
@@ -108,21 +112,29 @@ const SearchPrinterScreen = ({ navigation }) => {
         dispatch,
         listener1,
         listener2,
+        goNext,
+        navigation,
       });
 
       if (response?.status == "fail") {
         setShowPrinterErrorModal("Unable to Connect to Device");
         setConnectionError(`${response?.error} \n Your device lost connection`);
+        return;
       }
     } catch (error) {
       console.log("HandleApply Error => ", error);
       showPrinterErrorModal("Unable to Connect to Device");
       setConnectionError(
-        error?.message || "Unexpected error, please try again"
+        error?.message || "Unexpected error\n please try again"
       );
     }
   };
   function listener1(error, characteristic) {
+    console.log("ERROR, CHARACTERISTICS => ", {
+      error,
+      characteristic,
+    });
+
     if (error) {
       setLoading(false);
       // dispatch(setCurrentConnectedPrinter(null));
@@ -167,10 +179,10 @@ const SearchPrinterScreen = ({ navigation }) => {
         }
       }
     } catch (err) {
-      setShowPrinterErrorModal(
-        "Unable to connect to Device, Retype your password!"
+      setShowPrinterErrorModal("Unable to connect to network");
+      setConnectionError(
+        "Device can not connect to network, Please check your password"
       );
-      console.log("ERROR => ", err);
       const isSafeToIgnore =
         err?.message?.includes("Invalid record in scannedWifis") ||
         err?.toString()?.includes("non-serializable");

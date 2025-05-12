@@ -24,7 +24,7 @@ export const ConnectionStatusModal = ({
         style={{ ...styles.modalContainer, backgroundColor: AppTheme.White }}
       >
         <CustomImage source={icon} style={styles.deviceIcon} />
-        <Text bold size={18} color={AppTheme.Black}>
+        <Text bold size={18} color={AppTheme.Black} centered>
           {title}
         </Text>
         <Text
