@@ -30,6 +30,7 @@ export const usePrinter = (ip, initialVar = null) => {
               details: {
                 Status: "Disconnected",
                 statusCategory: "Disconnected",
+                IP_Addr: ip,
               },
             })
           );
