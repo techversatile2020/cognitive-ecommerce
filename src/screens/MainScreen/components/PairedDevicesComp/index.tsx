@@ -102,7 +102,7 @@ const PairedDevicesComp = ({
           </Text>
           <Text regular size={10} color={AppTheme.fontGray}>
             {/* {subTitlel} */}
-            Congnitive Printers
+            Cognitive Printers
           </Text>
         </View>
         <View style={styles.statusView}>
