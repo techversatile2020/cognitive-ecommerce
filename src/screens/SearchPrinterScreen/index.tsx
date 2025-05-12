@@ -185,6 +185,7 @@ const SearchPrinterScreen = ({ navigation }) => {
   function listener2(error, characteristic) {
     if (error) {
       setLoading(false);
+      navigation.navigate(ScreenNames.PrinterSetupScreen);
       return console.log("Listner 2 => ", error);
     }
     console.log("Recieved char => ", characteristic.value);
