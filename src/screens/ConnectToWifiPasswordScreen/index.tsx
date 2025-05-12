@@ -60,7 +60,7 @@ const ConnectToWifiPasswordScreen = ({ route, navigation }) => {
     try {
       await ConnectWifiRouter(routerName, wifiPassword, setLoading);
     } catch (error) {
-      console.log("ERR", error);
+      console.log("ConnectWifiRouter ERROR =>", error);
     }
   };
 

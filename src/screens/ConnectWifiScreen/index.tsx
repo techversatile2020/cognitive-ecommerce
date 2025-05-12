@@ -125,51 +125,57 @@ export default function ConnectWifiScreen({ navigation, route }) {
               </Text>
             ) : (
               <>
-                {scannedWifis.map((item, index) => {
+                {/* {scannedWifis.map((item, index) => {
                   const ssidCounts = scannedWifis.reduce((acc, item) => {
                     const ssid = bin2String(item.getWifi().getSsid());
                     acc[ssid] = (acc[ssid] || 0) + 1;
                     return acc;
-                  }, {});
-                  let ssid = bin2String(item.getWifi().getSsid());
-                  const wifiInfo = item.getWifi();
-                  const band = wifiInfo.getBand(); // e.g., 1 or 2
-                  const readableBand = getReadableBand(band);
-                  const displayName =
-                    ssidCounts[ssid] > 1 ? `${ssid} (${readableBand})` : ssid;
-                  return (
-                    <ParingConnectionCard
-                      isActive={selectedWifi == displayName}
-                      isCurrent={deviceConnectedWifi == ssid}
-                      heading={displayName}
-                      subHeading={""}
-                      onPress={() => {
-                        setSelectedWifi(displayName);
-                        handleConnectWifi(item);
-                      }}
-                      key={index}
-                      icon={Images.wifiRound}
-                    />
-                  );
-                })}
+                  }, {}); */}
+                {[...scannedWifis]
+                  .sort((a, b) => {
+                    const ssidA = bin2String(a.getWifi().getSsid());
+                    const ssidB = bin2String(b.getWifi().getSsid());
+                    if (
+                      ssidA === deviceConnectedWifi &&
+                      ssidB !== deviceConnectedWifi
+                    )
+                      return -1;
+                    if (
+                      ssidA !== deviceConnectedWifi &&
+                      ssidB === deviceConnectedWifi
+                    )
+                      return 1;
+                    return ssidA.localeCompare(ssidB);
+                  })
+                  .map((item, index) => {
+                    const ssidCounts = scannedWifis.reduce((acc, item) => {
+                      const ssid = bin2String(item.getWifi().getSsid());
+                      acc[ssid] = (acc[ssid] || 0) + 1;
+                      return acc;
+                    }, {});
+                    let ssid = bin2String(item.getWifi().getSsid());
+                    const wifiInfo = item.getWifi();
+                    const band = wifiInfo.getBand();
+                    const readableBand = getReadableBand(band);
+                    const displayName =
+                      ssidCounts[ssid] > 1 ? `${ssid} (${readableBand})` : ssid;
+                    return (
+                      <ParingConnectionCard
+                        isActive={selectedWifi == displayName}
+                        isCurrent={deviceConnectedWifi == ssid}
+                        heading={displayName}
+                        subHeading={""}
+                        onPress={() => {
+                          setSelectedWifi(displayName);
+                          handleConnectWifi(item);
+                        }}
+                        key={index}
+                        icon={Images.wifiRound}
+                      />
+                    );
+                  })}
               </>
             )}
-
-            {/* <Text bold size={14} color={AppTheme.Black} topSpacing={10}>
-              New Devices
-            </Text> */}
-            {/* {newDevices.map((item, index) => {
-              return (
-                <ParingConnectionCard
-                  isActive={item.id === connectedWifi?.SSID}
-                  heading={item.name}
-                  subHeading={item.subheading}
-                  onPress={() => handleConnectWifi(item)}
-                  key={index}
-                  icon={item.icon}
-                />
-              );
-            })} */}
           </ScrollView>
         </SectionContainer>
       </View>

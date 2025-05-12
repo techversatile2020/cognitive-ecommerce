@@ -18,8 +18,8 @@ export const styles = StyleSheet.create({
     borderRadius: 4,
   },
   printerImage: {
-    width: "40%",
-    height: "80%",
+    width: SD.wp(133),
+    height: SD.hp(136),
     resizeMode: "contain",
   },
   optionsSection: {

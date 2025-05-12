@@ -19,6 +19,16 @@ const NetworkInformationScreen = ({ route, navigation }) => {
   );
   usePrinter(IP_Address, ["Status", "RSSI", "SSID"]);
 
+  const colorOnStatusChange =
+    statusCategory == "OK"
+      ? AppTheme.lightGreen
+      : statusCategory == "WARNING"
+      ? AppTheme.Yellow
+      : statusCategory == "ERROR"
+      ? AppTheme.Red
+      : AppTheme.disableGray;
+  let isDisconnected = statusCategory == "Disconnected";
+
   const handleConnectOtherWifi = () => {
     return navigation.navigate(ScreenNames.PrinterSetupScreen);
   };
@@ -36,10 +46,15 @@ const NetworkInformationScreen = ({ route, navigation }) => {
         <View
           style={{
             ...styles.connectedTextView,
-            backgroundColor: AppTheme.lightGreen,
+            backgroundColor: colorOnStatusChange,
           }}
         >
-          <Text bold size={16} color={AppTheme.White} centered>
+          <Text
+            bold
+            size={16}
+            color={isDisconnected ? AppTheme.Black : AppTheme.White}
+            centered
+          >
             {/* Connected */}
             {statusCategory == "OK" ? "Connected" : "Disconnected"}
           </Text>

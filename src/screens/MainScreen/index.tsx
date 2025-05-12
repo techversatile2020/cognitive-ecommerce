@@ -20,25 +20,18 @@ import { useEffect, useState } from "react";
 function MainScreen({ navigation, route }) {
   const { AppTheme } = useTheme();
   const { printerDetailsByIp } = useSelector((state: any) => state.printer);
-  const printerList = Object.values(printerDetailsByIp ?? {});
-
-  const sortPrintersByConnection = (printers) => {
-    return printers.sort((a, b) => {
-      const aIsConnected = a.statusCategory !== "Disconnected";
-      const bIsConnected = b.statusCategory !== "Disconnected";
-
-      if (aIsConnected !== bIsConnected) {
-        return aIsConnected ? -1 : 1;
-      }
-
-      return a.HostName.localeCompare(b.HostName);
-    });
-  };
-
-  const [setup, setSetup] = useState(false);
+  const [setup, setSetup] = useState([]);
   const [showRemoveButton, setShowRemoveButton] = useState(null);
   useEffect(() => {
-    setSetup(Object.values(printerDetailsByIp).length > 0);
+    const sortedPrinters: any = [...Object.values(printerDetailsByIp)].sort(
+      (a: any, b: any) => {
+        if (a.Status === "Connected" && b.Status !== "Connected") return -1;
+        if (a.Status !== "Connected" && b.Status === "Connected") return 1;
+
+        return a.HostName.localeCompare(b.HostName);
+      }
+    );
+    setSetup(sortedPrinters);
   }, [printerDetailsByIp]);
 
   const handleAddNow = () => {
@@ -52,7 +45,7 @@ function MainScreen({ navigation, route }) {
   return (
     <Pressable style={{ flex: 1 }} onPress={() => setShowRemoveButton(null)}>
       <MainContainer isFlatList>
-        <MainHeader logo showPlusIcon={setup} />
+        <MainHeader logo showPlusIcon={!!setup.length} />
         <ScrollView
           style={{ flex: 1 }}
           showsVerticalScrollIndicator={false}
@@ -62,7 +55,7 @@ function MainScreen({ navigation, route }) {
             onPress={() => setShowRemoveButton(null)}
             containerStyles={[
               styles.sectionContainerStyles,
-              setup && {
+              setup.length && {
                 flexDirection: "column",
                 justifyContent: "flex-start",
                 paddingHorizontal: SD.wp(0),
@@ -70,12 +63,12 @@ function MainScreen({ navigation, route }) {
               },
             ]}
           >
-            {setup ? (
+            {setup.length > 0 ? (
               <ScrollView
                 showsVerticalScrollIndicator={false}
                 style={{ flex: 1 }}
               >
-                {sortPrintersByConnection(printerList).map((item, index) => {
+                {setup?.map((item, index) => {
                   return (
                     <PairedDevicesComp
                       data={item}
@@ -87,7 +80,7 @@ function MainScreen({ navigation, route }) {
                 })}
               </ScrollView>
             ) : (
-              <>
+              <View style={styles.optionsSection}>
                 <View style={styles.leftView}>
                   <Text bold size={22} blackBold>
                     Add Your {"\n"}First Printer
@@ -112,7 +105,7 @@ function MainScreen({ navigation, route }) {
                   source={Images.printer}
                   style={styles.printerImage}
                 />
-              </>
+              </View>
             )}
           </SectionContainer>
           <View style={styles.optionsSection}>

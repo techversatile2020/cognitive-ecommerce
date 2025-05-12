@@ -31,7 +31,7 @@ import { PersistGate } from "redux-persist/integration/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const Stack = createNativeStackNavigator();
-const queryClient = new QueryClient();
+export const queryClient = new QueryClient();
 
 export default function App() {
   return (

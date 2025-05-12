@@ -12,7 +12,6 @@ import {
 import { NavigationService, ScreenNames } from "../config";
 import { store } from "../redux";
 import { toast } from "./toast.utils";
-import navigationService from "../config/navigationService";
 import { Platform } from "react-native";
 import { fullUUID } from "react-native-ble-plx";
 
@@ -35,6 +34,8 @@ export async function ConnectButtonHandler({
   dispatch,
   listener1,
   listener2,
+  goNext = false,
+  navigation,
 }) {
   try {
     setLoading(`Connecting to ${device.name}`);
@@ -112,7 +113,9 @@ export async function ConnectButtonHandler({
     console.log("WiFi scan initiated successfully");
     await new Promise((resolve) => setTimeout(resolve, 300));
     setLoading(null);
-
+    if (goNext) {
+      navigation.navigate(ScreenNames.ConnectWifiScreen);
+    }
     return {};
   } catch (error) {
     console.error("Connection process failed:", error);
