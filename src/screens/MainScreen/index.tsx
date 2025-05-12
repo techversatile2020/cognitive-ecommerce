@@ -88,6 +88,7 @@ function MainScreen({ navigation, route }) {
                   <Text
                     regular
                     size={12}
+                    width={168}
                     color={AppTheme.fontGray}
                     topSpacing={10}
                     bottomSpacing={10}
