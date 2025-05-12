@@ -56,15 +56,17 @@ const PairedDevicesComp = ({
       ? AppTheme.Yellow
       : statusCategory == "ERROR"
       ? AppTheme.Red
-      : AppTheme.disableGray;
+      : AppTheme.fontGray;
+
+  let isDisconnected = statusCategory == "Disconnected";
 
   return (
     <View
       style={[
         styles.container,
         {
-          backgroundColor: colorOnStatusChange,
-          opacity: statusCategory == "Disconnected" ? 0.5 : 1,
+          backgroundColor: AppTheme.White,
+          opacity: isDisconnected ? 0.6 : 1,
           // opacity: 0.2,
         },
       ]}
@@ -93,7 +95,7 @@ const PairedDevicesComp = ({
           <Text
             bold
             size={12}
-            color={AppTheme.Black}
+            color={isDisconnected ? AppTheme.fontGray : AppTheme.Black}
             style={{ textTransform: "uppercase" }}
           >
             {HostName}
@@ -107,7 +109,7 @@ const PairedDevicesComp = ({
           <Text bold size={10} color={AppTheme.Black} centered>
             Status
           </Text>
-          <Text regular size={10} color={AppTheme.Black} centered>
+          <Text regular size={10} color={colorOnStatusChange} centered>
             {Status}
           </Text>
         </View>
@@ -115,7 +117,12 @@ const PairedDevicesComp = ({
           {/* <Text bold size={10} color={AppTheme.Black}>
           Connected
           </Text> */}
-          <Text bold size={10} color={AppTheme.Black} centered>
+          <Text
+            bold
+            size={10}
+            color={isDisconnected ? AppTheme.fontGray : AppTheme.Black}
+            centered
+          >
             {/* {connected} */}
             {/* {Status ? "Connected" : "Disconnected"} */}
             {statusCategory == "Disconnected" ? "Disconnected" : "Connected"}

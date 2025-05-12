@@ -80,7 +80,8 @@ const PrinterInfoScreen = ({ route, navigation }) => {
   const handleGoBack = () => {
     navigation.goBack();
   };
-  console.log(MediaTypeV);
+
+  let isDisconnected = statusCategory == "Disconnected";
 
   return (
     <MainContainer>
@@ -112,7 +113,12 @@ const PrinterInfoScreen = ({ route, navigation }) => {
             backgroundColor: colorOnStatusChange,
           }}
         >
-          <Text bold size={10} color={AppTheme.White} centered>
+          <Text
+            bold
+            size={10}
+            color={isDisconnected ? AppTheme.Black : AppTheme.White}
+            centered
+          >
             {/* Connected */}
             {statusCategory == "OK" ? "Connected" : "Disconnected"}
           </Text>
