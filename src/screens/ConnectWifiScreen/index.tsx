@@ -60,8 +60,12 @@ export default function ConnectWifiScreen({ navigation, route }) {
         }
       );
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        const ssid = await WifiManager.getCurrentWifiSSID();
-        setDeviceConnectedWifi(ssid);
+        try {
+          const ssid = await WifiManager.getCurrentWifiSSID();
+          setDeviceConnectedWifi(ssid);
+        } catch(error) {
+          console.log("Cannot get current SSID!");
+        }
       } else {
         // Permission denied
         // toast.fail('Fail','User denied wifi ')
