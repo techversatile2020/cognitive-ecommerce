@@ -100,6 +100,11 @@ const SearchPrinterScreen = ({ navigation }) => {
     setShowPrinterErrorModal(null);
   };
 
+  const handleOnRetry = () => {
+    navigation.navigate(ScreenNames.PrinterSetupScreen);
+    setShowPrinterErrorModal(null);
+  };
+
   const handleApply = async (device, goNext = false) => {
     if (!goNext) {
       hasUserClicked.current = true;
@@ -123,7 +128,7 @@ const SearchPrinterScreen = ({ navigation }) => {
       }
     } catch (error) {
       console.log("HandleApply Error => ", error);
-      showPrinterErrorModal("Unable to Connect to Device");
+      setShowPrinterErrorModal("Unable to Connect to Device");
       setConnectionError(
         error?.message || "Unexpected error\n please try again"
       );
@@ -198,7 +203,8 @@ const SearchPrinterScreen = ({ navigation }) => {
     if (error) {
       setLoading(false);
       navigation.navigate(ScreenNames.PrinterSetupScreen);
-      return console.log("Listner 2 => ", error);
+      console.log("Listner 2 => ", error);
+      return toast.fail("Retry", "please retry Bluetooth");
     }
     console.log("Recieved char => ", characteristic.value);
     try {
@@ -208,22 +214,6 @@ const SearchPrinterScreen = ({ navigation }) => {
         const scanRecord = result.getScanRecord();
         const ssid = bin2String(scanRecord.getWifi().getSsid());
         if (ssid) {
-          const alreadyExists =
-            Array.isArray(scannedWifis) &&
-            scannedWifis.some((record) => {
-              try {
-                return bin2String(record?.getWifi?.().getSsid?.()) === ssid;
-              } catch (err) {
-                console.warn("Invalid record in scannedWifis:", record);
-                return false;
-              }
-            });
-
-          const updatedWifi = alreadyExists
-            ? scannedWifis
-            : [...(scannedWifis || []), scanRecord];
-
-          // handleWifiScanner(updatedWifi);
           dispatch(addScannedWifi(scanRecord));
         }
       }
@@ -290,7 +280,7 @@ const SearchPrinterScreen = ({ navigation }) => {
         title={showPrinterErrorModal}
         description={connectionError}
         onCancel={handleOnClose}
-        onRetry={handleOnClose}
+        onRetry={handleOnRetry}
       />
       <PrimaryButton
         title="Next"

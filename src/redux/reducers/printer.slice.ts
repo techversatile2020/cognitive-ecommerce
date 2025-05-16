@@ -1,5 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { converBase64Obj } from "../../utils/ble.util";
+import { converBase64Obj, bin2String } from "../../utils/ble.util";
+
+const version_pb = require("./../../../protos/version_pb");
+const request_pb = require("./../../../protos/request_pb");
+const common_pb = require("./../../../protos/common_pb");
+const response_pb = require("./../../../protos/response_pb");
+const result_pb = require("./../../../protos/result_pb");
 
 export type PrinterStateType = {
   connectedPrinters: any[];
@@ -59,7 +65,19 @@ const printerSlice = createSlice({
       }
     },
     addScannedWifi: (state, action: PayloadAction<any>) => {
-      state.scannedWifis.push(action.payload);
+      let add = true;
+      const attempt_ssid = bin2String(action.payload.getWifi().getSsid());
+      const attempt_band = action.payload.getWifi().getBand();
+      for (const wifi of state.scannedWifis) {
+        const ssid = bin2String(wifi.getWifi().getSsid());
+        const band = wifi.getWifi().getBand();
+        if (attempt_ssid === ssid && attempt_band === band) {
+          add = false;
+        }
+      }
+      if (add === true) {
+        state.scannedWifis = [...state.scannedWifis, action.payload];
+      }
     },
     removeConnectedPrinter: (state, action: PayloadAction<string>) => {
       state.connectedPrinters = state.connectedPrinters.filter(
