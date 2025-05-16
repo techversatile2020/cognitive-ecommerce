@@ -20,6 +20,14 @@ import { useSelector } from "react-redux";
 import { wifiService } from "../../../services";
 import { toast } from "../../utils/toast.utils";
 import WifiManager from "react-native-wifi-reborn";
+import { LogBox } from 'react-native';
+
+// https://stackoverflow.com/questions/66310505/non-serializable-values-were-found-in-the-navigation-state-when-passing-a-functi
+// Navigate to ScreenNames.ConnectToWifiPasswordScreen screen with parameter "connectedWifi" causes this warning.
+// As we are not using deep link or state persistence, we can ignore this warning.
+LogBox.ignoreLogs([
+  'Non-serializable values were found in the navigation state',
+]);
 
 // import ver from './../../../protos'
 const version_pb = require("./../../../protos/version_pb");
@@ -31,19 +39,23 @@ const result_pb = require("./../../../protos/result_pb");
 export default function ConnectWifiScreen({ navigation, route }) {
   const [connectedWifi, setConnectedWifi] = useState(null);
   const [showWifiError, setShowWifiError] = useState(false);
-  const [showGenralError, setShowGenralError] = useState(false);
+  const [showGenralError, setShowGeneralError] = useState(false);
   const { scannedWifis } = useSelector((state: any) => state.printer);
   const { AppTheme } = useTheme();
   const [deviceConnectedWifi, setDeviceConnectedWifi] = useState(null);
   const [selectedWifi, setSelectedWifi] = useState(null);
+
   const handleNext = () => {
     console.log(connectedWifi);
 
-    if (!connectedWifi) return toast.fail("Fial", "Please select network!");
-    navigation.navigate(ScreenNames.ConnectToWifiPasswordScreen, {
-      isSuccess: !!connectedWifi,
-      wifi: connectedWifi,
-    });
+    if (!connectedWifi) {
+      return toast.fail("Fail", "Please select network!");
+    } else {
+      navigation.navigate(ScreenNames.ConnectToWifiPasswordScreen, {
+        isSuccess: !!connectedWifi,
+        wifi: connectedWifi,
+      });
+    }
   };
 
   useEffect(() => {
@@ -78,7 +90,7 @@ export default function ConnectWifiScreen({ navigation, route }) {
     if (e?.id == "3") {
       return setShowWifiError(true);
     } else if (e?.id == "4") {
-      return setShowGenralError(true);
+      return setShowGeneralError(true);
     }
 
     setConnectedWifi(e);
@@ -86,7 +98,7 @@ export default function ConnectWifiScreen({ navigation, route }) {
 
   const handleOnClose = () => {
     setShowWifiError(false);
-    setShowGenralError(false);
+    setShowGeneralError(false);
   };
 
   function getReadableBand(bandValue) {
