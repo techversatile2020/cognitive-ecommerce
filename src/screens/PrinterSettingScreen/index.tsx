@@ -147,11 +147,9 @@ const PrinterSettingScreen = ({ navigation, route }) => {
   const handleRefresh = async () => {
     try {
       setLoading("Refreshing...");
-      // let res = await fetchPrinterDetails(IP_Address);
-      // dispatch(setPrinterDetailsByIp({ ip: IP_Address, details: res }));
       refetch();
       setLoading(null);
-      toast.success("Refreshed!!!");
+      toast.success("Refreshed!");
     } catch (error) {
       console.log("error refresing...", error);
       toast.fail("Fail", "Fail to refresh");
