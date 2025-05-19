@@ -5,7 +5,7 @@ import { setPrinterDetailsByIp } from "../../../redux/reducers";
 import { toast } from "../../../utils/toast.utils";
 import { store } from "../../../redux";
 
-export const usePrinter = (ip, initialVar = null) => {
+export const usePrinter = (ip, initialVar = null, interval: number|false = 5000) => {
   const dispatch = useDispatch();
   const { printerDetailsByIp } = useSelector((state: any) => state.printer);
   return useQuery({
@@ -39,7 +39,7 @@ export const usePrinter = (ip, initialVar = null) => {
       }
     },
     enabled: !!ip,
-    refetchInterval: 5000, // 5 sec polling
+    refetchInterval: interval,
     retry: false,
   });
 };

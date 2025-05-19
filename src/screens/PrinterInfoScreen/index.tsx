@@ -9,7 +9,7 @@ import {
 } from "../../components";
 import { styles } from "./styles";
 import { Images } from "../../config";
-import { useTheme } from "../../hooks";
+import { usePrinter, useTheme } from "../../hooks";
 import { useSelector } from "react-redux";
 import navigationService from "../../config/navigationService";
 const indexValues = [
@@ -82,6 +82,8 @@ const PrinterInfoScreen = ({ route, navigation }) => {
   };
 
   let isDisconnected = statusCategory == "Disconnected";
+
+  usePrinter(route?.params?.IP_Address);
 
   return (
     <MainContainer>

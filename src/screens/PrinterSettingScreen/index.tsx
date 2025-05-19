@@ -29,7 +29,7 @@ const PrinterSettingScreen = ({ navigation, route }) => {
   const [printer, setPrinter] = useState(route?.params?.data || {});
   const IP_Address = route?.params?.IP_Address;
   const [loading, setLoading] = useState(null);
-  const { refetch, isFetching, isLoading } = usePrinter(IP_Address);
+  const { refetch, isFetching, isLoading } = usePrinter(IP_Address, ["Status"], false);
   const {
     HostName,
     Status,
