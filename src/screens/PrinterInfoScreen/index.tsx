@@ -59,6 +59,7 @@ const PrinterInfoScreen = ({ route, navigation }) => {
     SpeedV,
     IndexV,
     HostName,
+    Status,
     statusCategory,
     Darkness,
     MediaTypeV,
@@ -122,7 +123,7 @@ const PrinterInfoScreen = ({ route, navigation }) => {
             centered
           >
             {/* Connected */}
-            {statusCategory == "OK" ? "Connected" : "Disconnected"}
+            {statusCategory == isDisconnected ? "Disconnected" : Status}
           </Text>
         </View>
         <SectionContainer containerStyles={styles.sectionContainerStyles}>
