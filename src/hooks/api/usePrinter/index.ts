@@ -23,7 +23,11 @@ export const usePrinter = (ip, initialVar = null, interval: number|false = 5000)
       } catch (error) {
         console.log("ERROR => ", error);
 
-        if (printerDetailsByIp[ip]) {
+        // manually fetch the latest state in case user remove the printer during the request
+        // and printerDetailsByIp may not get updated on time by redux.
+        const printerDetails = store.getState().printer.printerDetailsByIp[ip];
+
+        if (printerDetails) {
           dispatch(
             setPrinterDetailsByIp({
               ip,
