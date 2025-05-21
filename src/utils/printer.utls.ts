@@ -245,8 +245,9 @@ export function generateTestLabelScript(
   languageCode: PrinterLanguageCode,
   context: ScriptContext
 ): string {
+  const var_header = "! 0 0 0 0"
   const header = "! 0 100 390 1";
   const variableLines = resolveVariables(context).join("\n");
   const body = SCRIPT_TEMPLATES[languageCode] || SCRIPT_TEMPLATES[0];
-  return [header, variableLines, body].join("\n").trim();
+  return [var_header, variableLines, "END", header, body].join("\n").trim();
 }
