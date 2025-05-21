@@ -24,6 +24,12 @@ import { sendRequest } from "../../services/printerServices";
 import { toast } from "../../utils/toast.utils";
 import { generateTestLabelScript } from "../../utils/printer.utls";
 
+const calibrationMethods = [
+  { label: "Gap", value: "gap" },
+  { label: "Bar", value: "bar" },
+  { label: "Notch", value: "notch" },
+];
+
 const PrinterSettingScreen = ({ navigation, route }) => {
   const [showCalibrationModal, setShowCalibrationModal] = useState(false);
   const [printer, setPrinter] = useState(route?.params?.data || {});
@@ -84,13 +90,13 @@ const PrinterSettingScreen = ({ navigation, route }) => {
     }
   };
 
-  const handlePrinterSetting = async (path) => {
+  const handlePrinterSetting = async (path, parameter=undefined) => {
     try {
       setLoading("Setting values to printer...");
       let response = await sendRequest({
         ip: IP_Address,
         method: "POST",
-        endpoint: `${path}.cgi`,
+        endpoint: parameter ? `${path}.cgi?${parameter}` : `${path}.cgi`,
         data: "",
       });
       console.log("Success response => ", response);
@@ -105,10 +111,16 @@ const PrinterSettingScreen = ({ navigation, route }) => {
     }
   };
 
-  const triggerCalibrationModal = () => {
-    handlePrinterSetting("calibrate");
+  const triggerCalibrationModal = (indexMode) => {
+    console.log(`index mode: ${indexMode}`);
+
+    handlePrinterSetting("calibrate", `type=${indexMode}`);
     setShowCalibrationModal(!showCalibrationModal);
   };
+
+  const closeCalibrationModal = () => {
+    setShowCalibrationModal(!showCalibrationModal);
+  }
 
   useEffect(() => {
     const setCalibError = async () => {
@@ -268,22 +280,18 @@ const PrinterSettingScreen = ({ navigation, route }) => {
       </View>
       <CalibrationModal
         isVisible={showCalibrationModal}
-        onClose={triggerCalibrationModal}
+        onTrigger={triggerCalibrationModal}
+        onClose={closeCalibrationModal}
       />
       <Loader visible={!!loading} text={loading} />
     </MainContainer>
   );
 };
 
-const CalibrationModal = ({ isVisible, onClose }) => {
+const CalibrationModal = ({ isVisible, onTrigger, onClose }) => {
   const { AppTheme } = useTheme();
-  const [selectedValue, setSelectedValue] = useState<string | number>("2");
+  const [selectedValue, setSelectedValue] = useState<string>("gap");
 
-  const data = [
-    { label: "Gap", value: "1" },
-    { label: "Bar", value: "2" },
-    { label: "Notch", value: "3" },
-  ];
   return (
     <CustomModal isVisible={isVisible} onClose={onClose}>
       <View
@@ -303,7 +311,7 @@ const CalibrationModal = ({ isVisible, onClose }) => {
             Select Your Media Type
           </Text>
           <CustomDropdown
-            data={data}
+            data={calibrationMethods}
             value={selectedValue}
             onChange={setSelectedValue}
             placeholder="Pick a color"
@@ -339,7 +347,7 @@ const CalibrationModal = ({ isVisible, onClose }) => {
           <PrimaryButton
             title="Calibrate"
             customStyles={styles.modalBtn}
-            onPress={onClose}
+            onPress={onTrigger.bind(this, selectedValue)}
           />
           <CustomTouchable
             onPress={onClose}
