@@ -36,6 +36,13 @@ const PrinterSettingScreen = ({ navigation, route }) => {
   const IP_Address = route?.params?.IP_Address;
   const [loading, setLoading] = useState(null);
   const { refetch, isFetching, isLoading } = usePrinter(IP_Address, ["Status"], false);
+  const printerDetails = useSelector((state: any) => state.printer.printerDetailsByIp[IP_Address]);
+
+  // in case it accidentally navigate here right after printer card removed. go back to home screne.
+  if (!Object.keys(printerDetails).length) {
+    return navigation.goBack();
+  }
+
   const {
     HostName,
     Status,
@@ -46,7 +53,7 @@ const PrinterSettingScreen = ({ navigation, route }) => {
     Darkness,
     PrintWidth,
     ShiftLeft,
-  } = useSelector((state: any) => state.printer.printerDetailsByIp[IP_Address]);
+  } = printerDetails;
 
   const { AppTheme } = useTheme();
   const handleClick = (el) => {
@@ -75,7 +82,7 @@ const PrinterSettingScreen = ({ navigation, route }) => {
         break;
       case "print diagnostic label":
         // console.log(el.title);
-        handlePrinterSetting("diagnostic");
+        handlePrinterSetting("scripttransfer", undefined, "!PRINT TESTLABEL\r\n");
         break;
       case "print test label":
         // console.log(el.title);
@@ -90,14 +97,14 @@ const PrinterSettingScreen = ({ navigation, route }) => {
     }
   };
 
-  const handlePrinterSetting = async (path, parameter=undefined) => {
+  const handlePrinterSetting = async (path, parameter=undefined, data=undefined) => {
     try {
       setLoading("Setting values to printer...");
       let response = await sendRequest({
         ip: IP_Address,
         method: "POST",
         endpoint: parameter ? `${path}.cgi?${parameter}` : `${path}.cgi`,
-        data: "",
+        data: data ? `${data}` : ``,
       });
       console.log("Success response => ", response);
       refetch();
