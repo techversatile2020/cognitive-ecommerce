@@ -28,10 +28,10 @@ const PrinterSettingNested = ({ route }) => {
         state.printer.printerDetailsByIp[route?.params?.IP_Address]
     );
   usePrinter(IP_Address, [
+    "Status",
     "ModelNum",
     "Darkness",
     "SpeedV",
-    "statusCategory",
     "LanguageV",
   ]);
   const { refetch } = usePrinter(IP_Address);
