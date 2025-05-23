@@ -29,7 +29,7 @@ export const IncreamentDecreamentComp: React.FC<Props> = ({
     <View style={{ ...styles.container, backgroundColor: AppTheme.White }}>
       <CustomTouchable
         style={{ ...styles.btn, backgroundColor: AppTheme.skyBlue }}
-        onPress={(e) => setValue(parseFloat(value) - 1)}
+        onPress={(e) => setValue((parseFloat(value) - 0.1).toFixed(2))}
       >
         <CustomImage source={Images.minus} style={styles.btnIcon} />
       </CustomTouchable>
@@ -49,7 +49,7 @@ export const IncreamentDecreamentComp: React.FC<Props> = ({
       </View>
       <CustomTouchable
         style={{ ...styles.btn, backgroundColor: AppTheme.skyBlue }}
-        onPress={(e) => setValue(parseFloat(value) + 1)}
+        onPress={(e) => setValue((parseFloat(value) + 0.1).toFixed(2))}
       >
         <CustomImage source={Images.plus} style={styles.btnIcon} />
       </CustomTouchable>

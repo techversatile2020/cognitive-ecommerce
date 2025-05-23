@@ -52,14 +52,16 @@ const MediaSettingReceiptComp = ({ data }) => {
   ]);
 
   const { AppTheme } = useTheme();
-  const [printWidth, setPrintWidth] = useState<any>(null);
+  const [printWidth, setPrintWidth] = useState<any>(0);
   const [shiftLeft, setShiftLeft] = useState<any>(0);
   const [printWidthError, setPrintWidthError] = useState<string | null>(null);
   const [shiftLeftError, setShiftLeftError] = useState<string | null>(null);
   const [loading, setLoading] = useState(null);
   useEffect(() => {
-    setPrintWidth(PrintWidth);
-    setShiftLeft(Number(ShiftLeft));
+    // setPrintWidth(PrintWidth);
+    // setShiftLeft(Number(ShiftLeft));
+    setPrintWidth(PrintWidth ? Number(PrintWidth) / 100 : 0);
+    setShiftLeft(ShiftLeft ? Number(ShiftLeft) / 100 : 0);
   }, []);
 
   const getPrintWidthRange = () => {
@@ -135,7 +137,11 @@ const MediaSettingReceiptComp = ({ data }) => {
       await sendRequest({
         ip,
         endpoint: "saveprintervarvalues.cgi",
-        data: `ShiftLeft=${shiftLeft}&MediaTypeV=${selectedType}&PrintWidth=${printWidth}`,
+        data: `ShiftLeft=${Math.round(
+          shiftLeft * 100
+        )}&MediaTypeV=${selectedType}&PrintWidth=${Math.round(
+          printWidth * 100
+        )}`,
         method: "POST",
       });
       refetch();
@@ -149,13 +155,30 @@ const MediaSettingReceiptComp = ({ data }) => {
     }
   };
 
+  useEffect(() => {
+    if (ModelNum) {
+      const thirdChar = ModelNum.charAt(2).toUpperCase();
+      if (thirdChar === "T") {
+        setTypeData([
+          { label: "Direct thermal", value: "0" },
+          { label: "Thermal Transfer", value: "1" },
+        ]);
+      } else {
+        setTypeData([{ label: "Direct thermal", value: "0" }]);
+        setSelectedType("0");
+      }
+    }
+  }, [ModelNum]);
+
   const handleTestPrint = async () => {
     try {
       setLoading("Sending test command...");
 
       let script = generateTestLabelScript(LanguageV, {
-        shiftLeft: shiftLeft,
-        printWidth: printWidth,
+        // shiftLeft: shiftLeft,
+        // printWidth: printWidth,
+        shiftLeft: Math.round(shiftLeft * 100),
+        printWidth: Math.round(printWidth * 100),
       });
 
       let response = await sendRequest({
@@ -224,7 +247,7 @@ const MediaSettingReceiptComp = ({ data }) => {
               />
             }
           />
-          <InfoFieldComp
+          {/* <InfoFieldComp
             title="Print Width (Hundredths of an Inch)"
             children={
               <CustomTextInput
@@ -240,6 +263,16 @@ const MediaSettingReceiptComp = ({ data }) => {
                 radius={10}
                 height={50}
                 // style={{ padding: SD.wp(15) }}
+              />
+            }
+          /> */}
+          <InfoFieldComp
+            title="Print Width (Inches)"
+            children={
+              <IncreamentDecreamentComp
+                value={printWidth}
+                setValue={(e) => setPrintWidth(e)}
+                sign="in"
               />
             }
           />

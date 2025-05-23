@@ -66,8 +66,14 @@ const MediaSettingLabelComp = ({ data }: any) => {
   ]);
   const { AppTheme } = useTheme();
   const [modelNumber, setModelNumber] = useState(null);
-  const [printWidth, setPrintWidth] = useState<any>(Number(PrintWidth || 0));
-  const [shiftLeft, setShiftLeft] = useState<any>(Number(ShiftLeft || 0));
+  // const [printWidth, setPrintWidth] = useState<any>(Number(PrintWidth || 0));
+  // const [shiftLeft, setShiftLeft] = useState<any>(Number(ShiftLeft || 0));
+  const [printWidth, setPrintWidth] = useState<any>(
+    PrintWidth ? Number(PrintWidth) / 100 : 0
+  );
+  const [shiftLeft, setShiftLeft] = useState<any>(
+    ShiftLeft ? Number(ShiftLeft) / 100 : 0
+  );
   const [printWidthError, setPrintWidthError] = useState<string | null>(null);
   const [shiftLeftError, setShiftLeftError] = useState<string | null>(null);
   const [selectedType, setSelectedType] = useState<string | number>(MediaTypeV);
@@ -138,6 +144,21 @@ const MediaSettingLabelComp = ({ data }: any) => {
     }
   }, [ModelNum, printWidth, shiftLeft, selectedSpeed]);
 
+  useEffect(() => {
+    if (ModelNum) {
+      const thirdChar = ModelNum.charAt(2).toUpperCase();
+      if (thirdChar === "T") {
+        setTypeData([
+          { label: "Direct thermal", value: "0" },
+          { label: "Thermal Transfer", value: "1" },
+        ]);
+      } else {
+        setTypeData([{ label: "Direct thermal", value: "0" }]);
+        setSelectedType("0"); // reset if not available
+      }
+    }
+  }, [ModelNum]);
+
   const handleSetValues = async () => {
     if (shiftLeftError !== null || printWidthError !== null) return;
     try {
@@ -145,7 +166,9 @@ const MediaSettingLabelComp = ({ data }: any) => {
       await sendRequest({
         ip,
         endpoint: "saveprintervarvalues.cgi",
-        data: `ShiftLeft=${shiftLeft}&IndexV=${selectedSpeed}&PrintWidth=${printWidth}`,
+        data: `ShiftLeft=${Math.round(
+          shiftLeft * 100
+        )}&IndexV=${selectedSpeed}&PrintWidth=${Math.round(printWidth * 100)}`,
         method: "POST",
       });
       refetch();
@@ -182,8 +205,10 @@ const MediaSettingLabelComp = ({ data }: any) => {
       setLoading("Sending test command...");
 
       let script = generateTestLabelScript(LanguageV, {
-        shiftLeft: shiftLeft,
-        printWidth: printWidth,
+        // shiftLeft: shiftLeft,
+        // printWidth: printWidth,
+        shiftLeft: Math.round(shiftLeft * 100),
+        printWidth: Math.round(printWidth * 100),
       });
 
       let response = await sendRequest({
