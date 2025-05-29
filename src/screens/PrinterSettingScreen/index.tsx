@@ -111,7 +111,11 @@ const PrinterSettingScreen = ({ navigation, route }) => {
 
       refetch();
       setLoading(null);
-      toast.success(`${path} sucesss`);
+      if (path === "calibrate") {
+        toast.success(`calibrate in progress`);
+      } else {
+        toast.success(`${path} sucesss`);
+      }
     } catch (error) {
       setLoading(null);
       toast.fail(`Failed','Failed to ${path} printer`);
@@ -120,41 +124,28 @@ const PrinterSettingScreen = ({ navigation, route }) => {
 
   const handleCalibrate = async (indexMode) => {
     handlePrinterSetting("calibrate", `type=${indexMode}`);
-    setShowCalibrationModal(false);
+    let intervalId = null;
+    setLoading(`Calibrating...`);
+
+    intervalId = setInterval(async () => {
+      await refetch();
+
+      // Get the latest status from Redux manually
+      const latestStatus =
+        store.getState().printer.printerDetailsByIp[IP_Address]?.Status;
+      console.log("STATUS => ", latestStatus);
+
+      if (
+        latestStatus === "Calibrate Succeeded" ||
+        latestStatus === "Calibrate Failed"
+      ) {
+        clearInterval(intervalId);
+        toast.success(`Calibration result: ${latestStatus}`);
+        setShowCalibrationModal(false);
+        setLoading(null);
+      }
+    }, 2000);
   };
-
-  const triggerCalibrationModal = (indexMode) => {
-    handlePrinterSetting("calibrate", `type=${indexMode}`);
-    setShowCalibrationModal(!showCalibrationModal);
-  };
-
-  useEffect(() => {
-    if (Status === "Calibrating") {
-      console.log("Calibrating", Status);
-
-      let intervalId = null;
-      setLoading(`${Status}...`);
-
-      intervalId = setInterval(async () => {
-        await refetch();
-
-        // Get the latest status from Redux manually
-        const latestStatus =
-          store.getState().printer.printerDetailsByIp[IP_Address]?.Status;
-        console.log("STATUS => ", latestStatus);
-
-        if (
-          latestStatus === "Calibrate Succeeded" ||
-          latestStatus === "Calibrate Failed"
-        ) {
-          clearInterval(intervalId);
-          toast.success(`Calibration result: ${latestStatus}`);
-          setShowCalibrationModal(false);
-          setLoading(null);
-        }
-      }, 2000);
-    }
-  }, [Status]);
 
   const closeCalibrationModal = () => {
     setShowCalibrationModal(!showCalibrationModal);
@@ -303,7 +294,6 @@ const PrinterSettingScreen = ({ navigation, route }) => {
       </View>
       <CalibrationModal
         isVisible={showCalibrationModal}
-        onTrigger={triggerCalibrationModal}
         onClose={closeCalibrationModal}
         onCalibrate={handleCalibrate}
         status={Status}
@@ -313,7 +303,7 @@ const PrinterSettingScreen = ({ navigation, route }) => {
   );
 };
 
-const CalibrationModal = ({ isVisible, onClose, onTrigger, onCalibrate, status }) => {
+const CalibrationModal = ({ isVisible, onClose, onCalibrate, status }) => {
   const { AppTheme } = useTheme();
   const [selectedValue, setSelectedValue] = useState<string>("gap");
 
@@ -336,7 +326,7 @@ const CalibrationModal = ({ isVisible, onClose, onTrigger, onCalibrate, status }
             Select Your Media Type
           </Text>
 
-          {status != "Ready" && status === "Calibrate Succeeded" ? (
+          {status === "Calibrate Succeeded" ? (
             <Text
               regular
               size={12}
@@ -355,6 +345,24 @@ const CalibrationModal = ({ isVisible, onClose, onTrigger, onCalibrate, status }
               centered
             >
               ❌ Calibration failed. Please check the printer and try again
+            </Text>
+          ) : status == "Ready" ? (
+            <Text
+              regular
+              size={12}
+              color={AppTheme.SuccessTextColor}
+              bottomSpacing={5}
+            >
+              Printer is ready to calibrate
+            </Text>
+          ) : status == "Calibrating" ? (
+            <Text
+              regular
+              size={12}
+              color={AppTheme.DispatcedTextColor}
+              bottomSpacing={5}
+            >
+              Calibrating in progress
             </Text>
           ) : (
             <Text
