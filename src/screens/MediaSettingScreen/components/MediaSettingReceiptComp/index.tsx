@@ -149,8 +149,6 @@ const MediaSettingReceiptComp = ({ data }) => {
       setLoading(null);
     } catch (error) {
       setLoading(null);
-      console.log("Setting value error => ", error);
-
       toast.fail("Failed", "Update failed. Check printer connections!!!");
     }
   };
@@ -188,12 +186,10 @@ const MediaSettingReceiptComp = ({ data }) => {
         data: script,
         headers: { "Content-Type": "text/plain" },
       });
-      console.log("values afer test => ", response);
       setLoading(null);
       toast.success("Test print command sent!");
     } catch (error) {
       setLoading(null);
-      console.log("Setting value error => ", error);
 
       toast.fail("Failed", "Test failed.");
     }

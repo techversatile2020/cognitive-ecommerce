@@ -13,7 +13,6 @@ import { PrinterSetupStepsCard } from "./components";
 const PrinterConnectedSuccessScreen = ({ navigation, route }) => {
   const { AppTheme } = useTheme();
   const isSuccess = route?.params?.isSuccess || false;
-  console.log("Screen printed connedted Success screen ");
 
   const handleNext = () => {
     navigation.replace(ScreenNames.MainScreen, {

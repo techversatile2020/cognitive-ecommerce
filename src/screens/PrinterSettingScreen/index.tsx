@@ -23,13 +23,18 @@ import { useSelector } from "react-redux";
 import { sendRequest } from "../../services/printerServices";
 import { toast } from "../../utils/toast.utils";
 import { generateTestLabelScript } from "../../utils/printer.utls";
+import { store } from "../../redux";
 
 const PrinterSettingScreen = ({ navigation, route }) => {
   const [showCalibrationModal, setShowCalibrationModal] = useState(false);
   const [printer, setPrinter] = useState(route?.params?.data || {});
   const IP_Address = route?.params?.IP_Address;
   const [loading, setLoading] = useState(null);
-  const { refetch, isFetching, isLoading } = usePrinter(IP_Address, ["Status"], false);
+  const { refetch, isFetching, isLoading } = usePrinter(
+    IP_Address,
+    ["Status"],
+    false
+  );
   const {
     HostName,
     Status,
@@ -60,7 +65,6 @@ const PrinterSettingScreen = ({ navigation, route }) => {
         navigation.navigate(ScreenNames.AdvanceSettingScreen, { IP_Address });
         break;
       case "open http server":
-        // console.log(el.title);
         navigation.navigate(ScreenNames.HttpServerWebVIew, { IP_Address });
         break;
       case "start calibration":
@@ -68,57 +72,78 @@ const PrinterSettingScreen = ({ navigation, route }) => {
         setShowCalibrationModal(true);
         break;
       case "print diagnostic label":
-        // console.log(el.title);
         handlePrinterSetting("diagnostic");
         break;
       case "print test label":
-        // console.log(el.title);
         handleTestPrint();
         break;
       case "factory reset":
         navigation.navigate(ScreenNames.FactoryResetScreen, { IP_Address });
         break;
       default:
-        console.log(null);
         break;
     }
   };
 
-  const handlePrinterSetting = async (path) => {
+  const handlePrinterSetting = async (path, indexV) => {
     try {
       setLoading("Setting values to printer...");
-      let response = await sendRequest({
+      await sendRequest({
         ip: IP_Address,
         method: "POST",
         endpoint: `${path}.cgi`,
-        data: "",
+        data: path == "calibrate" ? `IndexV=${indexV}` : "",
       });
-      console.log("Success response => ", response);
-      refetch();
 
+      refetch();
       setLoading(null);
       toast.success(`${path} sucesss`);
     } catch (error) {
       setLoading(null);
-      console.log("handlePRinterSettings", error);
       toast.fail(`Failed','Failed to ${path} printer`);
     }
   };
 
-  const triggerCalibrationModal = () => {
-    handlePrinterSetting("calibrate");
-    setShowCalibrationModal(!showCalibrationModal);
+  const handleCalibrate = async (indexV) => {
+    handlePrinterSetting("calibrate", indexV);
+    setShowCalibrationModal(false);
   };
+  const triggerCalibrationModal = () => {
+    setShowCalibrationModal(false);
+  };
+
+  useEffect(() => {
+    if (Status === "Calibrating") {
+      console.log("Calibrating", Status);
+
+      let intervalId = null;
+      setLoading(`${Status}...`);
+
+      intervalId = setInterval(async () => {
+        await refetch();
+
+        // Get the latest status from Redux manually
+        const latestStatus =
+          store.getState().printer.printerDetailsByIp[IP_Address]?.Status;
+        console.log("STATUS => ", latestStatus);
+
+        if (
+          latestStatus === "Calibrate Succeeded" ||
+          latestStatus === "Calibrate Failed"
+        ) {
+          clearInterval(intervalId);
+          toast.success(`Calibration result: ${latestStatus}`);
+          setShowCalibrationModal(false);
+          setLoading(null);
+        }
+      }, 2000);
+    }
+  }, [Status]);
 
   useEffect(() => {
     const setCalibError = async () => {
       try {
         let errorCode = Status == "Calibrate Failed" ? 21 : 20;
-        console.log({
-          IP_Address,
-          errorCode,
-        });
-
         let response = await sendRequest({
           ip: IP_Address,
           method: "POST",
@@ -126,15 +151,8 @@ const PrinterSettingScreen = ({ navigation, route }) => {
           data: `error=${errorCode}`,
           headers: {},
         });
-        console.log("Error response => ", response);
-      } catch (error) {
-        console.log("error updating calibrate status ", error);
-      }
+      } catch (error) {}
     };
-    if (Status == "Calibrate Succeeded" || Status == "Calibrate Failed") {
-      // console.log("Calibriting success");
-      // setCalibError();
-    }
   }, [Status]);
 
   const statusFontColor =
@@ -151,7 +169,6 @@ const PrinterSettingScreen = ({ navigation, route }) => {
       setLoading(null);
       toast.success("Refreshed!");
     } catch (error) {
-      console.log("error refresing...", error);
       toast.fail("Fail", "Fail to refresh");
     }
   };
@@ -175,12 +192,10 @@ const PrinterSettingScreen = ({ navigation, route }) => {
         data: script,
         headers: { "Content-Type": "text/plain" },
       });
-      console.log("values afer test => ", response);
       setLoading(null);
       toast.success("Test print command sent!");
     } catch (error) {
       setLoading(null);
-      console.log("Setting value error => ", error);
 
       toast.fail("Failed", "Test failed.");
     }
@@ -269,13 +284,15 @@ const PrinterSettingScreen = ({ navigation, route }) => {
       <CalibrationModal
         isVisible={showCalibrationModal}
         onClose={triggerCalibrationModal}
+        onCalibrate={handleCalibrate}
+        status={Status}
       />
       <Loader visible={!!loading} text={loading} />
     </MainContainer>
   );
 };
 
-const CalibrationModal = ({ isVisible, onClose }) => {
+const CalibrationModal = ({ isVisible, onClose, onCalibrate, status }) => {
   const { AppTheme } = useTheme();
   const [selectedValue, setSelectedValue] = useState<string | number>("2");
 
@@ -302,7 +319,41 @@ const CalibrationModal = ({ isVisible, onClose }) => {
           >
             Select Your Media Type
           </Text>
+
+          {status != "Ready" && status === "Calibrate Succeeded" ? (
+            <Text
+              regular
+              size={12}
+              color={AppTheme.lightGreen}
+              bottomSpacing={5}
+              centered
+            >
+              ✅ Calibration completed successfully
+            </Text>
+          ) : status == "Calibrate Failed" ? (
+            <Text
+              regular
+              size={12}
+              color={AppTheme.ErrorTextColor}
+              bottomSpacing={5}
+              centered
+            >
+              ❌ Calibration failed. Please check the printer and try again
+            </Text>
+          ) : (
+            <Text
+              regular
+              size={12}
+              color={AppTheme.ErrorTextColor}
+              bottomSpacing={5}
+            >
+              ⚠️ Printer is not ready. Please clear any errors before starting
+              calibration
+            </Text>
+          )}
+
           <CustomDropdown
+            disable={status != "Ready"}
             data={data}
             value={selectedValue}
             onChange={setSelectedValue}
@@ -339,7 +390,8 @@ const CalibrationModal = ({ isVisible, onClose }) => {
           <PrimaryButton
             title="Calibrate"
             customStyles={styles.modalBtn}
-            onPress={onClose}
+            onPress={() => onCalibrate(selectedValue)}
+            disabled={status != "Ready"}
           />
           <CustomTouchable
             onPress={onClose}

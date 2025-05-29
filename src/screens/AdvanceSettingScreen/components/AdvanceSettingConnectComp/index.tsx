@@ -79,7 +79,6 @@ export const AdvanceSettingConnectComp = ({ data }) => {
         );
       } catch (err) {
         setLoading(null);
-        console.log("Setting value error => ", err);
         toast.fail("Failed", "Update failed. ");
       }
     }

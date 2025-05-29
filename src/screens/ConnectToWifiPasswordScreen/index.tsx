@@ -59,9 +59,7 @@ const ConnectToWifiPasswordScreen = ({ route, navigation }) => {
   const handleApply = async () => {
     try {
       await ConnectWifiRouter(routerName, wifiPassword, setLoading);
-    } catch (error) {
-      console.log("ConnectWifiRouter ERROR =>", error);
-    }
+    } catch (error) {}
   };
 
   return (

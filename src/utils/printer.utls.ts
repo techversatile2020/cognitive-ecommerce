@@ -43,7 +43,6 @@ export async function ConnectButtonHandler({
 
     // 1. Connect and initialize device
     const connectedDevice = await BLEService.connectToDevice(device.id);
-    console.log("Connected to device:", connectedDevice.id);
 
     // 2. Discover services and characteristics
     await BLEService.discoverAllServicesAndCharacteristicsForDevice();
@@ -103,14 +102,11 @@ export async function ConnectButtonHandler({
           CHAR_WRITE_UUID,
           statusPayload
         );
-      } catch (error) {
-        console.log("iOS polling error:", error);
-      }
+      } catch (error) {}
     }
 
     // 8. Update application state
     dispatch(setCurrentConnectedPrinter(device));
-    console.log("WiFi scan initiated successfully");
     await new Promise((resolve) => setTimeout(resolve, 300));
     setLoading(null);
     if (goNext) {
@@ -177,8 +173,6 @@ export const ConnectWifiRouter = async (wifiInfo, wifiPassword, setLoading) => {
       setLoading(null);
       resolve({});
     } catch (error) {
-      console.log("Error connecting wifi => ", error);
-
       reject(error);
     }
   });

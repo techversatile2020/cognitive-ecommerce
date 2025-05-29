@@ -67,7 +67,6 @@ function AddPrinter() {
       ])
     );
 
-    console.log("scanning");
     return;
   }
 
@@ -76,7 +75,6 @@ function AddPrinter() {
   }
 
   async function ConnectWifiRouter(wifiInfo) {
-    console.log(`connecting to ${bin2String(wifiInfo.getWifi().getSsid())}`);
     const request = new request_pb.Request();
     const wifiConfig = new request_pb.WifiConfig();
     const connectWifiInfo = new common_pb.WifiInfo();
@@ -89,14 +87,12 @@ function AddPrinter() {
     wifiConfig.setWifi(connectWifiInfo);
     request.setConfig(wifiConfig);
     request.setOpCode(common_pb.OpCode.SET_CONFIG);
-    console.log(`debug: ${request.serializeBinary()}`);
     await BLEService.writeCharacteristicWithResponseForDevice(
       "14387800-130c-49e7-b877-2881c89cb258",
       "14387802-130c-49e7-b877-2881c89cb258",
       btoa(String.fromCharCode(...new Uint8Array(request.serializeBinary())))
     );
     await timeout(4000);
-    console.log(`get status`);
     const statusRequest = new request_pb.Request();
     statusRequest.setOpCode(common_pb.OpCode.GET_STATUS);
     await BLEService.writeCharacteristicWithResponseForDevice(
@@ -109,14 +105,10 @@ function AddPrinter() {
   }
 
   function listener1(error, characteristic) {
-    console.log("listener1");
     const response = response_pb.Response.deserializeBinary(
       base64ToArrayBuffer(characteristic.value)
     );
     if (response.hasDeviceStatus()) {
-      console.log(
-        `connection info: ${response.getDeviceStatus().getConnectionInfo()}`
-      );
       const ipAddr = `${
         response.getDeviceStatus().getConnectionInfo().getIp4Addr()[0]
       }.${response.getDeviceStatus().getConnectionInfo().getIp4Addr()[1]}.${
@@ -150,15 +142,12 @@ function AddPrinter() {
   }
 
   async function ConnectButtonHandler(device) {
-    console.log(`Connecting to ${device.name}`);
     BLEService.connectToDevice(device.id)
       .then((device) => {
-        console.log("connected");
         updateBleConnectionStatus("connected");
         return BLEService.discoverAllServicesAndCharacteristicsForDevice();
       })
       .then((device) => {
-        console.log("found services");
         return BLEService.readCharacteristicForDevice(
           fullUUID("14387800-130c-49e7-b877-2881c89cb258"),
           fullUUID("14387801-130c-49e7-b877-2881c89cb258")
@@ -167,7 +156,6 @@ function AddPrinter() {
       .then((data) => {
         const version_info = base64ToArrayBuffer(data.value);
         const version = version_pb.Info.deserializeBinary(version_info);
-        console.log(`version info: ${version.getVersion()}`);
 
         return BLEService.monitorCharacteristicForService(
           "14387800-130c-49e7-b877-2881c89cb258",
@@ -197,11 +185,8 @@ function AddPrinter() {
           reqBase64
         );
       })
-      .then((data) => {
-        console.log("start wifi");
-      })
+      .then((data) => {})
       .catch((err) => {
-        console.log(`failed: ${err}`);
         updateBleConnectionStatus("connectFailed");
       });
   }

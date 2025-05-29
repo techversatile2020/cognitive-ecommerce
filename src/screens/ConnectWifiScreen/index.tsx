@@ -20,13 +20,13 @@ import { useSelector } from "react-redux";
 import { wifiService } from "../../../services";
 import { toast } from "../../utils/toast.utils";
 import WifiManager from "react-native-wifi-reborn";
-import { LogBox } from 'react-native';
+import { LogBox } from "react-native";
 
 // https://stackoverflow.com/questions/66310505/non-serializable-values-were-found-in-the-navigation-state-when-passing-a-functi
 // Navigate to ScreenNames.ConnectToWifiPasswordScreen screen with parameter "connectedWifi" causes this warning.
 // As we are not using deep link or state persistence, we can ignore this warning.
 LogBox.ignoreLogs([
-  'Non-serializable values were found in the navigation state',
+  "Non-serializable values were found in the navigation state",
 ]);
 
 // import ver from './../../../protos'
@@ -46,8 +46,6 @@ export default function ConnectWifiScreen({ navigation, route }) {
   const [selectedWifi, setSelectedWifi] = useState(null);
 
   const handleNext = () => {
-    console.log(connectedWifi);
-
     if (!connectedWifi) {
       return toast.fail("Fail", "Please select network!");
     } else {
@@ -75,9 +73,7 @@ export default function ConnectWifiScreen({ navigation, route }) {
         try {
           const ssid = await WifiManager.getCurrentWifiSSID();
           setDeviceConnectedWifi(ssid);
-        } catch(error) {
-          console.log("Cannot get current SSID!");
-        }
+        } catch (error) {}
       } else {
         // Permission denied
         // toast.fail('Fail','User denied wifi ')

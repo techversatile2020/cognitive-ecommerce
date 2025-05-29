@@ -53,7 +53,6 @@ export const getPrinterStatus = async (ip4Addr) => {
       const value = extractVarValue(text, key);
       result[key] = key === "RSSI" ? getRssiString(Number(value)) : value;
     }
-    console.log("Resputl => ", result);
 
     return result;
   } catch (error) {

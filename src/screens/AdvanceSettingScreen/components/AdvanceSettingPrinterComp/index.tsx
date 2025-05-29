@@ -53,12 +53,10 @@ export const AdvanceSettingPrinterComp = ({ data }) => {
         data: `LanguageV=${selectedLanguage}`,
       });
       refetch();
-      console.log("values setter response => ", response);
       setLoading(null);
       toast.success("Success setting updated!");
     } catch (err) {
       setLoading(null);
-      console.log("Setting value error => ", err);
       toast.fail("Failed", "Update failed.");
     }
   };

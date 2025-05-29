@@ -82,7 +82,6 @@ const SearchPrinterScreen = ({ navigation }) => {
       setLoading(null);
     } catch (error) {
       setLoading(null);
-      console.log("EERRR", error);
     }
   };
 
@@ -127,7 +126,6 @@ const SearchPrinterScreen = ({ navigation }) => {
         return;
       }
     } catch (error) {
-      console.log("HandleApply Error => ", error);
       setShowPrinterErrorModal("Unable to Connect to Device");
       setConnectionError(
         error?.message || "Unexpected error\n please try again"
@@ -135,11 +133,6 @@ const SearchPrinterScreen = ({ navigation }) => {
     }
   };
   function listener1(error, characteristic) {
-    console.log("ERROR, CHARACTERISTICS => ", {
-      error,
-      characteristic,
-    });
-
     if (error) {
       setLoading(false);
       // dispatch(setCurrentConnectedPrinter(null));
@@ -159,7 +152,6 @@ const SearchPrinterScreen = ({ navigation }) => {
 
           fetchPrinterDetails(ipAddr)
             .then((details: any) => {
-              console.log("Got Details", details);
               toast.success(
                 `Printer ${details?.HostName?.toUpperCase()} connected successfully`
               );
@@ -193,8 +185,6 @@ const SearchPrinterScreen = ({ navigation }) => {
         err?.toString()?.includes("non-serializable");
 
       if (!isSafeToIgnore) {
-        console.log("Unexpected error in Wifi handler:", err);
-        // Optionally show toast or handle error
       }
     }
   }
@@ -203,10 +193,8 @@ const SearchPrinterScreen = ({ navigation }) => {
     if (error) {
       setLoading(false);
       navigation.navigate(ScreenNames.PrinterSetupScreen);
-      console.log("Listner 2 => ", error);
       return toast.fail("Retry", "please retry Bluetooth");
     }
-    console.log("Recieved char => ", characteristic.value);
     try {
       const resultVal = base64ToArrayBuffer(characteristic.value);
       const result = result_pb.Result.deserializeBinary(resultVal);
@@ -217,9 +205,7 @@ const SearchPrinterScreen = ({ navigation }) => {
           dispatch(addScannedWifi(scanRecord));
         }
       }
-    } catch (error) {
-      console.log("Unable to get wifi list: ", error);
-    }
+    } catch (error) {}
   }
 
   // useEffect(() => {

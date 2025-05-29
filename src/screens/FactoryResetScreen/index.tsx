@@ -43,8 +43,6 @@ const FactoryResetScreen = ({ navigation, route }) => {
     } catch (err) {
       setLoading(null);
 
-      console.log(err);
-
       toast.fail(
         "Fail",
         "Factory reset failed. Please check device connection."
