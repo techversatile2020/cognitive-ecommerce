@@ -45,7 +45,6 @@ export const SectionContainer: React.FC<MainContainerProps> = ({
     // >
     <CardContainer
       onPress={() => {
-        console.log("dadada");
         if (onPress) {
           onPress();
         }

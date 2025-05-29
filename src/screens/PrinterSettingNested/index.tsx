@@ -69,12 +69,10 @@ const PrinterSettingNested = ({ route }) => {
         data: `Darkness=${sliderValue}&SpeedV=${selectedSpeed}`,
       });
       refetch();
-      console.log("values setter response => ", response);
       setLoading(null);
       toast.success("Success setting updated!");
     } catch (err) {
       setLoading(null);
-      console.log("Setting value error => ", err);
       toast.fail("Failed", "Update failed.");
     }
   };
@@ -96,12 +94,10 @@ const PrinterSettingNested = ({ route }) => {
         data: script,
         headers: { "Content-Type": "text/plain" },
       });
-      console.log("values afer test => ", response);
       setLoading(null);
       toast.success("Test print command sent!");
     } catch (error) {
       setLoading(null);
-      console.log("Setting value error => ", error);
 
       toast.fail("Failed", "Test failed.");
     }

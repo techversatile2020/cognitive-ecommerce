@@ -365,7 +365,6 @@ class BLEServiceInstance {
         CHARACTERISTIC_UUID,
         base64Value
       );
-      console.log("TRUNED ON");
 
       this.showSuccessToast("Turned LED ON");
     } catch (error) {
@@ -521,7 +520,6 @@ class BLEServiceInstance {
         characteristicUUID,
         listener // Pass the listener to handle data updates
       );
-      console.log(`Notifications enabled for ${characteristicUUID}`);
     } else {
       console.warn("Characteristic is not notifiable or indicatable");
     }
@@ -717,7 +715,6 @@ class BLEServiceInstance {
   //     WIFI_SERVICE_UUID,
   //     CONTROL_POINT_CHAR_UUID,
   //     (error, characteristic) => {
-  //       console.log("EVENT RUNNING...");
 
   //       if (error) {
   //         console.error("🚨 Error monitoring response:", error);
@@ -725,22 +722,13 @@ class BLEServiceInstance {
   //       }
 
   //       const base64Value = characteristic.value;
-  //       console.log("base64Value ", base64Value);
 
   //       const buffer = Buffer.from(base64Value, "base64");
-  //       console.log("📦 Buffer length:", buffer.length);
-  //       console.log("🧬 Hex preview:", buffer.toString("hex").slice(0, 50));
-  //       console.log("🧬 Full Hex:", buffer.toString("hex"));
 
   //       try {
   //         // const res = Response.Response();
-  //         // console.log(Object.keys(res));
-  //         console.log("555");
 
   //         const response = Response.Response.deserializeBinary(buffer);
-  //         console.log("558");
-  //         // console.log("🔍 State from object:", response.toObject().state);
-  //         console.log("Response from ble => ", response.toObject());
   //       } catch (err) {
   //         console.error("❌ Failed to decode response:", err);
   //       }
@@ -753,10 +741,8 @@ class BLEServiceInstance {
   //       base64Payload
   //     )
   //     .then((res) => {
-  //       console.log("WiFi credentials sent successfully", res);
   //     })
   //     .catch((err) => {
-  //       console.log("ERROR WRITTING => ", err);
   //     });
   // }
 

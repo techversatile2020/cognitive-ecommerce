@@ -25,7 +25,6 @@ function MainPage({ route, navigation }) {
   // if (route && route.params && route.params.ipAddr) {
   //   if ("ipAddr" in route.params) {
   //     const newPrinterIpAddr = route.params.ipAddr;
-  //     console.log(`hello: ${newPrinterIpAddr}`);
   //     setConnectedPrinters((prevPrinterslst) => {
   //       return [
   //         ...prevPrinterslst,

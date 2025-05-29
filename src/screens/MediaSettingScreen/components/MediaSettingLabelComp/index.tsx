@@ -17,10 +17,18 @@ import { useSelector } from "react-redux";
 import { sendRequest } from "../../../../services/printerServices";
 import { toast } from "../../../../utils/toast.utils";
 import { generateTestLabelScript } from "../../../../utils/printer.utls";
+import { store } from "../../../../redux";
 const MediaSettingLabelComp = ({ data }: any) => {
   const { ip } = data;
-  const { ModelNum, PrintWidth, ShiftLeft, IndexV, LanguageV, MediaTypeV } =
-    useSelector((state: any) => state.printer.printerDetailsByIp[ip]);
+  const {
+    ModelNum,
+    PrintWidth,
+    ShiftLeft,
+    IndexV,
+    LanguageV,
+    MediaTypeV,
+    Status,
+  } = useSelector((state: any) => state.printer.printerDetailsByIp[ip]);
   usePrinter(ip, [
     "ModelNum",
     "PrintWidth",
@@ -28,6 +36,7 @@ const MediaSettingLabelComp = ({ data }: any) => {
     "IndexV",
     "LanguageV",
     "MediaTypeV",
+    "Status",
   ]);
   const [selectedIndex, setSelectedIndex] = useState<string | number>(
     IndexV || "1"
@@ -180,7 +189,6 @@ const MediaSettingLabelComp = ({ data }: any) => {
       toast.success("Media setting updated!");
     } catch (error) {
       setLoading(null);
-      console.log("Setting value error => ", error);
       toast.fail("Failed", "Update failed. Check printer connections!!!");
     }
   };
@@ -216,11 +224,38 @@ const MediaSettingLabelComp = ({ data }: any) => {
       setLoading(null);
       toast.success("Calibration request sent!");
     } catch (error) {
-      console.log("Error calibriting => ", error);
       setLoading(null);
       toast.fail("Fail", "Calibrating failed.");
     }
   };
+
+  useEffect(() => {
+    if (Status === "Calibrating") {
+      console.log("Calibrating", Status);
+
+      let intervalId = null;
+      setLoading(`${Status}...`);
+
+      intervalId = setInterval(async () => {
+        await refetch();
+
+        // Get the latest status from Redux manually
+        const latestStatus =
+          store.getState().printer.printerDetailsByIp[ip]?.Status;
+        console.log("STATUS => ", latestStatus);
+
+        if (
+          latestStatus === "Calibrate Succeeded" ||
+          latestStatus === "Calibrate Failed"
+        ) {
+          clearInterval(intervalId);
+          toast.success(`Calibration result: ${latestStatus}`);
+
+          setLoading(null);
+        }
+      }, 2000);
+    }
+  }, [Status]);
 
   const handleTestPrint = async () => {
     try {
@@ -240,12 +275,10 @@ const MediaSettingLabelComp = ({ data }: any) => {
         data: script,
         headers: { "Content-Type": "text/plain" },
       });
-      console.log("values afer test => ", response);
       setLoading(null);
       toast.success("Test print command sent!");
     } catch (error) {
       setLoading(null);
-      console.log("Setting value error => ", error);
 
       toast.fail("Failed", "Test failed.");
     }

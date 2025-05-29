@@ -152,7 +152,6 @@ export const sendRequest = async ({
       ? headers
       : { "Content-Type": "application/x-www-form-urlencoded" };
   let url = `http://${ip}/cgi-bin/${endpoint}`;
-  console.log(url); // Only keep valid headers
 
   try {
     const response = await axios({
@@ -171,13 +170,11 @@ export const sendRequest = async ({
         `Request failed: ${error.response.status} ${error.response.statusText}`
       );
     } else if (error.request) {
-      console.log(error?.message);
       if (error?.message == "Network Error") {
         toast.fail("Failed", "Connection lost to device!");
       }
       throw new Error("No response received from server.");
     }
-    console.log(error);
 
     throw new Error(error);
   }

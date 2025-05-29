@@ -11,8 +11,6 @@ export const connectAndSendWifi = async (
   ssid,
   password
 ) => {
-  console.log("Request ", RequestPub);
-
   //   try {
   //     // Step 1: Create Wifi object
   //     const wifi = new Wifi();
@@ -34,7 +32,6 @@ export const connectAndSendWifi = async (
   //       characteristicUUID,
   //       base64data
   //     );
-  //     console.log("WiFi credentials sent successfully.");
   //   } catch (error) {
   //     console.error("Failed to connect and send WiFi:", error);
   //   }

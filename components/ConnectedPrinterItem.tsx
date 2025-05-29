@@ -2,7 +2,6 @@ import { View, Text, Pressable, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 function ConnectedPrinterItem({ printName, ipAddr, onPress }) {
-  console.log(`name: ${printName}, ipAddr: ${ipAddr}`);
   return (
     <View style={styles.outterContainer}>
       <Pressable onPress={onPress}>
