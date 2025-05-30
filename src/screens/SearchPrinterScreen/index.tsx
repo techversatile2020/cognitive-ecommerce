@@ -24,6 +24,7 @@ import {
   addConnectedPrinter,
   addScannedWifi,
   setCurrentConnectedPrinter,
+  setError,
   setScannedWifis,
 } from "../../redux/reducers";
 import { toast } from "../../utils/toast.utils";
@@ -180,12 +181,6 @@ const SearchPrinterScreen = ({ navigation }) => {
       setConnectionError(
         "Device can not connect to network, Please check your password"
       );
-      const isSafeToIgnore =
-        err?.message?.includes("Invalid record in scannedWifis") ||
-        err?.toString()?.includes("non-serializable");
-
-      if (!isSafeToIgnore) {
-      }
     }
   }
 
@@ -265,7 +260,6 @@ const SearchPrinterScreen = ({ navigation }) => {
         icon={Images.failBluetooth}
         title={showPrinterErrorModal}
         description={connectionError}
-        onCancel={handleOnClose}
         onRetry={handleOnRetry}
       />
       <PrimaryButton

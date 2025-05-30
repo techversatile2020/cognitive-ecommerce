@@ -1,4 +1,4 @@
-import { ScrollView, View, PermissionsAndroid } from "react-native";
+import { ScrollView, View } from "react-native";
 import { styles } from "./styles";
 import {
   ConnectionStatusModal,
@@ -12,38 +12,26 @@ import {
 } from "../../components";
 import { Images, ScreenNames } from "../../config";
 import { useTheme } from "../../hooks";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { SD } from "../../utils";
-import { knownDevices, newDevices } from "./extra/dummyData";
-import { base64ToArrayBuffer, bin2String } from "../../utils/ble.util";
+import { bin2String } from "../../utils/ble.util";
 import { useSelector } from "react-redux";
-import { wifiService } from "../../../services";
 import { toast } from "../../utils/toast.utils";
 import WifiManager from "react-native-wifi-reborn";
 import { LogBox } from "react-native";
+import { usePermission } from "../../hooks/usePermission";
 
-// https://stackoverflow.com/questions/66310505/non-serializable-values-were-found-in-the-navigation-state-when-passing-a-functi
-// Navigate to ScreenNames.ConnectToWifiPasswordScreen screen with parameter "connectedWifi" causes this warning.
-// As we are not using deep link or state persistence, we can ignore this warning.
 LogBox.ignoreLogs([
   "Non-serializable values were found in the navigation state",
 ]);
 
-// import ver from './../../../protos'
-const version_pb = require("./../../../protos/version_pb");
-const request_pb = require("./../../../protos/request_pb");
-const common_pb = require("./../../../protos/common_pb");
-const response_pb = require("./../../../protos/response_pb");
-const result_pb = require("./../../../protos/result_pb");
-
-export default function ConnectWifiScreen({ navigation, route }) {
+export default function ConnectWifiScreen({ navigation }) {
   const [connectedWifi, setConnectedWifi] = useState(null);
-  const [showWifiError, setShowWifiError] = useState(false);
-  const [showGenralError, setShowGeneralError] = useState(false);
   const { scannedWifis } = useSelector((state: any) => state.printer);
   const { AppTheme } = useTheme();
   const [deviceConnectedWifi, setDeviceConnectedWifi] = useState(null);
   const [selectedWifi, setSelectedWifi] = useState(null);
+  const { checkAndRequestPermission } = usePermission("wifi");
 
   const handleNext = () => {
     if (!connectedWifi) {
@@ -57,45 +45,25 @@ export default function ConnectWifiScreen({ navigation, route }) {
   };
 
   useEffect(() => {
-    const fetchCurrentWifi = async () => {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-        {
-          title: "Location permission is required for WiFi connections",
-          message:
-            "This app needs location permission as this is required  " +
-            "to scan for wifi networks.",
-          buttonNegative: "DENY",
-          buttonPositive: "ALLOW",
-        }
-      );
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+    const fetchSSID = async () => {
+      const hasPermission = await checkAndRequestPermission();
+      if (hasPermission) {
         try {
           const ssid = await WifiManager.getCurrentWifiSSID();
           setDeviceConnectedWifi(ssid);
-        } catch (error) {}
+        } catch (err) {
+          console.warn("Failed to get SSID", err);
+        }
       } else {
-        // Permission denied
-        // toast.fail('Fail','User denied wifi ')
+        console.warn("Permission denied");
+        toast.fail(
+          "To detect the connected Wi-Fi, this app needs access to your location. \n You can also enable location permission from Settings."
+        );
       }
     };
-    fetchCurrentWifi();
+
+    fetchSSID();
   }, [scannedWifis]);
-
-  const handleConnectWifi = (e) => {
-    if (e?.id == "3") {
-      return setShowWifiError(true);
-    } else if (e?.id == "4") {
-      return setShowGeneralError(true);
-    }
-
-    setConnectedWifi(e);
-  };
-
-  const handleOnClose = () => {
-    setShowWifiError(false);
-    setShowGeneralError(false);
-  };
 
   function getReadableBand(bandValue) {
     switch (bandValue) {
@@ -124,21 +92,12 @@ export default function ConnectWifiScreen({ navigation, route }) {
       <View style={{ flex: 1 }}>
         <SectionContainer containerStyles={styles.wifiSectionContainer}>
           <ScrollView showsVerticalScrollIndicator={false}>
-            {/* <Text bold size={14} color={AppTheme.Black}>
-              Known Devices
-            </Text> */}
             {scannedWifis?.length < 1 ? (
               <Text bold size={14} color={AppTheme.Black}>
                 Scanning...
               </Text>
             ) : (
               <>
-                {/* {scannedWifis.map((item, index) => {
-                  const ssidCounts = scannedWifis.reduce((acc, item) => {
-                    const ssid = bin2String(item.getWifi().getSsid());
-                    acc[ssid] = (acc[ssid] || 0) + 1;
-                    return acc;
-                  }, {}); */}
                 {[...scannedWifis]
                   .sort((a, b) => {
                     const ssidA = bin2String(a.getWifi().getSsid());
@@ -175,7 +134,7 @@ export default function ConnectWifiScreen({ navigation, route }) {
                         subHeading={""}
                         onPress={() => {
                           setSelectedWifi(displayName);
-                          handleConnectWifi(item);
+                          setConnectedWifi(item);
                         }}
                         key={index}
                         icon={Images.wifiRound}
@@ -187,28 +146,6 @@ export default function ConnectWifiScreen({ navigation, route }) {
           </ScrollView>
         </SectionContainer>
       </View>
-      <ConnectionStatusModal
-        icon={Images.failWifi}
-        title={"Unable to Connect Wifi"}
-        description={
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore."
-        }
-        onCancel={handleOnClose}
-        onRetry={handleOnClose}
-        onClose={handleOnClose}
-        isVisible={showWifiError}
-      />
-      <ConnectionStatusModal
-        icon={Images.genralError}
-        title={"General Error"}
-        description={
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore."
-        }
-        onCancel={handleOnClose}
-        onRetry={handleOnClose}
-        onClose={handleOnClose}
-        isVisible={showGenralError}
-      />
       <PrimaryButton
         title="Next"
         customStyles={styles.nextBtn}
