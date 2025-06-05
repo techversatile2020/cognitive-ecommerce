@@ -110,9 +110,11 @@ const MediaSettingReceiptComp = ({ data }) => {
     if (ModelNum) {
       // Validate print width when model number changes
       const { min, max } = getPrintWidthRange();
-      if (printWidth < min || printWidth > max) {
+      const min_inch = min / 100;
+      const max_inch = max / 100;
+      if (printWidth <  min_inch || printWidth > max_inch) {
         setPrintWidthError(
-          `Print width value must be between ${min} and ${max}`
+          `Print width value must be between ${min_inch} and ${max_inch}`
         );
       } else {
         setPrintWidthError(null);
@@ -120,9 +122,11 @@ const MediaSettingReceiptComp = ({ data }) => {
 
       // Validate shift left when model number changes
       const { min: shiftMin, max: shiftMax } = getShiftLeftRange();
-      if (shiftLeft < shiftMin || shiftLeft > shiftMax) {
+      const shift_left_min_inch = shiftMin / 100;
+      const shift_left_max_inch = shiftMax / 100;
+      if (shiftLeft < shift_left_min_inch || shiftLeft > shift_left_max_inch) {
         setShiftLeftError(
-          `Shoft left value must be between ${shiftMin} and ${shiftMax}`
+          `Shift left value must be between ${shift_left_min_inch} and ${shift_left_max_inch}`
         );
       } else {
         setShiftLeftError(null);
@@ -141,12 +145,12 @@ const MediaSettingReceiptComp = ({ data }) => {
           shiftLeft * 100
         )}&MediaTypeV=${selectedType}&PrintWidth=${Math.round(
           printWidth * 100
-        )}`,
+        )}&IndexV=1`,   // force indexing off
         method: "POST",
       });
       refetch();
-
       setLoading(null);
+      toast.success("Media setting updated!");
     } catch (error) {
       setLoading(null);
       toast.fail("Failed", "Update failed. Check printer connections!!!");
@@ -263,7 +267,7 @@ const MediaSettingReceiptComp = ({ data }) => {
             }
           /> */}
           <InfoFieldComp
-            title="Print Width (Inches)"
+            title="Print Width"
             children={
               <IncreamentDecreamentComp
                 value={printWidth}
@@ -278,7 +282,7 @@ const MediaSettingReceiptComp = ({ data }) => {
             </Text>
           )}
           <InfoFieldComp
-            title="Shift Left (Hundredths of an Inch)"
+            title="Shift Left"
             children={
               <IncreamentDecreamentComp
                 value={shiftLeft}

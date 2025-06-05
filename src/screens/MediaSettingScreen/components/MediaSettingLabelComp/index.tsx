@@ -38,7 +38,7 @@ const MediaSettingLabelComp = ({ data }: any) => {
     "MediaTypeV",
     "Status",
   ]);
-  const [selectedSpeed, setSelectedSpeed] = useState<string | number>(
+  const [selectedIndex, setSelectedIndex] = useState<string | number>(
     IndexV || "1"
   );
   const [loading, setLoading] = useState(null);
@@ -55,13 +55,13 @@ const MediaSettingLabelComp = ({ data }: any) => {
     },
   ]);
 
-  const [speedData, setSpeedData] = useState([
+  const [indexData, setIndexData] = useState([
     {
       label: "None",
       value: "1",
     },
     {
-      label: "BAR",
+      label: "Bar",
       value: "2",
     },
     {
@@ -133,9 +133,11 @@ const MediaSettingLabelComp = ({ data }: any) => {
     if (ModelNum) {
       // Validate print width when model number changes
       const { min, max } = getPrintWidthRange();
-      if (printWidth < min || printWidth > max) {
+      const min_inch = min / 100;
+      const max_inch = max / 100;
+      if (printWidth <  min_inch || printWidth > max_inch) {
         setPrintWidthError(
-          `Print width value must be between ${min} and ${max}`
+          `Print width value must be between ${min_inch} and ${max_inch}`
         );
       } else {
         setPrintWidthError(null);
@@ -143,15 +145,17 @@ const MediaSettingLabelComp = ({ data }: any) => {
 
       // Validate shift left when model number changes
       const { min: shiftMin, max: shiftMax } = getShiftLeftRange();
-      if (shiftLeft < shiftMin || shiftLeft > shiftMax) {
+      const shift_left_min_inch = shiftMin / 100;
+      const shift_left_max_inch = shiftMax / 100;
+      if (shiftLeft < shift_left_min_inch || shiftLeft > shift_left_max_inch) {
         setShiftLeftError(
-          `Shoft left value must be between ${shiftMin} and ${shiftMax}`
+          `Shift left value must be between ${shift_left_min_inch} and ${shift_left_max_inch}`
         );
       } else {
         setShiftLeftError(null);
       }
     }
-  }, [ModelNum, printWidth, shiftLeft, selectedSpeed]);
+  }, [ModelNum, printWidth, shiftLeft, selectedIndex]);
 
   useEffect(() => {
     if (ModelNum) {
@@ -177,30 +181,48 @@ const MediaSettingLabelComp = ({ data }: any) => {
         endpoint: "saveprintervarvalues.cgi",
         data: `ShiftLeft=${Math.round(
           shiftLeft * 100
-        )}&IndexV=${selectedSpeed}&PrintWidth=${Math.round(printWidth * 100)}`,
+        )}&IndexV=${selectedIndex}&PrintWidth=${Math.round(printWidth * 100)}`,
         method: "POST",
       });
       refetch();
-
       setLoading(null);
+      toast.success("Media setting updated!");
     } catch (error) {
       setLoading(null);
-
       toast.fail("Failed", "Update failed. Check printer connections!!!");
     }
   };
 
-  const handleStartCalibration = async () => {
+  const handleStartCalibration = async (indexV) => {
+    let index_method;
+    if (indexV == 2) {
+      index_method = "gap";
+    } else if (indexV == 3) {
+      index_method = "bar";
+    } else if (indexV == 4) {
+      index_method = "notch";
+    }
     try {
-      let response = await sendRequest({
-        ip,
-        method: "POST",
-        endpoint: "calibrate.cgi",
-        data: "",
-      });
-
+      if (index_method === null) {
+        let response = await sendRequest({
+          ip,
+          method: "POST",
+          endpoint: "scripttransfer.cgi",
+          data: "! 0 0 0 0\r\nVARIABLE INDEX off\r\nEND\r\n",
+        });
+        console.log("Disable calibration => ", response);
+      } else {
+        let response = await sendRequest({
+          ip,
+          method: "POST",
+          endpoint: `calibrate.cgi?type=${index_method}`,
+          data: "",
+        });
+        console.log("Calibrate response => ", response);
+      }
       refetch();
       setLoading(null);
+      toast.success("Calibration request sent!");
     } catch (error) {
       setLoading(null);
       toast.fail("Fail", "Calibrating failed.");
@@ -282,9 +304,9 @@ const MediaSettingLabelComp = ({ data }: any) => {
             children={
               <CustomDropdown
                 iconColor={AppTheme.Primary}
-                data={speedData}
-                onChange={setSelectedSpeed}
-                value={selectedSpeed}
+                data={indexData}
+                onChange={setSelectedIndex}
+                value={selectedIndex}
                 dropdownStyle={styles.dropdownStyles}
                 itemStyle={{
                   ...styles.customItemStyle,
@@ -338,7 +360,7 @@ const MediaSettingLabelComp = ({ data }: any) => {
             }
           />
           <InfoFieldComp
-            title="Print Width (Inches)"
+            title="Print Width"
             children={
               <IncreamentDecreamentComp
                 value={printWidth}
@@ -353,7 +375,7 @@ const MediaSettingLabelComp = ({ data }: any) => {
             </Text>
           )}
           <InfoFieldComp
-            title="Shift Left (Hundredths of an inch)"
+            title="Shift Left"
             children={
               <IncreamentDecreamentComp
                 value={shiftLeft}
@@ -371,7 +393,7 @@ const MediaSettingLabelComp = ({ data }: any) => {
         <PrimaryButton
           title="Start Calibration"
           customStyles={{ borderRadius: 15, marginVertical: 0 }}
-          onPress={handleStartCalibration}
+          onPress={handleStartCalibration.bind(this, selectedIndex)}
         />
         <PrimaryButton
           title="Apply"

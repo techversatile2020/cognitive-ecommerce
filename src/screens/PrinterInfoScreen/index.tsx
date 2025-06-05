@@ -18,7 +18,7 @@ const indexValues = [
     value: "1",
   },
   {
-    label: "BAR",
+    label: "Bar",
     value: "2",
   },
   {

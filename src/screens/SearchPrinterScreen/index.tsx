@@ -101,7 +101,6 @@ const SearchPrinterScreen = ({ navigation }) => {
   };
 
   const handleOnRetry = () => {
-    navigation.navigate(ScreenNames.PrinterSetupScreen);
     setShowPrinterErrorModal(null);
   };
 

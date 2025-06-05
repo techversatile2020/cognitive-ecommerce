@@ -18,7 +18,8 @@ export const styles = StyleSheet.create({
   printerSectionContainer: {
     borderRadius: 10,
     marginTop: SD.hp(10),
-    height: SD.hp(298),
+    maxHeight: SD.hp(298),
+    minHeight: SD.hp(100),
     overflow: "scroll",
     paddingBottom: SD.hp(10),
   },
