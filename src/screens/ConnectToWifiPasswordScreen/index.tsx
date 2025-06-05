@@ -11,55 +11,28 @@ import {
   Text,
 } from "../../components";
 import { styles } from "./styles";
-import { Images, ScreenNames } from "../../config";
+import { Images } from "../../config";
 import { useTheme } from "../../hooks";
-import { useContext, useEffect, useState } from "react";
-import { ConnectWifiRouter, SD, Toast } from "../../utils";
+import { useState } from "react";
+import { ConnectWifiRouter } from "../../utils";
 import { bin2String } from "../../utils/ble.util";
-import { WifiContext } from "../ContextScreen";
-import { toast } from "../../utils/toast.utils";
-import { useDispatch, useSelector } from "react-redux";
-const version_pb = require("./../../../protos/version_pb");
-const request_pb = require("./../../../protos/request_pb");
-const common_pb = require("./../../../protos/common_pb");
-const response_pb = require("./../../../protos/response_pb");
-const result_pb = require("./../../../protos/result_pb");
 
-const ConnectToWifiPasswordScreen = ({ route, navigation }) => {
+const ConnectToWifiPasswordScreen = ({ route }) => {
   const { AppTheme } = useTheme();
   const [routerName, setRouterName] = useState(route?.params?.wifi);
   const [wifiPassword, setWifiPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(null);
-  // const { connectedPrinters }: any = useContext(WifiContext);
-  const { connectedPrinters } = useSelector((state: any) => state.printer);
   const handleTriggerShowPassword = () => {
     setShowPassword(!showPassword);
   };
-  const dispatch = useDispatch();
-
-  // useEffect(() => {
-  //   if (connectedPrinters?.length > 0) {
-  //     let currentRouter = connectedPrinters?.filter(
-  //       (router) =>
-  //         router?.deviceStatus?.provisioningInfo?.ssid ===
-  //         routerName?.getWifi().toObject().ssid
-  //     );
-  //     if (currentRouter?.length > 0) {
-  //       toast.success(
-  //         `Device connected to WIFI ${bin2String(
-  //           routerName.getWifi().getSsid()
-  //         )}`
-  //       );
-  //       navigation.navigate(ScreenNames.MainScreen);
-  //     }
-  //   }
-  // }, [connectedPrinters]);
 
   const handleApply = async () => {
     try {
       await ConnectWifiRouter(routerName, wifiPassword, setLoading);
-    } catch (error) {}
+    } catch (error) {
+      console.log("ERROR CONNETING => ", error);
+    }
   };
 
   return (
@@ -117,7 +90,6 @@ const ConnectToWifiPasswordScreen = ({ route, navigation }) => {
                   topSpacing={10}
                   radius={10}
                   height={50}
-                  //   style={{ padding: SD.wp(15) }}
                   disable={true}
                 />
               }
@@ -137,7 +109,6 @@ const ConnectToWifiPasswordScreen = ({ route, navigation }) => {
                   topSpacing={10}
                   radius={10}
                   height={50}
-                  //   style={{ padding: SD.wp(15) }}
                   secureText={showPassword}
                   icon={showPassword ? Images.eye : Images.eyeClose}
                   onIconPress={handleTriggerShowPassword}
@@ -145,10 +116,11 @@ const ConnectToWifiPasswordScreen = ({ route, navigation }) => {
               }
             />
           </View>
+
           <PrimaryButton
             title="Apply"
             customStyles={{ borderRadius: 15 }}
-            onPress={() => handleApply()}
+            onPress={handleApply}
           />
         </ScrollView>
       </KeyboardAvoidingView>

@@ -14,12 +14,11 @@ export const ConnectionStatusModal = ({
   icon,
   title,
   description,
-  onCancel,
   onRetry,
 }) => {
   const { AppTheme } = useTheme();
   return (
-    <CustomModal isVisible={isVisible} onClose={onClose}>
+    <CustomModal isVisible={isVisible}>
       <View
         style={{ ...styles.modalContainer, backgroundColor: AppTheme.White }}
       >
@@ -46,7 +45,7 @@ export const ConnectionStatusModal = ({
               marginHorizontal: SD.wp(5),
               borderRadius: 15,
             }}
-            onPress={onCancel}
+            onPress={onClose}
           />
           <PrimaryButton
             title="Retry"

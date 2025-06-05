@@ -6,20 +6,20 @@ import { styles } from "./styles";
 
 type CustomModalProps = {
   isVisible: boolean;
-  onClose: () => void;
+  onClose?: () => void;
   children: React.ReactNode;
 };
 
 const CustomModal: React.FC<CustomModalProps> = ({
   isVisible,
-  onClose,
+  onClose = () => null,
   children,
 }) => {
   return (
     <Modal
       isVisible={isVisible}
       onBackdropPress={onClose}
-      onBackButtonPress={onClose}
+      // onBackButtonPress={onClose}
       backdropOpacity={0.3}
       style={styles.modal}
     >

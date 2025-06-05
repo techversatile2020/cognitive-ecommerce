@@ -173,6 +173,8 @@ export const ConnectWifiRouter = async (wifiInfo, wifiPassword, setLoading) => {
       setLoading(null);
       resolve({});
     } catch (error) {
+      console.log("ERROR ACCORD => ", error);
+
       reject(error);
     }
   });
