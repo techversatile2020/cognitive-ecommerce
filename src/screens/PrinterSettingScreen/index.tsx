@@ -12,7 +12,7 @@ import {
   Text,
 } from "../../components";
 import { Images, ScreenNames } from "../../config";
-import { usePrinter, useTheme } from "../../hooks";
+import { useAnalytics, usePrinter, useTheme } from "../../hooks";
 import { styles } from "./styles";
 import { SD } from "../../utils";
 import { PrinterSettingScreenCard } from "./components";
@@ -36,13 +36,16 @@ const PrinterSettingScreen = ({ navigation, route }) => {
   const [printer, setPrinter] = useState(route?.params?.data || {});
   const IP_Address = route?.params?.IP_Address;
   const [loading, setLoading] = useState(null);
-  const printerDetails = useSelector((state: any) => state.printer.printerDetailsByIp[IP_Address]);
+  const printerDetails = useSelector(
+    (state: any) => state.printer.printerDetailsByIp[IP_Address]
+  );
 
   // in case it accidentally navigate here right after printer card removed. go back to home screne.
   if (!Object.keys(printerDetails).length) {
     return navigation.goBack();
   }
 
+  const { track } = useAnalytics();
   const { refetch, isFetching, isLoading } = usePrinter(
     IP_Address,
     ["Status"],
@@ -86,7 +89,11 @@ const PrinterSettingScreen = ({ navigation, route }) => {
         break;
       case "print diagnostic label":
         // console.log(el.title);
-        handlePrinterSetting("scripttransfer", undefined, "!PRINT TESTLABEL\r\n");
+        handlePrinterSetting(
+          "scripttransfer",
+          undefined,
+          "!PRINT TESTLABEL\r\n"
+        );
         break;
       case "print test label":
         handleTestPrint();
@@ -99,7 +106,11 @@ const PrinterSettingScreen = ({ navigation, route }) => {
     }
   };
 
-  const handlePrinterSetting = async (path, parameter=undefined, data=undefined) => {
+  const handlePrinterSetting = async (
+    path,
+    parameter = undefined,
+    data = undefined
+  ) => {
     try {
       setLoading("Setting values to printer...");
       await sendRequest({
@@ -149,7 +160,11 @@ const PrinterSettingScreen = ({ navigation, route }) => {
 
   const closeCalibrationModal = () => {
     setShowCalibrationModal(!showCalibrationModal);
-  }
+  };
+
+  useEffect(() => {
+    track("Printer Setting Page");
+  }, []);
 
   useEffect(() => {
     const setCalibError = async () => {

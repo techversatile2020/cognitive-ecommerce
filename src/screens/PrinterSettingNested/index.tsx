@@ -10,7 +10,7 @@ import {
   Text,
 } from "../../components";
 import { styles } from "./styles";
-import { usePrinter, useTheme } from "../../hooks";
+import { useAnalytics, usePrinter, useTheme } from "../../hooks";
 import { View } from "react-native";
 import { SD } from "../../utils";
 import Slider from "@react-native-community/slider";
@@ -34,6 +34,7 @@ const PrinterSettingNested = ({ route }) => {
     "SpeedV",
     "LanguageV",
   ]);
+  const { track } = useAnalytics();
   const { refetch } = usePrinter(IP_Address);
   const [sliderValue, setSliderValue] = useState(Number(Darkness) || 20);
   const { AppTheme } = useTheme();
@@ -55,6 +56,10 @@ const PrinterSettingNested = ({ route }) => {
     setSelectedSpeed(SpeedV);
     setSliderValue(Number(Darkness));
   }, [ModelNum, Darkness]);
+
+  useEffect(() => {
+    track("Printer Nested Setting Page");
+  }, []);
 
   const handleSetValues = async () => {
     if (statusCategory !== "OK") {

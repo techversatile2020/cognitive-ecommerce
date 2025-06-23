@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   CustomTouchable,
   MainContainer,
@@ -6,7 +6,7 @@ import {
   SectionContainer,
   Text,
 } from "../../components";
-import { usePrinter, useTheme } from "../../hooks";
+import { useAnalytics, usePrinter, useTheme } from "../../hooks";
 import { styles } from "./styles";
 import {
   AdvanceSettingConnectComp,
@@ -34,6 +34,10 @@ const AdvanceSettingScreen = ({ route }) => {
     "Printer",
     "Media",
   ]);
+  const { track } = useAnalytics();
+  useEffect(() => {
+    track("Printer Advance Setting Page ");
+  }, []);
 
   return (
     <MainContainer>

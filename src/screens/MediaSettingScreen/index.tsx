@@ -7,14 +7,18 @@ import {
   Text,
 } from "../../components";
 import { styles } from "./styles";
-import { useTheme } from "../../hooks";
-import { useState } from "react";
+import { useAnalytics, useTheme } from "../../hooks";
+import { useEffect, useState } from "react";
 import { MediaSettingLabelComp, MediaSettingReceiptComp } from "./components";
 import { useSelector } from "react-redux";
 
 const MediaSettingScreen = ({ route }) => {
   const { AppTheme } = useTheme();
   const [activeBar, setActiveBar] = useState("label");
+  const { track } = useAnalytics();
+  useEffect(() => {
+    track("Printer Media Setting Page ");
+  }, []);
   return (
     <MainContainer
       mainContainerStyle={{

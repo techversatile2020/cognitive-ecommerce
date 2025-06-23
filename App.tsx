@@ -1,10 +1,9 @@
-import React, { createContext, useEffect, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text } from "react-native";
+import { AppState, AppStateStatus, StyleSheet } from "react-native";
 import { ScreenNames } from "./src/config";
-
 import {
   AdvanceSettingScreen,
   CompletedScreen,
@@ -24,24 +23,30 @@ import {
   WifiConnectedSuccessScreen,
 } from "./src/screens";
 import Toast from "react-native-toast-message";
-import { WifiScannedDevicesProvider } from "./src/screens/ContextScreen";
 import { Provider } from "react-redux";
-import { persistor, store } from "./src/redux";
 import { PersistGate } from "redux-persist/integration/react";
+import { WifiScannedDevicesProvider } from "./src/screens/ContextScreen";
+import { store, persistor } from "./src/redux";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Mixpanel } from "mixpanel-react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import DeviceInfo from "react-native-device-info";
+import { useAnalytics } from "./src/hooks";
+
+const mixpanel = new Mixpanel("c10ab648b95cf89b2a6f102f12e2be085", false);
+mixpanel.init();
 
 const Stack = createNativeStackNavigator();
-export const queryClient = new QueryClient();
+const queryClient = new QueryClient();
 
-export default function App() {
+const App = () => {
+  useAnalytics();
   return (
-    // <WifiScannedDevicesProvider>
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <QueryClientProvider client={queryClient}>
           <>
             <StatusBar style="dark" />
-
             <NavigationContainer>
               <Stack.Navigator screenOptions={{ headerShown: false }}>
                 <Stack.Screen
@@ -110,20 +115,18 @@ export default function App() {
                 />
               </Stack.Navigator>
             </NavigationContainer>
-
             <Toast />
           </>
         </QueryClientProvider>
       </PersistGate>
     </Provider>
-
-    // </WifiScannedDevicesProvider>
   );
-}
+};
+
+export default App;
 
 const styles = StyleSheet.create({
   container: {
-    // flex: 1,
     paddingTop: 48,
     backgroundColor: "#fff",
     alignItems: "center",

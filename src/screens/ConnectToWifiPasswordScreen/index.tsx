@@ -12,7 +12,7 @@ import {
 } from "../../components";
 import { styles } from "./styles";
 import { Images } from "../../config";
-import { useTheme } from "../../hooks";
+import { useAnalytics, useTheme } from "../../hooks";
 import { useState } from "react";
 import { ConnectWifiRouter } from "../../utils";
 import { bin2String } from "../../utils/ble.util";
@@ -23,16 +23,27 @@ const ConnectToWifiPasswordScreen = ({ route }) => {
   const [wifiPassword, setWifiPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(null);
+  const { track } = useAnalytics();
   const handleTriggerShowPassword = () => {
     setShowPassword(!showPassword);
   };
 
   const handleApply = async () => {
     try {
+      track("Provisioning Started", {
+        screen: "ConnectToWifiPasswordScreen",
+        router: bin2String(routerName.getWifi().getSsid()),
+      });
+
       await ConnectWifiRouter(routerName, wifiPassword, setLoading);
     } catch (error) {
-      console.log("ERROR CONNETING => ", error);
+      console.log("ERROR CONNECTING => ", error);
     }
+    // try {
+    //   await ConnectWifiRouter(routerName, wifiPassword, setLoading);
+    // } catch (error) {
+    //   console.log("ERROR CONNETING => ", error);
+    // }
   };
 
   return (

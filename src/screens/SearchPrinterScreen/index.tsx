@@ -13,7 +13,7 @@ import {
   Text,
 } from "../../components";
 import { Images, ScreenNames } from "../../config";
-import { usePrinter, useTheme } from "../../hooks";
+import { useAnalytics, usePrinter, useTheme } from "../../hooks";
 import { useEffect, useRef, useState } from "react";
 import { ConnectButtonHandler, SD } from "../../utils";
 import { BLEService } from "../../../services";
@@ -48,12 +48,12 @@ const SearchPrinterScreen = ({ navigation }) => {
   const [showPrinterErrorModal, setShowPrinterErrorModal] = useState(null);
   const [loading, setLoading] = useState(null);
   const [bleScannedDevices, setBleScannedDevices] = useState([]);
-  const { scannedWifis, currentConnectedPrinter } = useSelector(
-    (state: any) => state.printer
-  );
+  const { scannedWifis, currentConnectedPrinter, printerDetailsByIp } =
+    useSelector((state: any) => state.printer);
 
   const [connectionError, setConnectionError] = useState(null);
   const hasUserClicked = useRef(false);
+  const { track } = useAnalytics();
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -150,6 +150,10 @@ const SearchPrinterScreen = ({ navigation }) => {
           const ipBytes = connectionInfo?.getIp4Addr?.(); // optional chaining in case undefined
           const ipAddr = `${ipBytes[0]}.${ipBytes[1]}.${ipBytes[2]}.${ipBytes[3]}`;
 
+          const provisionedCount = printerDetailsByIp
+            ? Object.keys(printerDetailsByIp).length
+            : 0;
+
           fetchPrinterDetails(ipAddr)
             .then((details: any) => {
               toast.success(
@@ -157,6 +161,13 @@ const SearchPrinterScreen = ({ navigation }) => {
               );
 
               dispatch(setPrinterDetailsByIp({ ip: ipAddr, details }));
+
+              // ✅ Provisioning success event
+              track("Provisioning Success", {
+                printerIP: ipAddr,
+                screen: "SearchPrinterScreen",
+                provisionedCount,
+              });
               navigation.navigate(ScreenNames.PrinterSetupScreen, {
                 isSuccess: true,
               });
@@ -180,6 +191,10 @@ const SearchPrinterScreen = ({ navigation }) => {
       setConnectionError(
         "Device can not connect to network, Please check your password"
       );
+      track("Provisioning Failed", {
+        screen: "SearchPrinterScreen",
+        error: err?.message || "Device failed to connect to network",
+      });
     }
   }
 

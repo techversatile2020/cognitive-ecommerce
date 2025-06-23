@@ -9,9 +9,10 @@ import {
 } from "../../components";
 import { styles } from "./styles";
 import { Images } from "../../config";
-import { usePrinter, useTheme } from "../../hooks";
+import { useAnalytics, usePrinter, useTheme } from "../../hooks";
 import { useSelector } from "react-redux";
 import navigationService from "../../config/navigationService";
+import { useEffect } from "react";
 const indexValues = [
   {
     label: "None",
@@ -66,6 +67,7 @@ const PrinterInfoScreen = ({ route, navigation }) => {
   } = useSelector(
     (state: any) => state.printer.printerDetailsByIp[route?.params?.IP_Address]
   );
+  const { track } = useAnalytics();
   const indexSetting = indexValues?.find((val) => val.value == IndexV);
   const printSt = printStValues?.find((val) => val.value == SpeedV);
   const printerMode = modes?.find((val) => val.value == MediaTypeV);
@@ -85,6 +87,10 @@ const PrinterInfoScreen = ({ route, navigation }) => {
   let isDisconnected = statusCategory == "Disconnected";
 
   usePrinter(route?.params?.IP_Address);
+
+  useEffect(() => {
+    track("Printer Info Page ");
+  }, []);
 
   return (
     <MainContainer>

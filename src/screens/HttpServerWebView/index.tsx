@@ -1,4 +1,4 @@
-import React, { Component, useState } from "react";
+import React, { Component, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Platform,
@@ -10,10 +10,15 @@ import {
 import { WebView } from "react-native-webview";
 import { Loader, MainContainer, MainHeader } from "../../components";
 import { SD } from "../../utils";
+import { useAnalytics } from "../../hooks";
 
 const HttpServerWebView = ({ route }) => {
   const ip = route?.params?.IP_Address;
   const [loading, setLoading] = useState(true);
+  const { track } = useAnalytics();
+  useEffect(() => {
+    track("Printer WebView Page ");
+  }, []);
 
   return (
     <MainContainer

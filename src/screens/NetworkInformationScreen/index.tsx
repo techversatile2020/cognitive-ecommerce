@@ -10,15 +10,16 @@ import {
 } from "../../components";
 import { Images, ScreenNames } from "../../config";
 import { styles } from "./styles";
-import { usePrinter, useTheme } from "../../hooks";
+import { useAnalytics, usePrinter, useTheme } from "../../hooks";
 import { useSelector } from "react-redux";
+import { useEffect } from "react";
 const NetworkInformationScreen = ({ route, navigation }) => {
   const { AppTheme } = useTheme();
   const { statusCategory, Status, IP_Address, RSSI, SSID } = useSelector(
     (state: any) => state.printer.printerDetailsByIp[route?.params?.IP_Address]
   );
   usePrinter(IP_Address, ["Status", "RSSI", "SSID"]);
-
+  const { track } = useAnalytics();
   const colorOnStatusChange =
     statusCategory == "OK"
       ? AppTheme.lightGreen
@@ -32,6 +33,10 @@ const NetworkInformationScreen = ({ route, navigation }) => {
   const handleConnectOtherWifi = () => {
     return navigation.navigate(ScreenNames.PrinterSetupScreen);
   };
+
+  useEffect(() => {
+    track("Printer Network Info Page ");
+  }, []);
   return (
     <MainContainer>
       <MainHeader
