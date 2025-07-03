@@ -12,15 +12,14 @@ import { Images, ScreenNames } from "../../config";
 import { styles } from "./styles";
 import { MainScreenOptionsCard, PairedDevicesComp } from "./components";
 import { opetionsData } from "./extra/data";
-import { useAnalytics, useTheme } from "../../hooks";
+import { mixpanel, useTheme } from "../../hooks";
 import { pairedDevicesData } from "./extra/pairedDevicesData";
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 
-function MainScreen({ navigation, route }) {
+function MainScreen({ navigation }) {
   const { AppTheme } = useTheme();
   const { printerDetailsByIp } = useSelector((state: any) => state.printer);
-  const { track } = useAnalytics();
   const [setup, setSetup] = useState([]);
   const [showRemoveButton, setShowRemoveButton] = useState(null);
   useEffect(() => {
@@ -40,7 +39,7 @@ function MainScreen({ navigation, route }) {
   };
 
   const handleOpenLink = (link, heading) => {
-    track("Tile Card Clicked", {
+    mixpanel.track("Tile Card Clicked", {
       tile: heading,
       link,
     });

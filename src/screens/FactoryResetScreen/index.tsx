@@ -10,7 +10,7 @@ import {
 } from "../../components";
 import { Images, ScreenNames } from "../../config";
 import { styles } from "./styles";
-import { useAnalytics, useTheme } from "../../hooks";
+import { mixpanel, useTheme } from "../../hooks";
 import { SD } from "../../utils";
 import { useEffect, useState } from "react";
 import { sendRequest } from "../../services/printerServices";
@@ -19,9 +19,8 @@ import { toast } from "../../utils/toast.utils";
 const FactoryResetScreen = ({ navigation, route }) => {
   const { AppTheme } = useTheme();
   const [loading, setLoading] = useState(null);
-  const { track } = useAnalytics();
   useEffect(() => {
-    track("Printer Reset Factory Page ");
+    mixpanel.track("Printer Reset Factory Page ");
   }, []);
   const handleYes = async () => {
     // navigation.navigate(ScreenNames.CompletedScreen);

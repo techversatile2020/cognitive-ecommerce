@@ -10,14 +10,13 @@ import {
 import { WebView } from "react-native-webview";
 import { Loader, MainContainer, MainHeader } from "../../components";
 import { SD } from "../../utils";
-import { useAnalytics } from "../../hooks";
+import { mixpanel } from "../../hooks";
 
 const HttpServerWebView = ({ route }) => {
   const ip = route?.params?.IP_Address;
   const [loading, setLoading] = useState(true);
-  const { track } = useAnalytics();
   useEffect(() => {
-    track("Printer WebView Page ");
+    mixpanel.track("Printer WebView Page ");
   }, []);
 
   return (

@@ -6,7 +6,7 @@ import {
   SectionContainer,
   Text,
 } from "../../components";
-import { useAnalytics, usePrinter, useTheme } from "../../hooks";
+import { mixpanel, usePrinter, useTheme } from "../../hooks";
 import { styles } from "./styles";
 import {
   AdvanceSettingConnectComp,
@@ -34,9 +34,8 @@ const AdvanceSettingScreen = ({ route }) => {
     "Printer",
     "Media",
   ]);
-  const { track } = useAnalytics();
   useEffect(() => {
-    track("Printer Advance Setting Page ");
+    mixpanel.track("Printer Advance Setting Page ");
   }, []);
 
   return (

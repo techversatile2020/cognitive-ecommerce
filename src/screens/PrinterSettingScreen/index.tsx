@@ -12,7 +12,7 @@ import {
   Text,
 } from "../../components";
 import { Images, ScreenNames } from "../../config";
-import { useAnalytics, usePrinter, useTheme } from "../../hooks";
+import { mixpanel, useAnalytics, usePrinter, useTheme } from "../../hooks";
 import { styles } from "./styles";
 import { SD } from "../../utils";
 import { PrinterSettingScreenCard } from "./components";
@@ -45,7 +45,6 @@ const PrinterSettingScreen = ({ navigation, route }) => {
     return navigation.goBack();
   }
 
-  const { track } = useAnalytics();
   const { refetch, isFetching, isLoading } = usePrinter(
     IP_Address,
     ["Status"],
@@ -163,7 +162,7 @@ const PrinterSettingScreen = ({ navigation, route }) => {
   };
 
   useEffect(() => {
-    track("Printer Setting Page");
+    mixpanel.track("Printer Setting Page");
   }, []);
 
   useEffect(() => {

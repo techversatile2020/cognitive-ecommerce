@@ -33,9 +33,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import DeviceInfo from "react-native-device-info";
 import { useAnalytics } from "./src/hooks";
 
-const mixpanel = new Mixpanel("c10ab648b95cf89b2a6f102f12e2be085", false);
-mixpanel.init();
-
 const Stack = createNativeStackNavigator();
 const queryClient = new QueryClient();
 

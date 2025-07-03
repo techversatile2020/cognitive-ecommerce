@@ -26,14 +26,7 @@ export const fetchPrinterDetails = async (
       "TOFAdj",
     ];
     const query = variables.join(";");
-    const { track } = useAnalytics();
-    let trackData = {
-      APIUrl: `http://${ip}`,
-      APIRequestParameters: `/cgi-bin/buildprintervarvalues.cgi?${query}`,
-      dataPayload: query,
-    };
 
-    track("API Call", trackData);
     const response = await axios.get(
       `http://${ip}/cgi-bin/buildprintervarvalues.cgi?${query}`,
       {
@@ -135,7 +128,6 @@ export const getPrinterStatusDetails = (code: number): PrinterStatusDetails => {
 
 import axios, { AxiosRequestConfig, Method } from "axios";
 import { toast } from "../utils/toast.utils";
-import { useAnalytics } from "../hooks";
 
 interface RequestParams {
   ip: string;

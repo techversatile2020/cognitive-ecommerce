@@ -13,7 +13,7 @@ import {
   Text,
 } from "../../components";
 import { Images, ScreenNames } from "../../config";
-import { useAnalytics, usePrinter, useTheme } from "../../hooks";
+import { mixpanel, useAnalytics, usePrinter, useTheme } from "../../hooks";
 import { useEffect, useRef, useState } from "react";
 import { ConnectButtonHandler, SD } from "../../utils";
 import { BLEService } from "../../../services";
@@ -53,7 +53,6 @@ const SearchPrinterScreen = ({ navigation }) => {
 
   const [connectionError, setConnectionError] = useState(null);
   const hasUserClicked = useRef(false);
-  const { track } = useAnalytics();
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -161,23 +160,29 @@ const SearchPrinterScreen = ({ navigation }) => {
               );
 
               dispatch(setPrinterDetailsByIp({ ip: ipAddr, details }));
-
-              // ✅ Provisioning success event
-              track("Provisioning Success", {
+              mixpanel.track("Provisioning Success", {
                 printerIP: ipAddr,
                 screen: "SearchPrinterScreen",
                 provisionedCount,
               });
               navigation.navigate(ScreenNames.PrinterSetupScreen, {
                 isSuccess: true,
+                ipAddr,
+                provisionedCount,
               });
             })
-            .catch((err) =>
+            .catch((err) => {
+              console.log("ERROR in listner 1", err);
+
+              mixpanel.track("Provisioning Failed", {
+                screen: "SearchPrinterScreen",
+                error: err?.message || "Device failed to connect to network",
+              });
               toast.fail(
                 "Unable to connect",
                 err?.message || "Something went wrong!"
-              )
-            );
+              );
+            });
 
           // usePrinter({ ip: ipAddr });
 
@@ -187,11 +192,17 @@ const SearchPrinterScreen = ({ navigation }) => {
         }
       }
     } catch (err) {
+      console.log("Error listner 1 => ", err);
+
       setShowPrinterErrorModal("Unable to connect to network");
       setConnectionError(
         "Device can not connect to network, Please check your password"
       );
-      track("Provisioning Failed", {
+      // track("Provisioning Failed", {
+      //   screen: "SearchPrinterScreen",
+      //   error: err?.message || "Device failed to connect to network",
+      // });
+      mixpanel.track("Provisioning Failed", {
         screen: "SearchPrinterScreen",
         error: err?.message || "Device failed to connect to network",
       });

@@ -7,7 +7,7 @@ import {
 } from "../../components";
 import { Images, ScreenNames } from "../../config";
 import { styles } from "./styles";
-import { useTheme } from "../../hooks";
+import { mixpanel, useTheme } from "../../hooks";
 import { PrinterSetupStepsCard } from "./components";
 import { BLEService } from "../../../services";
 import { toast } from "../../utils/toast.utils";
@@ -15,8 +15,21 @@ import { useEffect, useState } from "react";
 
 const PrinterSetupScreen = ({ navigation, route }) => {
   const { AppTheme } = useTheme();
-  const isSuccess = route?.params?.isSuccess || false;
+  const { isSuccess, ipAddr, provisionedCount } = route?.params || {};
   const [isBluetoothOn, setIsBluetoothOn] = useState(false);
+
+  useEffect(() => {
+    if (isSuccess) {
+      mixpanel.track("Provisioning Success", {
+        printerIP: ipAddr,
+        screen: "SearchPrinterScreen",
+        provisionedCount,
+      });
+    }
+  }, []);
+
+  console.log("Hello ");
+
   const handleNext = async () => {
     if (isSuccess) {
       return navigation.replace(ScreenNames.MainScreen);
