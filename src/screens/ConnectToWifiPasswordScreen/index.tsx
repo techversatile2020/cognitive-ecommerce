@@ -1,5 +1,6 @@
 import { KeyboardAvoidingView, Platform, ScrollView, View } from "react-native";
 import {
+  ConnectionStatusModal,
   CustomImage,
   CustomTextInput,
   InfoFieldComp,
@@ -13,21 +14,35 @@ import {
 import { styles } from "./styles";
 import { Images } from "../../config";
 import { useAnalytics, useTheme } from "../../hooks";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ConnectWifiRouter } from "../../utils";
 import { bin2String } from "../../utils/ble.util";
+import { useDispatch, useSelector } from "react-redux";
+import { setError } from "../../redux/reducers";
 
 const ConnectToWifiPasswordScreen = ({ route }) => {
   const { AppTheme } = useTheme();
   const [routerName, setRouterName] = useState(route?.params?.wifi);
+  const { error } = useSelector((state: any) => state?.printer);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+
   const [wifiPassword, setWifiPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(null);
   const { track } = useAnalytics();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (!loading && error) {
+      setShowErrorModal(true);
+    } else {
+      setShowErrorModal(false);
+    }
+  }, [error, loading]);
+
   const handleTriggerShowPassword = () => {
     setShowPassword(!showPassword);
   };
-
   const handleApply = async () => {
     try {
       track("Provisioning Started", {
@@ -39,11 +54,10 @@ const ConnectToWifiPasswordScreen = ({ route }) => {
     } catch (error) {
       console.log("ERROR CONNECTING => ", error);
     }
-    // try {
-    //   await ConnectWifiRouter(routerName, wifiPassword, setLoading);
-    // } catch (error) {
-    //   console.log("ERROR CONNETING => ", error);
-    // }
+  };
+
+  const handleOnClose = () => {
+    dispatch(setError(null));
   };
 
   return (
@@ -137,6 +151,15 @@ const ConnectToWifiPasswordScreen = ({ route }) => {
       </KeyboardAvoidingView>
 
       <Loader visible={!!loading} text={loading} />
+
+      <ConnectionStatusModal
+        isVisible={showErrorModal}
+        onClose={handleOnClose}
+        icon={Images.failBluetooth}
+        title={"Failed to connect"}
+        description={error}
+        onRetry={handleOnClose}
+      />
     </MainContainer>
   );
 };

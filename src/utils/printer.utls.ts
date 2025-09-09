@@ -14,6 +14,7 @@ import { store } from "../redux";
 import { toast } from "./toast.utils";
 import { Platform } from "react-native";
 import { fullUUID } from "react-native-ble-plx";
+import { Buffer } from "buffer";
 
 const version_pb = require("./../../protos/version_pb");
 const request_pb = require("./../../protos/request_pb");
@@ -26,6 +27,40 @@ const SERVICE_UUID = "14387800-130c-49e7-b877-2881c89cb258"; // The main service
 const CHAR_NOTIFY_UUID = "14387803-130c-49e7-b877-2881c89cb258"; // NOTIFY characteristic UUID
 const CHAR_WRITE_UUID = "14387802-130c-49e7-b877-2881c89cb258"; // WRITE characteristic UUID
 const CHAR_VERSION_UUID = "14387801-130c-49e7-b877-2881c89cb258"; // Version characteristic UUID (added as per your code)
+
+// Utility: convert status enum to readable message
+const getStatusMessage = (status: number) => {
+  switch (status) {
+    case common_pb.Status.SUCCESS:
+      return "Connected successfully!";
+    case common_pb.Status.INVALID_ARGUMENT:
+      return "Invalid WiFi credentials.";
+    case common_pb.Status.INVALID_PROTO:
+      return "Internal protocol error.";
+    case common_pb.Status.INTERNAL_ERROR:
+      return "Internal device error.";
+    default:
+      return "Unknown error occurred.";
+  }
+};
+
+// Utility: convert failure reason enum to readable message
+const getFailureReasonMessage = (reason: number) => {
+  switch (reason) {
+    case common_pb.ConnectionFailureReason.AUTH_ERROR:
+      return "Authentication failed. Please check your Wi-Fi password.";
+    case common_pb.ConnectionFailureReason.NETWORK_NOT_FOUND:
+      return "Wi-Fi network not found.";
+    case common_pb.ConnectionFailureReason.TIMEOUT:
+      return "Connection timed out. Please try again.";
+    case common_pb.ConnectionFailureReason.FAIL_IP:
+      return "Failed to obtain IP address.";
+    case common_pb.ConnectionFailureReason.FAIL_CONN:
+      return "Unable to establish connection.";
+    default:
+      return "Unknown failure reason.";
+  }
+};
 
 export async function ConnectButtonHandler({
   device,
@@ -42,7 +77,9 @@ export async function ConnectButtonHandler({
     dispatch(setScannedWifis([]));
 
     // 1. Connect and initialize device
-    const connectedDevice = await BLEService.connectToDevice(device.id);
+    let connectedDevice = await BLEService.connectToDevice(device.id);
+
+    await new Promise((r) => setTimeout(r, 1000));
 
     // 2. Discover services and characteristics
     await BLEService.discoverAllServicesAndCharacteristicsForDevice();
@@ -84,6 +121,8 @@ export async function ConnectButtonHandler({
       CHAR_WRITE_UUID,
       requestPayload
     );
+
+    console.log("Still 88 working fine...");
 
     if (Platform.OS === "ios") {
       try {
@@ -160,6 +199,7 @@ export const ConnectWifiRouter = async (wifiInfo, wifiPassword, setLoading) => {
       await timeout(10000);
       const statusRequest = new request_pb.Request();
       statusRequest.setOpCode(common_pb.OpCode.GET_STATUS);
+
       await BLEService.writeCharacteristicWithResponseForDevice(
         "14387800-130c-49e7-b877-2881c89cb258",
         "14387802-130c-49e7-b877-2881c89cb258",
@@ -241,7 +281,7 @@ export function generateTestLabelScript(
   languageCode: PrinterLanguageCode,
   context: ScriptContext
 ): string {
-  const var_header = "! 0 0 0 0"
+  const var_header = "! 0 0 0 0";
   const header = "! 0 100 390 1";
   const variableLines = resolveVariables(context).join("\n");
   const body = SCRIPT_TEMPLATES[languageCode] || SCRIPT_TEMPLATES[0];

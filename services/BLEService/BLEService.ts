@@ -161,37 +161,41 @@ class BLEServiceInstance {
   ) => {
     this.discoveredDevices.clear();
 
-    this.manager.startDeviceScan(UUIDs, { legacyScan }, (error, device) => {
-      if (error) {
-        this.onError(error);
-        // console.error(error.message);
-        this.manager.stopDeviceScan();
-        return error?.message;
-        // throw new Error(error?.message);
-      }
-      if (device) {
-        // onDeviceFound(Array.from(this.discoveredDevices.values()));
+    this.manager.startDeviceScan(
+      UUIDs,
+      { legacyScan },
+      async (error, device) => {
+        if (error) {
+          this.onError(error);
+          // console.error(error.message);
+          await this.manager.stopDeviceScan();
+          return error?.message;
+          // throw new Error(error?.message);
+        }
+        if (device) {
+          // onDeviceFound(Array.from(this.discoveredDevices.values()));
 
-        if (
-          device &&
-          !this.discoveredDevices.has(device.id) &&
-          device.isConnectable
-        ) {
-          this.discoveredDevices.set(device.id, device);
-          const deviceArray = Array.from(this.discoveredDevices.values());
-          onDeviceFound(deviceArray); // emit full updated list
+          if (
+            device &&
+            !this.discoveredDevices.has(device.id) &&
+            device.isConnectable
+          ) {
+            this.discoveredDevices.set(device.id, device);
+            const deviceArray = Array.from(this.discoveredDevices.values());
+            onDeviceFound(deviceArray); // emit full updated list
+          }
         }
       }
-    });
+    );
   };
 
   stopScan = async () => {
-    this.manager.stopDeviceScan();
+    await this.manager.stopDeviceScan();
   };
 
-  connectToDevice = (deviceId: DeviceId) =>
-    new Promise<Device>((resolve, reject) => {
-      this.manager.stopDeviceScan();
+  connectToDevice = async (deviceId: DeviceId) =>
+    new Promise<Device>(async (resolve, reject) => {
+      await this.manager.stopDeviceScan();
       this.manager
         .connectToDevice(deviceId)
         .then((device) => {
@@ -199,6 +203,8 @@ class BLEServiceInstance {
           this.onDeviceDisconnected((error, device) => {
             store.dispatch(setCurrentConnectedPrinter(null));
             if (error) {
+              console.log("HERER ERROR: ", error);
+
               // this.showErrorToast(error?.message);
               reject(error);
             }
@@ -220,12 +226,14 @@ class BLEServiceInstance {
     });
 
   discoverAllServicesAndCharacteristicsForDevice = async () =>
-    new Promise<Device>((resolve, reject) => {
+    new Promise<Device>(async (resolve, reject) => {
       if (!this.device) {
         this.showErrorToast(deviceNotConnectedErrorText);
+
         reject(new Error(deviceNotConnectedErrorText));
         return;
       }
+
       this.manager
         .discoverAllServicesAndCharacteristicsForDevice(this.device.id)
         .then((device) => {
@@ -233,7 +241,7 @@ class BLEServiceInstance {
           this.device = device;
         })
         .catch((error) => {
-          this.onError(error);
+          this.onError(error?.message);
           reject(error);
         });
     });

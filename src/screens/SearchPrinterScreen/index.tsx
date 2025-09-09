@@ -79,6 +79,7 @@ const SearchPrinterScreen = ({ navigation }) => {
       await ble.scanDevices(setBleScannedDevices, [
         "14387800-130c-49e7-b877-2881c89cb258",
       ]);
+
       setLoading(null);
     } catch (error) {
       setLoading(null);
@@ -121,10 +122,14 @@ const SearchPrinterScreen = ({ navigation }) => {
 
       if (response?.status == "fail") {
         setShowPrinterErrorModal("Unable to Connect to Device");
-        setConnectionError(`${response?.error} \n Your device lost connection`);
+        setConnectionError(
+          `${response?.error} \nTry forget device from phone's settings.`
+        );
         return;
       }
     } catch (error) {
+      console.log("ERROR ");
+
       setShowPrinterErrorModal("Unable to Connect to Device");
       setConnectionError(
         error?.message || "Unexpected error\n please try again"
@@ -192,11 +197,14 @@ const SearchPrinterScreen = ({ navigation }) => {
         }
       }
     } catch (err) {
-      console.log("Error listner 1 => ", err);
-
       setShowPrinterErrorModal("Unable to connect to network");
-      setConnectionError(
-        "Device can not connect to network, Please check your password"
+      // setConnectionError(
+      //   "Device can not connect to network, Please check your password"
+      // );
+      dispatch(
+        setError(
+          "Device can not connect to network, Please check your password"
+        )
       );
       // track("Provisioning Failed", {
       //   screen: "SearchPrinterScreen",
