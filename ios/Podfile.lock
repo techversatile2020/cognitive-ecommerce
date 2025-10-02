@@ -1189,7 +1189,7 @@ PODS:
   - React-Mapbuffer (0.74.5):
     - glog
     - React-debug
-  - react-native-ble-plx (3.5.0):
+  - react-native-ble-plx (3.1.2):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1841,7 +1841,7 @@ SPEC CHECKSUMS:
   React-jsitracing: f8367edacc50bb3f9f056a5aeafb8cee5849fafb
   React-logger: 780b9ee9cec7d44eabc4093de90107c379078cb6
   React-Mapbuffer: f544f00b98dbdd8cbae96dd2bdb8b47f719976e0
-  react-native-ble-plx: e5aa8ba581f674146ccb631a1f7f21fea5fdeb2c
+  react-native-ble-plx: 1bf2f10df5e2666c44f2d2dcb6c8242518160d84
   react-native-blur: 207ec2bf853b9a3b7751e3a29f7f497e69010b44
   react-native-network-info: 23b4f34419d7998727c9e50bf8dee3c1bd3f975a
   react-native-safe-area-context: df9763c5de6fa38883028e243a0b60123acb8858
