@@ -12,7 +12,7 @@ import { SD } from "../../utils";
 import { PrimaryButton } from "../primary-button";
 import Text from "../text";
 import { useTheme } from "../../hooks";
-import { Images } from "../../config";
+import { Images, NavigationService } from "../../config"; // Navigation ke liye
 import { Fonts } from "../../styles";
 
 interface AuthContainerProps {
@@ -26,6 +26,8 @@ interface AuthContainerProps {
   containerStyle?: StyleProp<ViewStyle>;
   contentStyle?: StyleProp<ViewStyle>;
   showFooter?: boolean;
+  showBackButton?: boolean;
+  onBackPress?: () => void;
 }
 
 export const AuthContainer: React.FC<AuthContainerProps> = ({
@@ -39,20 +41,41 @@ export const AuthContainer: React.FC<AuthContainerProps> = ({
   containerStyle,
   contentStyle,
   showFooter = true,
+  showBackButton = true, // ✅ default true
+  onBackPress,
 }) => {
   const { AppTheme } = useTheme();
 
   return (
     <View style={[styles.container, containerStyle]}>
-      {/* Logo */}
-      <Image style={styles.logo} source={Images.logo} />
+      {/* Top Row */}
+      <View style={styles.topRow}>
+        {showBackButton && (
+          <TouchableOpacity
+            style={styles.backBtnWrapper}
+            activeOpacity={0.7}
+            onPress={onBackPress || (() => NavigationService.goBack())}
+          >
+            <Image style={styles.backBtn} source={Images.BackBtn} />
+          </TouchableOpacity>
+        )}
+        <Image
+          style={[
+            styles.logo,
+            {
+              marginLeft: showBackButton ? SD.wp(40) : SD.wp(80),
+            },
+          ]}
+          source={Images.logo}
+        />
+      </View>
 
       {/* Title */}
       <Text color={AppTheme.Black} bold size={34} style={styles.title}>
         {title}
       </Text>
 
-      {/* Content */}
+      {/* Children */}
       <View style={[styles.content, contentStyle]}>{children}</View>
 
       {/* Primary Button */}
@@ -63,7 +86,7 @@ export const AuthContainer: React.FC<AuthContainerProps> = ({
         onPress={onButtonPress}
       />
 
-      {/* Footer (Optional) */}
+      {/* Footer */}
       {showFooter && (
         <View style={styles.footer}>
           <Text size={14}>{footerText}</Text>
@@ -83,10 +106,23 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
   },
+  topRow: {
+    width: "100%",
+    flexDirection: "row",
+    marginTop: SD.hp(40),
+    alignItems: "center",
+  },
+  backBtnWrapper: {
+    padding: SD.hp(5),
+  },
+  backBtn: {
+    width: SD.wp(40),
+    height: SD.hp(40),
+    marginTop: SD.hp(-12),
+  },
   logo: {
     width: SD.wp(210),
     height: SD.hp(40),
-    marginTop: SD.hp(40),
   },
   title: {
     marginTop: SD.hp(50),

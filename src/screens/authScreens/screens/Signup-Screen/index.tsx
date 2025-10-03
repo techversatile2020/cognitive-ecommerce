@@ -8,7 +8,8 @@ import {
 import { useTheme } from "../../../../hooks/useTheme";
 import { SD } from "../../../../utils";
 import { Fonts } from "../../../../styles";
-import { Images } from "../../../../config";
+import { Images, NavigationService } from "../../../../config";
+import { AuthScreenNames } from "../../../../config/ScreenNames";
 
 export const SignupScreen = () => {
   const { AppTheme } = useTheme();
@@ -38,7 +39,7 @@ export const SignupScreen = () => {
   };
 
   const handleLoginRedirect = () => {
-    console.log("Go to Login screen");
+    NavigationService.reset_0(AuthScreenNames.LoginScreen);
   };
 
   return (

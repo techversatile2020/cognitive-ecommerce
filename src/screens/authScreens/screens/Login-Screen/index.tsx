@@ -10,7 +10,10 @@ import { useTheme } from "../../../../hooks/useTheme";
 import { SD } from "../../../../utils";
 import { Fonts } from "../../../../styles";
 import { Images, NavigationService } from "../../../../config";
-import { AuthScreenNames } from "../../../../config/ScreenNames";
+import {
+  AuthScreenNames,
+  BottomTabScreenNames,
+} from "../../../../config/ScreenNames";
 
 export const LoginScreen = () => {
   const { AppTheme } = useTheme();
@@ -25,6 +28,7 @@ export const LoginScreen = () => {
 
   const handleLogin = () => {
     console.log("Login pressed with email:", email);
+    NavigationService.navigate(BottomTabScreenNames.Home);
   };
 
   const handleSignupRedirect = () => {
@@ -42,6 +46,7 @@ export const LoginScreen = () => {
         buttonTitle="Log in"
         onButtonPress={handleLogin}
         onFooterPress={handleSignupRedirect}
+        showBackButton={false}
       >
         {/* Email */}
         <CustomTextInput
