@@ -34,8 +34,8 @@ import DeviceInfo from "react-native-device-info";
 import { useAnalytics } from "./src/hooks";
 import { ApolloProvider } from "@apollo/client/react";
 import { client } from "./src/api";
+import { StackNavigator } from "./src/navigation";
 
-const Stack = createNativeStackNavigator();
 const queryClient = new QueryClient();
 
 const App = () => {
@@ -48,72 +48,7 @@ const App = () => {
             <>
               <StatusBar style="dark" />
               <NavigationContainer>
-                <Stack.Navigator screenOptions={{ headerShown: false }}>
-                  <Stack.Screen
-                    name={ScreenNames.MainScreen}
-                    component={MainScreen}
-                  />
-                  <Stack.Screen
-                    name={ScreenNames.PrinterSetupScreen}
-                    component={PrinterSetupScreen}
-                  />
-                  <Stack.Screen
-                    name={ScreenNames.SearchPrinterScreen}
-                    component={SearchPrinterScreen}
-                  />
-                  <Stack.Screen
-                    name={ScreenNames.ConnectWifiScreen}
-                    component={ConnectWifiScreen}
-                  />
-                  <Stack.Screen
-                    name={ScreenNames.PrinterConnectedSuccessScreen}
-                    component={PrinterConnectedSuccessScreen}
-                  />
-                  <Stack.Screen
-                    name={ScreenNames.PrinterSettingScreen}
-                    component={PrinterSettingScreen}
-                  />
-                  <Stack.Screen
-                    name={ScreenNames.NetworkInformationScreen}
-                    component={NetworkInformationScreen}
-                  />
-                  <Stack.Screen
-                    name={ScreenNames.PrinterSettingNested}
-                    component={PrinterSettingNested}
-                  />
-                  <Stack.Screen
-                    name={ScreenNames.MediaSettingScreen}
-                    component={MediaSettingScreen}
-                  />
-                  <Stack.Screen
-                    name={ScreenNames.PrinterInfoScreen}
-                    component={PrinterInfoScreen}
-                  />
-                  <Stack.Screen
-                    name={ScreenNames.AdvanceSettingScreen}
-                    component={AdvanceSettingScreen}
-                  />
-                  <Stack.Screen
-                    name={ScreenNames.ConnectToWifiPasswordScreen}
-                    component={ConnectToWifiPasswordScreen}
-                  />
-                  <Stack.Screen
-                    name={ScreenNames.FactoryResetScreen}
-                    component={FactoryResetScreen}
-                  />
-                  <Stack.Screen
-                    name={ScreenNames.CompletedScreen}
-                    component={CompletedScreen}
-                  />
-                  <Stack.Screen
-                    name={ScreenNames.WifiConnectedSuccessScreen}
-                    component={WifiConnectedSuccessScreen}
-                  />
-                  <Stack.Screen
-                    name={ScreenNames.HttpServerWebVIew}
-                    component={HttpServerWebView}
-                  />
-                </Stack.Navigator>
+                <StackNavigator />
               </NavigationContainer>
               <Toast />
             </>

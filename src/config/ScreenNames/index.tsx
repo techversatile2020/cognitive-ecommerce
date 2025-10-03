@@ -16,3 +16,10 @@ export const ScreenNames = {
   WifiConnectedSuccessScreen: "WifiConnectedSuccessScreen",
   HttpServerWebVIew: "HttpServerWebView",
 };
+
+export const BottomTabScreenNames = {
+  Home: "HomeScreen",
+  Cart: "CartScreen",
+  Orders: "OrdersScreen",
+  Profile: "ProfileScreen",
+};
