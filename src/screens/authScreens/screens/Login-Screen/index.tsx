@@ -66,7 +66,7 @@ export const LoginScreen = () => {
 
         {/* Password with Eye Toggle */}
         <CustomTextInput
-          ref={passwordRef}
+          inputRef={passwordRef}
           placeholder="Password"
           value={password}
           setValue={setPassword}

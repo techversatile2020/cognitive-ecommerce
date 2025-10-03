@@ -71,7 +71,7 @@ export const SignupScreen = () => {
 
         {/* Email */}
         <CustomTextInput
-          ref={emailRef}
+          inputRef={emailRef}
           placeholder="Email"
           value={email}
           setValue={setEmail}
@@ -90,7 +90,7 @@ export const SignupScreen = () => {
 
         {/* Password */}
         <CustomTextInput
-          ref={passwordRef}
+          inputRef={passwordRef}
           placeholder="Password"
           value={password}
           setValue={setPassword}
@@ -115,7 +115,7 @@ export const SignupScreen = () => {
 
         {/* Confirm Password */}
         <CustomTextInput
-          ref={confirmPasswordRef}
+          inputRef={confirmPasswordRef}
           placeholder="Confirm Password"
           value={confirmPassword}
           setValue={setConfirmPassword}
