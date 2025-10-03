@@ -29,3 +29,7 @@ export const AuthScreenNames = {
   SignupScreen: "SignupScreen",
   ForgotPassword: "ForgotPassword",
 };
+
+export const EcommerceScreenNames = {
+  ProductListingScreen: "ProductListingScreen",
+};

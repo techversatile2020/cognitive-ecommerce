@@ -50,6 +50,14 @@ const Images = {
   failWifi: require("./../../assets/icons/failWifi.png"),
   genralError: require("./../../assets/icons/genralError.png"),
   eyeOff: require("./../../assets/icons/eyeOff.png"),
+
+  Home: require("./../../assets/icons/home.png"),
+  Cart: require("./../../assets/icons/cart.png"),
+  Orders: require("./../../assets/icons/orders.png"),
+  Profile: require("./../../assets/icons/profile.png"),
+  Search: require("./../../assets/icons/search.png"),
+  filter: require("./../../assets/icons/filter.png"),
+  arrowDown: require("./../../assets/icons/arrowDown.png"),
 };
 
 export default Images;

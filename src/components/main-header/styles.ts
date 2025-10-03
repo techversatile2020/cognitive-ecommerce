@@ -21,6 +21,7 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     paddingBottom: SD.hp(10),
     flex: 1,
+    // justifyContent: "space-between",
   },
   backIcon: {
     width: SD.wp(34),
@@ -28,12 +29,13 @@ export const styles = StyleSheet.create({
     resizeMode: "contain",
   },
   headerTitle: {
-    textAlign: "center",
     flex: 1,
+    textAlign: "center",
     fontFamily: Fonts["Bold"],
     fontSize: SD.customFontSize(18),
     color: ThemeColors.Black,
-    right: SD.wp(10),
+    right: SD.wp(30),
+    marginLeft: SD.wp(20),
   },
   plusIcon: {
     width: SD.wp(32),

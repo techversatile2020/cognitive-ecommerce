@@ -16,6 +16,7 @@ import {
   PrinterSetupScreen,
   SearchPrinterScreen,
   WifiConnectedSuccessScreen,
+  ProductListingScreen,
 } from "../screens";
 import { BottomTabNavigator } from "./BottomTabNavigator";
 import { AuthScreenNames } from "../config/ScreenNames";
@@ -24,6 +25,7 @@ import {
   LoginScreen,
   SignupScreen,
 } from "../screens/authScreens";
+import { EcommerceScreenNames } from "../config/ScreenNames";
 
 const Stack = createNativeStackNavigator();
 export const StackNavigator = () => {
@@ -111,6 +113,11 @@ export const StackNavigator = () => {
         <Stack.Screen
           name={ScreenNames.HttpServerWebVIew}
           component={HttpServerWebView}
+        />
+
+        <Stack.Screen
+          name={EcommerceScreenNames.ProductListingScreen}
+          component={ProductListingScreen}
         />
       </Stack.Group>
     </Stack.Navigator>
