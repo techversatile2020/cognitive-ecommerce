@@ -1,11 +1,5 @@
 import React, { useRef, useState } from "react";
-import {
-  StyleSheet,
-  TextInput,
-  Image,
-  View,
-  TouchableOpacity,
-} from "react-native";
+import { StyleSheet, TextInput, View, TouchableOpacity } from "react-native";
 import {
   AuthContainer,
   CustomTextInput,
@@ -16,7 +10,6 @@ import { useTheme } from "../../../../hooks/useTheme";
 import { SD } from "../../../../utils";
 import { Fonts } from "../../../../styles";
 import { Images, NavigationService } from "../../../../config";
-import { EMPTY } from "rxjs";
 import { AuthScreenNames } from "../../../../config/ScreenNames";
 
 export const LoginScreen = () => {
@@ -25,6 +18,9 @@ export const LoginScreen = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
+  const [emailFocused, setEmailFocused] = useState(false);
+  const [passwordFocused, setPasswordFocused] = useState(false);
+
   const passwordRef = useRef<TextInput>(null);
 
   const handleLogin = () => {
@@ -32,7 +28,7 @@ export const LoginScreen = () => {
   };
 
   const handleSignupRedirect = () => {
-    console.log("Go to Signup");
+    NavigationService.navigate(AuthScreenNames.SignupScreen);
   };
 
   const handlePress = () => {
@@ -54,10 +50,18 @@ export const LoginScreen = () => {
           setValue={setEmail}
           placeholderTextColor={"#7C8BA0"}
           textColor={AppTheme.Black}
-          containerStyles={styles.input}
+          containerStyles={[
+            styles.input,
+            emailFocused && {
+              borderWidth: 1,
+              borderColor: AppTheme.Primary,
+            },
+          ]}
           returnKeyType="next"
           onSubmitEditing={() => passwordRef.current?.focus()}
           fontSize={16}
+          onFocus={() => setEmailFocused(true)}
+          onBlur={() => setEmailFocused(false)}
         />
 
         {/* Password with Eye Toggle */}
@@ -71,10 +75,19 @@ export const LoginScreen = () => {
           onIconPress={() => setShowPassword(!showPassword)}
           placeholderTextColor={"#7C8BA0"}
           textColor={AppTheme.Black}
-          containerStyles={[styles.input, { marginTop: SD.hp(25) }]}
+          containerStyles={[
+            styles.input,
+            { marginTop: SD.hp(25) },
+            passwordFocused && {
+              borderWidth: 1,
+              borderColor: AppTheme.Primary,
+            },
+          ]}
           returnKeyType="done"
           onSubmitEditing={handleLogin}
           fontSize={16}
+          onFocus={() => setPasswordFocused(true)}
+          onBlur={() => setPasswordFocused(false)}
         />
 
         <View style={styles.secondaryText}>
@@ -99,12 +112,6 @@ const styles = StyleSheet.create({
     fontFamily: Fonts["Regular"],
     paddingLeft: SD.wp(24),
   },
-  eyeIcon: {
-    width: SD.hp(20),
-    height: SD.hp(20),
-    tintColor: "#7C8BA0",
-  },
-
   secondaryText: {
     flexDirection: "row",
     justifyContent: "flex-end",

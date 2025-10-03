@@ -12,6 +12,7 @@ import { Fonts } from "../../../../styles";
 export const ForgotPassword = () => {
   const { AppTheme } = useTheme();
   const [email, setEmail] = useState("");
+  const [emailFocused, setEmailFocused] = useState(false);
 
   const handleForgotPassword = () => {
     console.log("Forgot password requested for:", email);
@@ -32,9 +33,17 @@ export const ForgotPassword = () => {
           setValue={setEmail}
           placeholderTextColor={"#7C8BA0"}
           textColor={AppTheme.Black}
-          containerStyles={styles.input}
+          containerStyles={[
+            styles.input,
+            emailFocused && {
+              borderWidth: 1,
+              borderColor: AppTheme.Primary,
+            },
+          ]}
           returnKeyType="done"
           fontSize={16}
+          onFocus={() => setEmailFocused(true)}
+          onBlur={() => setEmailFocused(false)}
         />
       </AuthContainer>
     </MainContainer>
