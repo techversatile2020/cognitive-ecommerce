@@ -13,7 +13,9 @@ import { Images, NavigationService } from "../../../../config";
 import {
   AuthScreenNames,
   BottomTabScreenNames,
+  ScreenNames,
 } from "../../../../config/ScreenNames";
+import { useDispatch } from "react-redux";
 
 export const LoginScreen = () => {
   const { AppTheme } = useTheme();
@@ -27,8 +29,12 @@ export const LoginScreen = () => {
   const passwordRef = useRef<TextInput>(null);
 
   const handleLogin = () => {
-    console.log("Login pressed with email:", email);
-    NavigationService.navigate(BottomTabScreenNames.Home);
+    NavigationService.reset_0(ScreenNames.MainScreen, {
+      state: {
+        index: 0,
+        routes: [{ name: BottomTabScreenNames.Home }],
+      },
+    });
   };
 
   const handleSignupRedirect = () => {
