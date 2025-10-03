@@ -26,4 +26,5 @@ export const BottomTabScreenNames = {
 
 export const EcommerceScreenNames = {
   ProductListingScreen: "ProductListingScreen",
+  ProductDetailsScreen: "ProductDetailsScreen",
 };

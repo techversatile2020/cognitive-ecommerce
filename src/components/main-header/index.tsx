@@ -6,6 +6,7 @@ import {
   Pressable,
   Text,
   Platform,
+  TextStyle,
 } from "react-native";
 import { Images, NavigationService, ScreenNames } from "../../config";
 import { useTheme } from "../../hooks";
@@ -22,6 +23,7 @@ type BackHeaderProps = {
   logo?: boolean;
   title?: string;
   showPlusIcon?: boolean;
+  headerTitleStyles?: TextStyle;
 };
 
 export const MainHeader: React.FC<BackHeaderProps> = ({
@@ -30,6 +32,7 @@ export const MainHeader: React.FC<BackHeaderProps> = ({
   back,
   title,
   showPlusIcon,
+  headerTitleStyles,
 }) => {
   const { AppTheme } = useTheme();
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -76,7 +79,9 @@ export const MainHeader: React.FC<BackHeaderProps> = ({
           <Pressable onPress={handleGoBack}>
             <CustomImage source={Images.BackBtn} style={styles.backIcon} />
           </Pressable>
-          {title && <Text style={styles.headerTitle}>{title}</Text>}
+          {title && (
+            <Text style={[styles.headerTitle, headerTitleStyles]}>{title}</Text>
+          )}
         </View>
       )}
     </SafeAreaView>

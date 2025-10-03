@@ -18,6 +18,7 @@ import {
   SearchPrinterScreen,
   WifiConnectedSuccessScreen,
   ProductListingScreen,
+  ProductDetailsScreen,
 } from "../screens";
 import { BottomTabNavigator } from "./BottomTabNavigator";
 import { EcommerceScreenNames } from "../config/ScreenNames";
@@ -98,6 +99,10 @@ export const StackNavigator = () => {
         <Stack.Screen
           name={EcommerceScreenNames.ProductListingScreen}
           component={ProductListingScreen}
+        />
+        <Stack.Screen
+          name={EcommerceScreenNames.ProductDetailsScreen}
+          component={ProductDetailsScreen}
         />
       </Stack.Group>
     </Stack.Navigator>
