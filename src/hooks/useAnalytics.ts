@@ -5,7 +5,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import DeviceInfo from "react-native-device-info";
 import { Mixpanel } from "mixpanel-react-native";
 
-const MIXPANEL_TOKEN = "cf58e795b5804fb345346f01bf5c47e9";
+// const MIXPANEL_TOKEN = "cf58e795b5804fb345346f01bf5c47e9";
+const MIXPANEL_TOKEN = "cf58e795b5804fb345346f";
 // const MIXPANEL_TOKEN = "c10ab648b95cf89b2a6f102f12e2be085";
 const trackAutomaticEvents = false; // disable legacy autotrack mobile events
 const useNative = true; // use Native Mode

@@ -53,6 +53,7 @@ const App = () => {
                     name={ScreenNames.MainScreen}
                     component={MainScreen}
                   />
+
                   <Stack.Screen
                     name={ScreenNames.PrinterSetupScreen}
                     component={PrinterSetupScreen}
