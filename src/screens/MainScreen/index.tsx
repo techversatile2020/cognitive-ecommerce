@@ -120,7 +120,10 @@ function MainScreen({ navigation }) {
                 heading={item.heading}
                 subHeading={item.subHeading}
                 key={index}
-                onPress={handleOpenLink.bind(this, item.link, item?.heading)}
+                onPress={
+                  item?.onPress ||
+                  handleOpenLink.bind(this, item.link, item?.heading)
+                }
               />
             ))}
           </View>

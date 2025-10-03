@@ -7,7 +7,7 @@ import {
   Text,
   Platform,
 } from "react-native";
-import { Images, ScreenNames } from "../../config";
+import { Images, NavigationService, ScreenNames } from "../../config";
 import { useTheme } from "../../hooks";
 import { CustomImage } from "../custom-image";
 import { styles } from "./styles";
@@ -34,7 +34,7 @@ export const MainHeader: React.FC<BackHeaderProps> = ({
   const { AppTheme } = useTheme();
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
-  const handleGoBack = () => navigation.goBack();
+  const handleGoBack = () => NavigationService.goBack();
   const handleAddPrinter = () =>
     navigation.navigate(ScreenNames.PrinterSetupScreen);
 

@@ -3,7 +3,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
 import { AppState, AppStateStatus, StyleSheet } from "react-native";
-import { ScreenNames } from "./src/config";
+import { NavigationService, ScreenNames } from "./src/config";
 import {
   AdvanceSettingScreen,
   CompletedScreen,
@@ -47,7 +47,9 @@ const App = () => {
           <ApolloProvider client={client}>
             <>
               <StatusBar style="dark" />
-              <NavigationContainer>
+              <NavigationContainer
+                ref={(ref: any) => NavigationService.setTopLevelNavigator(ref)}
+              >
                 <StackNavigator />
               </NavigationContainer>
               <Toast />

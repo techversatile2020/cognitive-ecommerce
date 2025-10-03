@@ -10,7 +10,8 @@ export const styles = StyleSheet.create({
     alignItems: "center",
   },
   leftView: {
-    width: "50%",
+    // width: "50%",
+    flex: 1,
   },
   AddNowBtn: {
     width: SD.wp(96),
@@ -21,6 +22,7 @@ export const styles = StyleSheet.create({
     width: SD.wp(133),
     height: SD.hp(136),
     resizeMode: "contain",
+    // alignSelf: "flex-end",
   },
   optionsSection: {
     marginTop: SD.hp(20),

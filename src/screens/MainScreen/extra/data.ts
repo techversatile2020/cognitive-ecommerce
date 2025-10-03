@@ -1,4 +1,5 @@
-import { Images } from "../../../config";
+import { Images, NavigationService } from "../../../config";
+import { EcommerceScreenNames } from "../../../config/ScreenNames";
 
 export const opetionsData = [
   {
@@ -6,12 +7,20 @@ export const opetionsData = [
     heading: "Buy Supplies",
     subHeading: "Add Your printer add see the listing of your printer fast",
     link: "https://www.cognitivetpg.com",
+    onPress: () =>
+      NavigationService.navigate(EcommerceScreenNames.ProductListingScreen, {
+        title: "Supplies",
+      }),
   },
   {
     icon: Images.buyPrinters,
     heading: "Buy Printers",
     subHeading: "Add Your printer add see the listing of your printer fast",
     link: "https://www.cognitivetpg.com",
+    onPress: () =>
+      NavigationService.navigate(EcommerceScreenNames.ProductListingScreen, {
+        title: "Printers",
+      }),
   },
   {
     icon: Images.instructions,

@@ -23,3 +23,7 @@ export const BottomTabScreenNames = {
   Orders: "OrdersScreen",
   Profile: "ProfileScreen",
 };
+
+export const EcommerceScreenNames = {
+  ProductListingScreen: "ProductListingScreen",
+};
