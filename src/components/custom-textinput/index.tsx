@@ -41,8 +41,8 @@ type Props = {
   horizentalSpacing?: number;
   style?: TextStyle;
   disable?: boolean;
-  icon?: ImageSourcePropType;
-  containerStyles?: ViewStyle;
+  icon?: ImageSourcePropType | any;
+  containerStyles?: ViewStyle | ViewStyle[];
   onIconPress?: () => void;
 };
 export const CustomTextInput: React.FC<Props> = ({

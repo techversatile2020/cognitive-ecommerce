@@ -49,6 +49,7 @@ const Images = {
   failBluetooth: require("./../../assets/icons/failBluetooth.png"),
   failWifi: require("./../../assets/icons/failWifi.png"),
   genralError: require("./../../assets/icons/genralError.png"),
+  eyeOff: require("./../../assets/icons/eyeOff.png"),
 };
 
 export default Images;
