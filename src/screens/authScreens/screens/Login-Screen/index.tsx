@@ -15,8 +15,9 @@ import {
 import { useTheme } from "../../../../hooks/useTheme";
 import { SD } from "../../../../utils";
 import { Fonts } from "../../../../styles";
-import { Images } from "../../../../config";
+import { Images, NavigationService } from "../../../../config";
 import { EMPTY } from "rxjs";
+import { AuthScreenNames } from "../../../../config/ScreenNames";
 
 export const LoginScreen = () => {
   const { AppTheme } = useTheme();
@@ -32,6 +33,10 @@ export const LoginScreen = () => {
 
   const handleSignupRedirect = () => {
     console.log("Go to Signup");
+  };
+
+  const handlePress = () => {
+    NavigationService.navigate(AuthScreenNames.ForgotPassword);
   };
 
   return (
@@ -72,14 +77,8 @@ export const LoginScreen = () => {
           fontSize={16}
         />
 
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "flex-end",
-            marginTop: SD.hp(20),
-          }}
-        >
-          <TouchableOpacity activeOpacity={0.7}>
+        <View style={styles.secondaryText}>
+          <TouchableOpacity onPress={handlePress} activeOpacity={0.7}>
             <Text color="#7C8BA0" size={14}>
               Forget Password?
             </Text>
@@ -104,5 +103,11 @@ const styles = StyleSheet.create({
     width: SD.hp(20),
     height: SD.hp(20),
     tintColor: "#7C8BA0",
+  },
+
+  secondaryText: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    marginTop: SD.hp(20),
   },
 });
