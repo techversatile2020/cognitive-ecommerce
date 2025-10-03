@@ -57,6 +57,7 @@ export const AuthContainer: React.FC<AuthContainerProps> = ({
 
       {/* Primary Button */}
       <PrimaryButton
+        fontSize={16}
         customStyles={styles.button}
         title={buttonTitle}
         onPress={onButtonPress}
@@ -97,6 +98,8 @@ const styles = StyleSheet.create({
   button: {
     width: "100%",
     marginTop: SD.hp(40),
+    fontSize: 16,
+    fontFamily: Fonts["Medium"],
   },
   footer: {
     flexDirection: "row",
