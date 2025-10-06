@@ -1,11 +1,13 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
+import { MainContainer, MainHeader, ProductCard } from "../../../../components";
 
 export const OrdersScreen = () => {
   return (
-    <View>
-      <Text>OrdersScreen</Text>
-    </View>
+    <MainContainer>
+      <MainHeader back title="Favorites" />
+      <ProductCard />
+    </MainContainer>
   );
 };
 

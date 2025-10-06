@@ -35,6 +35,7 @@ export enum ThemeColors {
   skyBlue = "#EAEEF5",
   lightGreen = "#5CB85C",
   disableGray = "#D1D5DB",
+  lightGrayTextColor = "#868D94",
 }
 
 export enum DarkTheme {
@@ -76,6 +77,7 @@ export enum DarkTheme {
   TimeCardBackgroundColor3 = "rgba(98, 219, 190, 0.07)",
   ShadowColor = "rgba(0, 0, 0, 0.55)",
   InputIconBorder = "#E6EDF9",
+  lightGrayTextColor = "#868D94",
 }
 
 export enum LightTheme {
@@ -88,4 +90,5 @@ export enum LightTheme {
   SecondaryTextColor = "rgba(255, 255, 255, 0.60)",
   TertiaryTextColor = "#119A9D",
   TextInputBaseColor = "#354e60",
+  lightGrayTextColor = "#868D94",
 }

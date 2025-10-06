@@ -18,6 +18,7 @@ import { IncreamentDecreamentComp } from "./increament-decreament";
 import { ConnectionStatusModal } from "./connect-status-modal";
 import Loader from "./Loader";
 import { AuthContainer } from "./auth-container";
+import { ProductCard } from "./ProductCard";
 export {
   AuthContainer,
   BackHeader,
@@ -38,5 +39,6 @@ export {
   CustomTextInput,
   IncreamentDecreamentComp,
   ConnectionStatusModal,
+  ProductCard,
   Loader,
 };
