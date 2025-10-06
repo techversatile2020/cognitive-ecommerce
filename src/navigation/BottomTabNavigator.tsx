@@ -7,7 +7,12 @@ import { SD } from "../utils";
 import { Colors } from "../../constants/colors";
 import { useTheme } from "../hooks";
 import { Text } from "../components";
-import { CartScreen, OrdersScreen, ProfileScreen } from "../screens/homeScreen";
+import {
+  CartScreen,
+  FavouriteScreen,
+  OrdersScreen,
+  ProfileScreen,
+} from "../screens/homeScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -41,7 +46,7 @@ const BottomTabScreens = [
     name: BottomTabScreenNames.favourite,
     title: "Favourites",
     options: {},
-    component: MainScreen,
+    component: FavouriteScreen,
     Icon: Images.heartOutlined,
   },
   {
