@@ -1,17 +1,33 @@
-import { Image, StyleSheet, View } from "react-native";
+import {
+  Image,
+  StyleSheet,
+  View,
+  ImageSourcePropType,
+  TouchableOpacity,
+} from "react-native";
 import React from "react";
 import { SectionContainer } from "../section-container";
 import { SD } from "../../utils";
 import { useTheme } from "../../hooks";
 import { CardContainer } from "../card-container";
-import { Images } from "../../config";
 import Text from "../text";
+import { Images } from "../../config";
 
-interface InfoSectionProps {
+interface ProductCardProps {
   containerStyle?: object;
+  price: string;
+  title: string;
+  model: string;
+  image: ImageSourcePropType;
 }
 
-export const ProductCard: React.FC<InfoSectionProps> = ({ containerStyle }) => {
+export const ProductCard: React.FC<ProductCardProps> = ({
+  containerStyle,
+  price,
+  title,
+  model,
+  image,
+}) => {
   const { AppTheme } = useTheme();
 
   const COLORS = {
@@ -31,20 +47,38 @@ export const ProductCard: React.FC<InfoSectionProps> = ({ containerStyle }) => {
         <View
           style={[styles.imageWrapper, { backgroundColor: COLORS.lightBlue }]}
         >
-          <Image style={styles.image} source={Images.printer} />
+          <Image style={styles.image} source={image} resizeMode="contain" />
         </View>
 
         <View style={styles.detailsContainer}>
           <Text bottomSpacing={5} color={COLORS.black} bold size={14}>
-            $349.99
+            {price}
           </Text>
           <Text bottomSpacing={5} color={COLORS.black} medium size={14}>
-            A776II-Retail Receipt...
+            {title}
           </Text>
           <Text color={COLORS.grey} size={11}>
-            Model: WH-100XM4, Black
+            {model}
           </Text>
         </View>
+        <TouchableOpacity
+          activeOpacity={0.7}
+          style={[
+            styles.iconBox,
+            {
+              backgroundColor: AppTheme.lightBlue,
+              justifyContent: "center",
+              alignItems: "center",
+            },
+          ]}
+        >
+          <Image
+            tintColor={AppTheme.Primary}
+            source={Images.Cart}
+            resizeMode="contain"
+            style={styles.iconStyles}
+          />
+        </TouchableOpacity>
       </CardContainer>
     </SectionContainer>
   );
@@ -78,5 +112,14 @@ const styles = StyleSheet.create({
     width: "60%",
     height: SD.hp(60),
     justifyContent: "center",
+  },
+  iconBox: {
+    width: SD.wp(38),
+    height: SD.wp(38),
+    borderRadius: SD.wp(20),
+  },
+  iconStyles: {
+    width: SD.wp(20),
+    height: SD.wp(20),
   },
 });
