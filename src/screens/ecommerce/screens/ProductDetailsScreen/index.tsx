@@ -1,8 +1,13 @@
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 import React, { useState } from "react";
 import { useTheme } from "../../../../hooks";
 import { ThemeColors } from "../../../../styles";
-import { CustomImage, MainContainer, MainHeader } from "../../../../components";
+import {
+  CustomImage,
+  MainContainer,
+  MainHeader,
+  Text,
+} from "../../../../components";
 import { SD } from "../../../../utils";
 import { Images } from "../../../../config";
 
@@ -33,6 +38,33 @@ export const ProductDetailsScreen = () => {
             />
           </Pressable>
         </View>
+      </View>
+      <View style={styles.infoSection}>
+        <Text extraBold size={20}>
+          $349.99
+        </Text>
+        <Text semiBold size={20} topSpacing={5}>
+          Advantage DLX Printer
+        </Text>
+        <Text
+          regular
+          size={14}
+          color="#868D94"
+          topSpacing={5}
+          bottomSpacing={10}
+        >
+          Model: DBD24/DBT24-2085-xxx
+        </Text>
+        {[1, 2, 3].map((item, index) => {
+          return (
+            <View style={styles.listText}>
+              <View style={styles.dot} />
+              <Text regular size={14} color="#868D94" key={index}>
+                Exceptional Ruggedness and Reliability
+              </Text>
+            </View>
+          );
+        })}
       </View>
     </MainContainer>
   );
@@ -74,5 +106,22 @@ const createStyles = (colors: typeof ThemeColors) =>
       width: SD.wp(21),
       height: SD.wp(21),
       resizeMode: "contain",
+    },
+    infoSection: {
+      marginTop: SD.hp(20),
+      paddingLeft: SD.wp(10),
+      flex: 1,
+    },
+    listText: {
+      flexDirection: "row",
+      alignItems: "center",
+      columnGap: 10,
+      marginTop: SD.hp(5),
+    },
+    dot: {
+      width: SD.wp(5),
+      height: SD.hp(5),
+      borderRadius: 100,
+      backgroundColor: "#868D94",
     },
   });

@@ -59,6 +59,7 @@ const Images = {
   filter: require("./../../assets/icons/filter.png"),
   arrowDown: require("./../../assets/icons/arrowDown.png"),
   heart: require("./../../assets/icons/heart.png"),
+  heartOutlined: require("./../../assets/icons/heart-outlined.png"),
 };
 
 export default Images;
