@@ -17,7 +17,9 @@ import { CustomTextInput } from "./custom-textinput";
 import { IncreamentDecreamentComp } from "./increament-decreament";
 import { ConnectionStatusModal } from "./connect-status-modal";
 import Loader from "./Loader";
+import { AuthContainer } from "./auth-container";
 export {
+  AuthContainer,
   BackHeader,
   CardContainer,
   CustomImage,

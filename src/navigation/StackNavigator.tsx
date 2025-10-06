@@ -1,7 +1,6 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { ScreenNames } from "../config";
 import {
-  MainScreen,
   AdvanceSettingScreen,
   CompletedScreen,
   ConnectToWifiPasswordScreen,
@@ -21,6 +20,12 @@ import {
   ProductDetailsScreen,
 } from "../screens";
 import { BottomTabNavigator } from "./BottomTabNavigator";
+import { AuthScreenNames } from "../config/ScreenNames";
+import {
+  ForgotPassword,
+  LoginScreen,
+  SignupScreen,
+} from "../screens/authScreens";
 import { EcommerceScreenNames } from "../config/ScreenNames";
 
 const Stack = createNativeStackNavigator();
@@ -28,8 +33,23 @@ export const StackNavigator = () => {
   return (
     <Stack.Navigator
       screenOptions={{ headerShown: false }}
-      initialRouteName={ScreenNames.MainScreen}
+      initialRouteName={AuthScreenNames.LoginScreen}
     >
+      <Stack.Group>
+        <Stack.Screen
+          name={AuthScreenNames.LoginScreen}
+          component={LoginScreen}
+        />
+        <Stack.Screen
+          name={AuthScreenNames.SignupScreen}
+          component={SignupScreen}
+        />
+        <Stack.Screen
+          name={AuthScreenNames.ForgotPassword}
+          component={ForgotPassword}
+        />
+      </Stack.Group>
+
       <Stack.Group>
         <Stack.Screen
           name={ScreenNames.MainScreen}

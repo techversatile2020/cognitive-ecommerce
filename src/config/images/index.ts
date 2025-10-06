@@ -49,6 +49,7 @@ const Images = {
   failBluetooth: require("./../../assets/icons/failBluetooth.png"),
   failWifi: require("./../../assets/icons/failWifi.png"),
   genralError: require("./../../assets/icons/genralError.png"),
+  eyeOff: require("./../../assets/icons/eyeOff.png"),
 
   Home: require("./../../assets/icons/home.png"),
   Cart: require("./../../assets/icons/cart.png"),

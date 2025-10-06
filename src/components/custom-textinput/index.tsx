@@ -10,7 +10,7 @@ import {
   ViewStyle,
 } from "react-native";
 import { styles } from "./styles";
-import React from "react";
+import React, { Ref } from "react";
 import { useTheme } from "../../hooks";
 import { Fonts } from "../../styles";
 import { SD } from "../../utils";
@@ -41,39 +41,44 @@ type Props = {
   horizentalSpacing?: number;
   style?: TextStyle;
   disable?: boolean;
-  icon?: ImageSourcePropType;
-  containerStyles?: ViewStyle;
+  icon?: ImageSourcePropType | any;
+  containerStyles?: ViewStyle | ViewStyle[];
   onIconPress?: () => void;
+  inputRef?: Ref<TextInput>;
 };
-export const CustomTextInput: React.FC<Props> = ({
-  placeholder,
-  keyboardType = "default",
-  fontSize = 16,
-  placeholderTextColor,
-  backgroundColor,
-  bold,
-  value,
-  setValue,
-  secureText,
-  textColor,
-  regular,
-  medium,
-  multiline,
-  height = 50,
-  radius = 10,
-  topSpacing,
-  bottomSpacing,
-  rightSpacing,
-  leftSpacing,
-  verticalSpacing,
-  horizentalSpacing,
-  style,
-  disable,
-  icon,
-  containerStyles,
-  onIconPress,
-  ...rest
-}) => {
+export const CustomTextInput: React.FC<Props> = (
+  {
+    placeholder,
+    keyboardType = "default",
+    fontSize = 16,
+    placeholderTextColor,
+    backgroundColor,
+    bold,
+    value,
+    setValue,
+    secureText,
+    textColor,
+    regular,
+    medium,
+    multiline,
+    height = 50,
+    radius = 10,
+    topSpacing,
+    bottomSpacing,
+    rightSpacing,
+    leftSpacing,
+    verticalSpacing,
+    horizentalSpacing,
+    style,
+    disable,
+    icon,
+    containerStyles,
+    onIconPress,
+    inputRef,
+    ...rest
+  },
+  ref
+) => {
   const { AppTheme } = useTheme();
   return (
     <View
@@ -94,6 +99,7 @@ export const CustomTextInput: React.FC<Props> = ({
       ]}
     >
       <TextInput
+        ref={inputRef}
         placeholder={placeholder}
         placeholderTextColor={placeholderTextColor}
         keyboardType={keyboardType || "default"}

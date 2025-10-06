@@ -24,6 +24,12 @@ export const BottomTabScreenNames = {
   Profile: "ProfileScreen",
 };
 
+export const AuthScreenNames = {
+  LoginScreen: "LoginScreen",
+  SignupScreen: "SignupScreen",
+  ForgotPassword: "ForgotPassword",
+};
+
 export const EcommerceScreenNames = {
   ProductListingScreen: "ProductListingScreen",
   ProductDetailsScreen: "ProductDetailsScreen",
