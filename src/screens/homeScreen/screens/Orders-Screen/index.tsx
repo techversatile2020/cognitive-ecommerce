@@ -7,24 +7,17 @@ import { SD } from "../../../../utils";
 const accountOptions = [
   {
     id: "1",
-    price: "$0.00",
-    title: "Profile Settings",
-    model: "Manage your personal information",
+    price: "$349.99",
+    title: "A776II-Retail Receipt...",
+    model: "Model: WH-100XM4, Black",
     image: Images.printer,
   },
   {
     id: "2",
-    price: "$0.00",
-    title: "Change Password",
-    model: "Update your account credentials",
+    price: "$349.99",
+    title: "C Series",
+    model: "Model: WH-100XM4, Black",
     image: Images.printer2,
-  },
-  {
-    id: "4",
-    price: "$0.00",
-    title: "Logout",
-    model: "Sign out from your account",
-    image: Images.printerWithCheck,
   },
 ];
 

@@ -39,7 +39,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
   return (
     <SectionContainer
-      containerStyles={[styles.sectionContainer, containerStyle]}
+      containerStyles={[
+        styles.sectionContainer,
+        containerStyle,
+        {
+          marginTop: SD.hp(8),
+        },
+      ]}
     >
       <CardContainer
         customStyles={[styles.cardContainer, { backgroundColor: COLORS.base }]}
