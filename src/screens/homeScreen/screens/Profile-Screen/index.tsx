@@ -20,6 +20,7 @@ interface ProfileHeaderProps {
 const accountOptions: AccountOption[] = [
   { id: "1", title: "Profile Settings", icon: Images.profileSetting },
   { id: "2", title: "Change Password", icon: Images.logout },
+  { id: "5", title: "Delete", icon: Images.logout },
   { id: "4", title: "Logout", icon: Images.logout },
 ];
 

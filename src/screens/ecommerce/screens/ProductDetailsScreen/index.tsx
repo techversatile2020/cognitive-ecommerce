@@ -6,10 +6,12 @@ import {
   CustomImage,
   MainContainer,
   MainHeader,
+  PrimaryButton,
   Text,
 } from "../../../../components";
 import { SD } from "../../../../utils";
 import { Images } from "../../../../config";
+import { Counter } from "../../components";
 
 export const ProductDetailsScreen = () => {
   const { AppTheme }: any = useTheme();
@@ -57,14 +59,24 @@ export const ProductDetailsScreen = () => {
         </Text>
         {[1, 2, 3].map((item, index) => {
           return (
-            <View style={styles.listText}>
+            <View style={styles.listText} key={index}>
               <View style={styles.dot} />
-              <Text regular size={14} color="#868D94" key={index}>
+              <Text regular size={14} color="#868D94">
                 Exceptional Ruggedness and Reliability
               </Text>
             </View>
           );
         })}
+      </View>
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <Counter />
+        <PrimaryButton title="Add to cart" customStyles={{ width: "47%" }} />
       </View>
     </MainContainer>
   );
