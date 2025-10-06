@@ -38,6 +38,14 @@ const BottomTabScreens = [
   },
   {
     id: 4,
+    name: BottomTabScreenNames.favourite,
+    title: "Favourites",
+    options: {},
+    component: MainScreen,
+    Icon: Images.heartOutlined,
+  },
+  {
+    id: 5,
     name: BottomTabScreenNames.Profile,
     title: "Profile",
     options: {},

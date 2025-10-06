@@ -26,6 +26,7 @@ export const BottomTabScreenNames = {
   Cart: "CartScreen",
   Orders: "OrdersScreen",
   Profile: "ProfileScreen",
+  favourite: "Favourites",
 };
 
 export const AuthScreenNames = {
@@ -36,4 +37,5 @@ export const AuthScreenNames = {
 
 export const EcommerceScreenNames = {
   ProductListingScreen: "ProductListingScreen",
+  ProductDetailsScreen: "ProductDetailsScreen",
 };

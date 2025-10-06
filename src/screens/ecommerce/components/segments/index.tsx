@@ -75,6 +75,7 @@ const createStyles = (colors: typeof ThemeColors) =>
       //   flexDirection: "row",
       alignItems: "center",
       columnGap: 10,
+      paddingBottom: SD.hp(5),
     },
     segmentCardContainer: {
       height: SD.hp(48),
