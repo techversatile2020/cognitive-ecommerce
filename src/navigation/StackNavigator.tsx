@@ -26,6 +26,12 @@ import {
   SignupScreen,
 } from "../screens/authScreens";
 import { EcommerceScreenNames } from "../config/ScreenNames";
+import {
+  CartScreen,
+  FavouriteScreen,
+  OrdersScreen,
+  ProfileScreen,
+} from "../screens/homeScreen";
 
 const Stack = createNativeStackNavigator();
 export const StackNavigator = () => {
@@ -53,6 +59,19 @@ export const StackNavigator = () => {
         <Stack.Screen
           name={ScreenNames.MainScreen}
           component={BottomTabNavigator}
+        />
+        <Stack.Screen name={ScreenNames.CartScreen} component={CartScreen} />
+        <Stack.Screen
+          name={ScreenNames.FavouriteScreen}
+          component={FavouriteScreen}
+        />
+        <Stack.Screen
+          name={ScreenNames.OrdersScreen}
+          component={OrdersScreen}
+        />
+        <Stack.Screen
+          name={ScreenNames.ProfileScreen}
+          component={ProfileScreen}
         />
         <Stack.Screen
           name={ScreenNames.PrinterSetupScreen}

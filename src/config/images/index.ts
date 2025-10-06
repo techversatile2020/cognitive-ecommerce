@@ -50,6 +50,8 @@ const Images = {
   failWifi: require("./../../assets/icons/failWifi.png"),
   genralError: require("./../../assets/icons/genralError.png"),
   eyeOff: require("./../../assets/icons/eyeOff.png"),
+  profileSetting: require("./../../assets/icons/profileSetting.png"),
+  logout: require("./../../assets/icons/logOut.png"),
 
   Home: require("./../../assets/icons/home.png"),
   Cart: require("./../../assets/icons/cart.png"),

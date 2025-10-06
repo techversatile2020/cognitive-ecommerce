@@ -7,6 +7,7 @@ import { SD } from "../utils";
 import { Colors } from "../../constants/colors";
 import { useTheme } from "../hooks";
 import { Text } from "../components";
+import { CartScreen, OrdersScreen, ProfileScreen } from "../screens/homeScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -24,7 +25,7 @@ const BottomTabScreens = [
     name: BottomTabScreenNames.Cart,
     title: "Cart",
     options: {},
-    component: MainScreen,
+    component: CartScreen,
     Icon: Images.Cart,
   },
   {
@@ -32,7 +33,7 @@ const BottomTabScreens = [
     name: BottomTabScreenNames.Orders,
     title: "Orders",
     options: {},
-    component: MainScreen,
+    component: OrdersScreen,
     Icon: Images.Orders,
   },
   {
@@ -40,7 +41,7 @@ const BottomTabScreens = [
     name: BottomTabScreenNames.Profile,
     title: "Profile",
     options: {},
-    component: MainScreen,
+    component: ProfileScreen,
     Icon: Images.Profile,
   },
 ];
