@@ -16,7 +16,6 @@ export const ForgotPassword = () => {
 
   const handleForgotPassword = () => {
     console.log("Forgot password requested for:", email);
-    // 👉 yahan tum apni API call kar sakte ho
   };
 
   return (
@@ -25,7 +24,7 @@ export const ForgotPassword = () => {
         title="Forgot Password"
         buttonTitle="Send Reset Password"
         onButtonPress={handleForgotPassword}
-        showFooter={false} // 👈 Footer hide kar diya (optional)
+        showFooter={false}
       >
         <CustomTextInput
           placeholder="Email"
