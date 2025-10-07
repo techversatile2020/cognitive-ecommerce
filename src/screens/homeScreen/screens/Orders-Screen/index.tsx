@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, View, Image } from "react-native";
+import { StyleSheet, View, Image, Pressable } from "react-native";
 import {
   CardContainer,
   MainContainer,
@@ -10,57 +10,21 @@ import {
 import { SD } from "../../../../utils";
 import { useTheme } from "../../../../hooks";
 import { Images } from "../../../../config";
+import { OrderCard } from "../../../../components/OrderCard";
 
 export const OrdersScreen = () => {
   const { AppTheme } = useTheme();
   return (
     <MainContainer>
       <MainHeader back title="Orders" />
-
-      <SectionContainer
-        containerStyles={[
-          styles.sectionContainer,
-          {
-            marginTop: SD.hp(8),
-          },
-        ]}
-      >
-        <CardContainer
-          customStyles={[
-            styles.cardContainer,
-            { backgroundColor: AppTheme.Base },
-          ]}
-        >
-          <View
-            style={[
-              styles.imageWrapper,
-              { backgroundColor: AppTheme.lightBlue },
-            ]}
-          >
-            <Image
-              style={styles.image}
-              source={Images.printer}
-              resizeMode="contain"
-            />
-          </View>
-
-          <View style={styles.detailsContainer}>
-            <Text
-              bottomSpacing={5}
-              color={AppTheme.lightGrayTextColor}
-              size={10}
-            >
-              {"Order: #12458"}
-            </Text>
-            <Text bottomSpacing={3} color={AppTheme.Black} bold size={14}>
-              {"$349.99"}
-            </Text>
-            <Text bottomSpacing={2} color={AppTheme.Black} medium size={14}>
-              {"Advantage DLX"}
-            </Text>
-          </View>
-        </CardContainer>
-      </SectionContainer>
+      <OrderCard
+        orderId="#12458"
+        price="$349.99"
+        productName="Advantage DLX"
+        status="Delivered"
+        date="30 Sept 2025"
+        imageSource={Images.printer}
+      />
     </MainContainer>
   );
 };
@@ -89,8 +53,32 @@ const styles = StyleSheet.create({
   },
   detailsContainer: {
     marginLeft: SD.wp(10),
-    width: "60%",
+    width: "45%",
     height: SD.hp(60),
     justifyContent: "center",
+  },
+  counter: {
+    alignItems: "flex-end",
+    justifyContent: "space-between",
+    // backgroundColor: "red",
+    flex: 1,
+    alignContent: "space-between",
+    // height: "100%",
+  },
+  optionSelector: {
+    width: SD.wp(20),
+    height: SD.wp(20),
+    borderColor: "#CECECE",
+    borderWidth: 1,
+    borderRadius: 100,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  tickImage: {
+    width: "60%",
+    height: "60%",
+    resizeMode: "contain",
+    // tintColor: "#28CF6C",
+    // backgroundColor: "red",
   },
 });
