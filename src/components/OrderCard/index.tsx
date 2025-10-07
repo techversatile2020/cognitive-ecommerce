@@ -95,8 +95,11 @@ export const OrderCard: React.FC<OrderCardProps> = ({
         </View>
 
         <View style={styles.bottomRow}>
-          <TouchableOpacity activeOpacity={0.7}>
-            <Text underlined size={12} medium color={AppTheme.Black}>
+          <TouchableOpacity
+            style={styles.viewDetailsButtonRtles}
+            activeOpacity={0.7}
+          >
+            <Text size={12} medium color={AppTheme.Black}>
               View Details
             </Text>
           </TouchableOpacity>

@@ -67,4 +67,8 @@ export const styles = StyleSheet.create({
     borderRadius: SD.wp(10),
     marginVertical: 0,
   },
+  viewDetailsButtonRtles: {
+    paddingBottom: 2,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+  },
 });
