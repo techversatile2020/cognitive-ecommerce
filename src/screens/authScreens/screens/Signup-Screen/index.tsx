@@ -18,6 +18,7 @@ import { SD } from "../../../../utils";
 import { Fonts } from "../../../../styles";
 import { Images, NavigationService } from "../../../../config";
 import { AuthScreenNames } from "../../../../config/ScreenNames";
+import { useAuth } from "../../../../graphql";
 
 export const SignupScreen = () => {
   const { AppTheme } = useTheme();
@@ -55,7 +56,10 @@ export const SignupScreen = () => {
   const passwordRef = useRef<TextInput>(null);
   const confirmPasswordRef = useRef<TextInput>(null);
 
-  const handleSignup = () => {
+  //auth hooks
+  const { signup } = useAuth();
+
+  const handleSignup = async () => {
     let valid = true;
     setNameError("");
     setEmailError("");
@@ -94,8 +98,15 @@ export const SignupScreen = () => {
     }
 
     if (!valid) return;
-
-    console.log("Signup with:", { name, email, password, confirmPassword });
+    // console.log("Signup with:", { name, email, password, confirmPassword });
+    let firstName = name?.split(" ")[0];
+    let lastName = name?.split(" ")[1] || null;
+    await signup({
+      firstName,
+      lastName,
+      email,
+      password,
+    });
   };
 
   const handleLoginRedirect = () => {
