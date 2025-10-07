@@ -31,8 +31,12 @@ export const useAuth = () => {
   };
 
   const login = async (input) => {
-    const { data }: any = await loginMutation({ variables: { input } });
-    return data.customerAccessTokenCreate;
+    try {
+      const { data }: any = await loginMutation({ variables: { input } });
+      return data.customerAccessTokenCreate;
+    } catch (error) {
+      return error;
+    }
   };
 
   const recover = async (email) => {

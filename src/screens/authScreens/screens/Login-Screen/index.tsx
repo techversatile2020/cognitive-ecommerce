@@ -17,7 +17,16 @@ import {
 } from "../../../../config/ScreenNames";
 import { useAuth } from "../../../../graphql";
 
+import { SHOPIFY_STORE_DOMAIN, STOREFRONT_ACCESS_TOKEN } from "@env";
+
 export const LoginScreen = () => {
+  console.log(
+    "SHOPIFY_STORE_DOMAIN",
+    SHOPIFY_STORE_DOMAIN,
+    "STOREFRONT_ACCESS_TOKEN",
+    STOREFRONT_ACCESS_TOKEN
+  );
+
   const { AppTheme } = useTheme();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -55,12 +64,22 @@ export const LoginScreen = () => {
       setPasswordError("Password is required");
       valid = false;
     }
-
+    console.log("emailErrorpasswordError", emailError, passwordError);
     if (!valid) return;
 
-    let response = await login({
-      email: "test@gmail.com",
-      password: "123321123",
+    let responce = await login({
+      email,
+      password,
+    });
+
+    console.log("responce = >", responce);
+
+    return;
+    NavigationService.reset_0(ScreenNames.MainScreen, {
+      state: {
+        index: 0,
+        routes: [{ name: BottomTabScreenNames.Home }],
+      },
     });
 
     console.log("response =-> ", response);
