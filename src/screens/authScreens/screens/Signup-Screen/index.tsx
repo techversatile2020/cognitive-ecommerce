@@ -10,6 +10,7 @@ import {
 import {
   AuthContainer,
   CustomTextInput,
+  Loader,
   MainContainer,
   Text,
 } from "../../../../components";
@@ -49,6 +50,7 @@ export const SignupScreen = () => {
   const emailRef = useRef<TextInput>(null);
   const passwordRef = useRef<TextInput>(null);
   const confirmPasswordRef = useRef<TextInput>(null);
+  const [loading, setLoading] = useState(false);
 
   //auth hooks
   const { signup } = useAuth();
@@ -79,17 +81,18 @@ export const SignupScreen = () => {
       setConfirmPasswordError("Passwords do not match");
       valid = false;
     }
+    setLoading(true);
 
     if (!valid) return;
-    // console.log("Signup with:", { name, email, password, confirmPassword });
     let firstName = name?.split(" ")[0];
     let lastName = name?.split(" ")[1] || null;
-    await signup({
+    let response = await signup({
       firstName,
       lastName,
       email,
       password,
     });
+    setLoading(false);
   };
 
   const handleLoginRedirect = () => {
@@ -245,6 +248,7 @@ export const SignupScreen = () => {
               </Text>
             ) : null}
           </AuthContainer>
+          <Loader visible={loading} text="Loading..." />
         </ScrollView>
       </KeyboardAvoidingView>
     </MainContainer>

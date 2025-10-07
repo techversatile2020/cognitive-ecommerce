@@ -15,6 +15,7 @@ import {
   BottomTabScreenNames,
   ScreenNames,
 } from "../../../../config/ScreenNames";
+import { useAuth } from "../../../../graphql";
 
 export const LoginScreen = () => {
   const { AppTheme } = useTheme();
@@ -30,7 +31,9 @@ export const LoginScreen = () => {
 
   const passwordRef = useRef<TextInput>(null);
 
-  const handleLogin = () => {
+  const { login } = useAuth();
+
+  const handleLogin = async () => {
     let valid = true;
 
     // Reset previous errors
@@ -55,13 +58,20 @@ export const LoginScreen = () => {
 
     if (!valid) return;
 
-    // ✅ Navigate only if both fields are valid
-    NavigationService.reset_0(ScreenNames.MainScreen, {
-      state: {
-        index: 0,
-        routes: [{ name: BottomTabScreenNames.Home }],
-      },
+    let response = await login({
+      email: "test@gmail.com",
+      password: "123321123",
     });
+
+    console.log("response =-> ", response);
+
+    // ✅ Navigate only if both fields are valid
+    // NavigationService.reset_0(ScreenNames.MainScreen, {
+    //   state: {
+    //     index: 0,
+    //     routes: [{ name: BottomTabScreenNames.Home }],
+    //   },
+    // });
   };
 
   const handleSignupRedirect = () => {

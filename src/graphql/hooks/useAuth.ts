@@ -15,8 +15,6 @@ export const useAuth = () => {
   const signup = async (input) => {
     try {
       const { data }: any = await signupMutation({ variables: { input } });
-      // console.log("Data => ", data);
-
       return data.customerCreate;
     } catch (error) {
       if (error.graphQLErrors?.length) {
