@@ -44,6 +44,12 @@ export const SignupScreen = () => {
   const [passwordFocused, setPasswordFocused] = useState(false);
   const [confirmPasswordFocused, setConfirmPasswordFocused] = useState(false);
 
+  // Scroll handling
+  const scrollViewRef = useRef<ScrollView>(null);
+  const [scrollViewPaddingBottom, setScrollViewPaddingBottom] = useState(
+    SD.hp(100)
+  );
+
   // Refs for focusing next input
   const emailRef = useRef<TextInput>(null);
   const passwordRef = useRef<TextInput>(null);
@@ -56,18 +62,29 @@ export const SignupScreen = () => {
     setPasswordError("");
     setConfirmPasswordError("");
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
     if (!name.trim()) {
       setNameError("Name is required");
       valid = false;
     }
+
     if (!email.trim()) {
       setEmailError("Email is required");
       valid = false;
+    } else if (!emailRegex.test(email)) {
+      setEmailError("Enter a valid email address");
+      valid = false;
     }
+
     if (!password.trim()) {
       setPasswordError("Password is required");
       valid = false;
+    } else if (password.length < 6) {
+      setPasswordError("Password must be at least 6 characters");
+      valid = false;
     }
+
     if (!confirmPassword.trim()) {
       setConfirmPasswordError("Please confirm your password");
       valid = false;
@@ -77,11 +94,57 @@ export const SignupScreen = () => {
     }
 
     if (!valid) return;
+
     console.log("Signup with:", { name, email, password, confirmPassword });
   };
 
   const handleLoginRedirect = () => {
     NavigationService.reset_0(AuthScreenNames.LoginScreen);
+  };
+
+  // 🔹 helper: handle focus scroll and padding
+  const handleFocus = (inputName: string, scrollY: number) => {
+    setScrollViewPaddingBottom(SD.hp(150));
+
+    switch (inputName) {
+      case "name":
+        setNameFocused(true);
+        break;
+      case "email":
+        setEmailFocused(true);
+        break;
+      case "password":
+        setPasswordFocused(true);
+        break;
+      case "confirmPassword":
+        setConfirmPasswordFocused(true);
+        break;
+    }
+
+    setTimeout(() => {
+      scrollViewRef.current?.scrollTo({
+        y: scrollY,
+        animated: true,
+      });
+    }, 150);
+  };
+
+  const handleBlur = (field: string) => {
+    switch (field) {
+      case "name":
+        setNameFocused(false);
+        break;
+      case "email":
+        setEmailFocused(false);
+        break;
+      case "password":
+        setPasswordFocused(false);
+        break;
+      case "confirmPassword":
+        setConfirmPasswordFocused(false);
+        break;
+    }
+    setScrollViewPaddingBottom(SD.hp(0));
   };
 
   return (
@@ -91,7 +154,11 @@ export const SignupScreen = () => {
         style={{ flex: 1 }}
       >
         <ScrollView
-          contentContainerStyle={{ flexGrow: 1, paddingBottom: SD.hp(50) }}
+          ref={scrollViewRef}
+          contentContainerStyle={{
+            flexGrow: 1,
+            paddingBottom: scrollViewPaddingBottom,
+          }}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
@@ -109,7 +176,7 @@ export const SignupScreen = () => {
               placeholder="Full Name"
               value={name}
               setValue={setName}
-              placeholderTextColor={"#7C8BA0"}
+              placeholderTextColor="#7C8BA0"
               textColor={AppTheme.Black}
               containerStyles={[
                 styles.input,
@@ -121,8 +188,8 @@ export const SignupScreen = () => {
               returnKeyType="next"
               onSubmitEditing={() => emailRef.current?.focus()}
               fontSize={16}
-              onFocus={() => setNameFocused(true)}
-              onBlur={() => setNameFocused(false)}
+              onFocus={() => handleFocus("name", SD.hp(0))}
+              onBlur={() => handleBlur("name")}
             />
             {nameError ? (
               <Text
@@ -140,7 +207,7 @@ export const SignupScreen = () => {
               placeholder="Email"
               value={email}
               setValue={setEmail}
-              placeholderTextColor={"#7C8BA0"}
+              placeholderTextColor="#7C8BA0"
               textColor={AppTheme.Black}
               containerStyles={[
                 styles.input,
@@ -152,8 +219,8 @@ export const SignupScreen = () => {
               returnKeyType="next"
               onSubmitEditing={() => passwordRef.current?.focus()}
               fontSize={16}
-              onFocus={() => setEmailFocused(true)}
-              onBlur={() => setEmailFocused(false)}
+              // onFocus={() => handleFocus("email", SD.hp(100))}
+              onBlur={() => handleBlur("email")}
             />
             {emailError ? (
               <Text
@@ -174,7 +241,7 @@ export const SignupScreen = () => {
               secureTextEntry={!showPassword}
               icon={showPassword ? Images.eye : Images.eyeOff}
               onIconPress={() => setShowPassword(!showPassword)}
-              placeholderTextColor={"#7C8BA0"}
+              placeholderTextColor="#7C8BA0"
               textColor={AppTheme.Black}
               containerStyles={[
                 styles.input,
@@ -186,8 +253,8 @@ export const SignupScreen = () => {
               returnKeyType="next"
               onSubmitEditing={() => confirmPasswordRef.current?.focus()}
               fontSize={16}
-              onFocus={() => setPasswordFocused(true)}
-              onBlur={() => setPasswordFocused(false)}
+              onFocus={() => handleFocus("password", SD.hp(100))}
+              onBlur={() => handleBlur("password")}
             />
             {passwordError ? (
               <Text
@@ -208,7 +275,7 @@ export const SignupScreen = () => {
               secureTextEntry={!showConfirmPassword}
               icon={showConfirmPassword ? Images.eye : Images.eyeOff}
               onIconPress={() => setShowConfirmPassword(!showConfirmPassword)}
-              placeholderTextColor={"#7C8BA0"}
+              placeholderTextColor="#7C8BA0"
               textColor={AppTheme.Black}
               containerStyles={[
                 styles.input,
@@ -220,8 +287,8 @@ export const SignupScreen = () => {
               returnKeyType="done"
               onSubmitEditing={handleSignup}
               fontSize={16}
-              onFocus={() => setConfirmPasswordFocused(true)}
-              onBlur={() => setConfirmPasswordFocused(false)}
+              onFocus={() => handleFocus("confirmPassword", SD.hp(150))}
+              onBlur={() => handleBlur("confirmPassword")}
             />
             {confirmPasswordError ? (
               <Text
