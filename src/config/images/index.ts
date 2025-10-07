@@ -52,6 +52,8 @@ const Images = {
   eyeOff: require("./../../assets/icons/eyeOff.png"),
   profileSetting: require("./../../assets/icons/profileSetting.png"),
   logout: require("./../../assets/icons/logOut.png"),
+  lockIcon: require("./../../assets/icons/lockIcon.png"),
+  deleteIcon: require("./../../assets/icons/deleteIcon.png"),
 
   Home: require("./../../assets/icons/home.png"),
   Cart: require("./../../assets/icons/cart.png"),

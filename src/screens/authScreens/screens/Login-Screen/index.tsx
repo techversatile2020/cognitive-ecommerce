@@ -18,8 +18,8 @@ import {
 
 export const LoginScreen = () => {
   const { AppTheme } = useTheme();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("eddy@yopmial.com");
+  const [password, setPassword] = useState("Swift@2020");
   const [showPassword, setShowPassword] = useState(false);
 
   const [emailFocused, setEmailFocused] = useState(false);
