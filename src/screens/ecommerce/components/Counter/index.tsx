@@ -4,7 +4,7 @@ import { CustomTouchable, Text } from "../../../../components";
 import { useTheme } from "../../../../hooks";
 import { SD } from "../../../../utils";
 
-export const Counter = () => {
+export const Counter = ({ containerStyles }: any) => {
   const { AppTheme } = useTheme();
   const [counter, setCounter] = useState(1);
 
@@ -12,7 +12,13 @@ export const Counter = () => {
   const handleDecrease = () =>
     setCounter((prev) => (prev == 1 ? prev : prev - 1));
   return (
-    <View style={[styles.container, { backgroundColor: AppTheme.lightBlue }]}>
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: AppTheme.lightBlue },
+        containerStyles,
+      ]}
+    >
       <CustomTouchable
         style={[styles.button, { backgroundColor: AppTheme.Base }]}
         onPress={handleDecrease}
@@ -41,13 +47,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    padding: SD.wp(10),
+    padding: SD.wp(5),
     width: "47%",
     borderRadius: 14,
+    height: SD.hp(60),
   },
   button: {
     width: "35%",
-    height: SD.hp(35),
+    height: "100%",
     borderRadius: 10,
     justifyContent: "center",
     alignItems: "center",

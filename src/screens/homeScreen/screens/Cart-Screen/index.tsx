@@ -1,14 +1,17 @@
-import { StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import React, { useState } from "react";
 import {
   BackHeader,
   CustomTextInput,
   MainContainer,
   MainHeader,
+  PrimaryButton,
   Text,
 } from "../../../../components";
 import { SD } from "../../../../utils";
 import { useTheme } from "../../../../hooks";
+import { Images } from "../../../../config";
+import { ProductCard } from "./ProductCard";
 
 export const CartScreen = () => {
   const { AppTheme } = useTheme();
@@ -22,7 +25,20 @@ export const CartScreen = () => {
           fontSize: SD.customFontSize(24),
         }}
       />
-      <View></View>
+      <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
+        {[1, 2, 3, 4].map((item) => {
+          return (
+            <ProductCard
+              price={"$349.99"}
+              title={"C Series"}
+              model={"Model: WH-100XM4, Black"}
+              image={Images.printer2}
+              key={item}
+              // containerStyle={styles.cardSpacing}
+            />
+          );
+        })}
+      </ScrollView>
       <View style={styles.footer}>
         <Text bold size={14}>
           Promo Code
@@ -60,6 +76,7 @@ export const CartScreen = () => {
           <TableText title="Total" value="$0" bold />
         </View>
       </View>
+      <PrimaryButton title="Checkout" />
     </MainContainer>
   );
 };
@@ -104,5 +121,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#E1E1E1",
     marginVertical: SD.hp(10),
   },
-  footer: {},
+  footer: {
+    paddingTop: SD.hp(5),
+  },
 });
