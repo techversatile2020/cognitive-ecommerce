@@ -15,7 +15,6 @@ import {
   BottomTabScreenNames,
   ScreenNames,
 } from "../../../../config/ScreenNames";
-import { useDispatch } from "react-redux";
 
 export const LoginScreen = () => {
   const { AppTheme } = useTheme();
@@ -26,9 +25,31 @@ export const LoginScreen = () => {
   const [emailFocused, setEmailFocused] = useState(false);
   const [passwordFocused, setPasswordFocused] = useState(false);
 
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+
   const passwordRef = useRef<TextInput>(null);
 
   const handleLogin = () => {
+    let valid = true;
+
+    if (!email.trim()) {
+      setEmailError("Email is required");
+      valid = false;
+    } else {
+      setEmailError("");
+    }
+
+    if (!password.trim()) {
+      setPasswordError("Password is required");
+      valid = false;
+    } else {
+      setPasswordError("");
+    }
+
+    if (!valid) return;
+
+    // ✅ Navigate if both are filled
     NavigationService.reset_0(ScreenNames.MainScreen, {
       state: {
         index: 0,
@@ -74,8 +95,17 @@ export const LoginScreen = () => {
           onFocus={() => setEmailFocused(true)}
           onBlur={() => setEmailFocused(false)}
         />
+        {emailError ? (
+          <Text
+            size={10}
+            color="red"
+            style={{ marginTop: SD.hp(5), marginLeft: SD.wp(10) }}
+          >
+            {emailError}
+          </Text>
+        ) : null}
 
-        {/* Password with Eye Toggle */}
+        {/* Password */}
         <CustomTextInput
           inputRef={passwordRef}
           placeholder="Password"
@@ -100,6 +130,15 @@ export const LoginScreen = () => {
           onFocus={() => setPasswordFocused(true)}
           onBlur={() => setPasswordFocused(false)}
         />
+        {passwordError ? (
+          <Text
+            size={10}
+            color="red"
+            style={{ marginTop: SD.hp(5), marginLeft: SD.wp(10) }}
+          >
+            {passwordError}
+          </Text>
+        ) : null}
 
         <View style={styles.secondaryText}>
           <TouchableOpacity onPress={handlePress} activeOpacity={0.7}>

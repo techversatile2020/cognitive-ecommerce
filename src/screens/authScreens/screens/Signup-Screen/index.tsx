@@ -1,9 +1,10 @@
 import React, { useState, useRef } from "react";
-import { StyleSheet, TextInput } from "react-native";
+import { StyleSheet, TextInput, View } from "react-native";
 import {
   AuthContainer,
   CustomTextInput,
   MainContainer,
+  Text,
 } from "../../../../components";
 import { useTheme } from "../../../../hooks/useTheme";
 import { SD } from "../../../../utils";
@@ -14,11 +15,19 @@ import { AuthScreenNames } from "../../../../config/ScreenNames";
 export const SignupScreen = () => {
   const { AppTheme } = useTheme();
 
-  // States
+  // Input states
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
+  // Error states
+  const [nameError, setNameError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [confirmPasswordError, setConfirmPasswordError] = useState("");
+
+  // Show/hide password
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -34,8 +43,42 @@ export const SignupScreen = () => {
   const confirmPasswordRef = useRef<TextInput>(null);
 
   const handleSignup = () => {
+    let valid = true;
+
+    // Reset all errors first
+    setNameError("");
+    setEmailError("");
+    setPasswordError("");
+    setConfirmPasswordError("");
+
+    // Validation checks
+    if (!name.trim()) {
+      setNameError("Name is required");
+      valid = false;
+    }
+
+    if (!email.trim()) {
+      setEmailError("Email is required");
+      valid = false;
+    }
+
+    if (!password.trim()) {
+      setPasswordError("Password is required");
+      valid = false;
+    }
+
+    if (!confirmPassword.trim()) {
+      setConfirmPasswordError("Please confirm your password");
+      valid = false;
+    } else if (password !== confirmPassword) {
+      setConfirmPasswordError("Passwords do not match");
+      valid = false;
+    }
+
+    if (!valid) return;
+
+    // ✅ Proceed with signup logic
     console.log("Signup with:", { name, email, password, confirmPassword });
-    // 👉 yahan tum apna API call karna
   };
 
   const handleLoginRedirect = () => {
@@ -69,6 +112,15 @@ export const SignupScreen = () => {
           onFocus={() => setNameFocused(true)}
           onBlur={() => setNameFocused(false)}
         />
+        {nameError ? (
+          <Text
+            size={10}
+            color="red"
+            style={{ marginTop: SD.hp(5), marginLeft: SD.wp(10) }}
+          >
+            {nameError}
+          </Text>
+        ) : null}
 
         {/* Email */}
         <CustomTextInput
@@ -88,6 +140,15 @@ export const SignupScreen = () => {
           onFocus={() => setEmailFocused(true)}
           onBlur={() => setEmailFocused(false)}
         />
+        {emailError ? (
+          <Text
+            size={10}
+            color="red"
+            style={{ marginTop: SD.hp(5), marginLeft: SD.wp(10) }}
+          >
+            {emailError}
+          </Text>
+        ) : null}
 
         {/* Password */}
         <CustomTextInput
@@ -113,6 +174,15 @@ export const SignupScreen = () => {
           onFocus={() => setPasswordFocused(true)}
           onBlur={() => setPasswordFocused(false)}
         />
+        {passwordError ? (
+          <Text
+            size={10}
+            color="red"
+            style={{ marginTop: SD.hp(5), marginLeft: SD.wp(10) }}
+          >
+            {passwordError}
+          </Text>
+        ) : null}
 
         {/* Confirm Password */}
         <CustomTextInput
@@ -138,6 +208,15 @@ export const SignupScreen = () => {
           onFocus={() => setConfirmPasswordFocused(true)}
           onBlur={() => setConfirmPasswordFocused(false)}
         />
+        {confirmPasswordError ? (
+          <Text
+            size={10}
+            color="red"
+            style={{ marginTop: SD.hp(5), marginLeft: SD.wp(10) }}
+          >
+            {confirmPasswordError}
+          </Text>
+        ) : null}
       </AuthContainer>
     </MainContainer>
   );
@@ -151,10 +230,5 @@ const styles = StyleSheet.create({
     marginTop: SD.hp(15),
     paddingLeft: SD.hp(24),
     fontFamily: Fonts["Regular"],
-  },
-  icon: {
-    width: SD.hp(20),
-    height: SD.hp(20),
-    resizeMode: "contain",
   },
 });
