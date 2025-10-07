@@ -4,6 +4,7 @@ import {
   AuthContainer,
   CustomTextInput,
   MainContainer,
+  Text,
 } from "../../../../components";
 import { useTheme } from "../../../../hooks/useTheme";
 import { SD } from "../../../../utils";
@@ -13,8 +14,18 @@ export const ForgotPassword = () => {
   const { AppTheme } = useTheme();
   const [email, setEmail] = useState("");
   const [emailFocused, setEmailFocused] = useState(false);
+  const [emailError, setEmailError] = useState("");
 
   const handleForgotPassword = () => {
+    // Reset previous error
+    setEmailError("");
+
+    if (!email.trim()) {
+      setEmailError("Email is required");
+      return;
+    }
+
+    // ✅ Proceed with your reset password logic
     console.log("Forgot password requested for:", email);
   };
 
@@ -29,7 +40,10 @@ export const ForgotPassword = () => {
         <CustomTextInput
           placeholder="Email"
           value={email}
-          setValue={setEmail}
+          setValue={(text) => {
+            setEmail(text);
+            if (emailError && text.trim()) setEmailError("");
+          }}
           placeholderTextColor={"#7C8BA0"}
           textColor={AppTheme.Black}
           containerStyles={[
@@ -38,12 +52,23 @@ export const ForgotPassword = () => {
               borderWidth: 1,
               borderColor: AppTheme.Primary,
             },
+            // emailError && { borderWidth: 1, borderColor: "red" },
           ]}
           returnKeyType="done"
           fontSize={16}
           onFocus={() => setEmailFocused(true)}
           onBlur={() => setEmailFocused(false)}
         />
+
+        {emailError ? (
+          <Text
+            size={10}
+            color="red"
+            style={{ marginTop: SD.hp(5), marginLeft: SD.wp(10) }}
+          >
+            {emailError}
+          </Text>
+        ) : null}
       </AuthContainer>
     </MainContainer>
   );
