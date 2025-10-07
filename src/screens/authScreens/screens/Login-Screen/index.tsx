@@ -33,23 +33,29 @@ export const LoginScreen = () => {
   const handleLogin = () => {
     let valid = true;
 
+    // Reset previous errors
+    setEmailError("");
+    setPasswordError("");
+
+    // Basic email regex for validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
     if (!email.trim()) {
       setEmailError("Email is required");
       valid = false;
-    } else {
-      setEmailError("");
+    } else if (!emailRegex.test(email)) {
+      setEmailError("Enter a valid email address");
+      valid = false;
     }
 
     if (!password.trim()) {
       setPasswordError("Password is required");
       valid = false;
-    } else {
-      setPasswordError("");
     }
 
     if (!valid) return;
 
-    // ✅ Navigate if both are filled
+    // ✅ Navigate only if both fields are valid
     NavigationService.reset_0(ScreenNames.MainScreen, {
       state: {
         index: 0,
