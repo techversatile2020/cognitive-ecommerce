@@ -13,8 +13,23 @@ export const useAuth = () => {
   const [getCustomerQuery] = useLazyQuery(GET_CUSTOMER);
 
   const signup = async (input) => {
-    const { data }: any = await signupMutation({ variables: { input } });
-    return data.customerCreate;
+    try {
+      const { data }: any = await signupMutation({ variables: { input } });
+      // console.log("Data => ", data);
+
+      return data.customerCreate;
+    } catch (error) {
+      if (error.graphQLErrors?.length) {
+        console.log("GraphQL Error:", error.graphQLErrors[0].message);
+        return { error: error.graphQLErrors[0].message };
+      } else if (error.networkError) {
+        console.log("Network Error:", error.networkError.message);
+        return { error: error.networkError.message };
+      } else {
+        console.log("Unknown Error:", error.message);
+        return { error: error.message };
+      }
+    }
   };
 
   const login = async (input) => {
