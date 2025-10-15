@@ -1,10 +1,23 @@
-import React from "react";
-import { FlatList, ListRenderItem, View, StyleSheet } from "react-native";
+import React, { useState } from "react";
+import {
+  FlatList,
+  ListRenderItem,
+  View,
+  StyleSheet,
+  Alert,
+} from "react-native";
 import { Images } from "../../../../config";
 import InfoSection from "../../../../components/infoSection";
-import { MainContainer, MainHeader, Text } from "../../../../components";
+import {
+  GlobalModal,
+  MainContainer,
+  MainHeader,
+  Text,
+} from "../../../../components";
 import { SD } from "../../../../utils";
 import { useTheme } from "../../../../hooks";
+import { useDispatch, useSelector } from "react-redux";
+import { setToken, setUser } from "../../../../redux/reducers/auth.slice";
 
 interface AccountOption {
   id: string;
@@ -20,7 +33,7 @@ interface ProfileHeaderProps {
 const accountOptions: AccountOption[] = [
   { id: "1", title: "Profile Settings", icon: Images.profileSetting },
   { id: "2", title: "Change Password", icon: Images.lockIcon },
-  { id: "5", title: "Delete", icon: Images.deleteIcon },
+  { id: "3", title: "Delete", icon: Images.deleteIcon },
   { id: "4", title: "Logout", icon: Images.logout },
 ];
 
@@ -29,7 +42,6 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   email,
 }) => {
   const { AppTheme } = useTheme();
-
   const getInitials = (fullName: string) => {
     const parts = fullName.trim().split(" ");
     const initials = parts.map((p) => p[0]?.toUpperCase()).join("");
@@ -55,13 +67,78 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 };
 
 export const ProfileScreen = () => {
-  const renderItem: ListRenderItem<AccountOption> = ({ item }) => (
-    <InfoSection
-      source={item?.icon}
-      title={item.title}
-      containerStyle={styles.infoSectionContainer}
-    />
-  );
+  const dispatch = useDispatch();
+  const { user, token } = useSelector((state: any) => state.auth);
+  console.log("user => ", user);
+  const [showModal, setShowModal] = useState(false);
+  const [modalType, setModalType] = useState(null);
+
+  const renderItem: ListRenderItem<AccountOption> = ({ item }) => {
+    const handlePress = () => {
+      if (item.id == "4") {
+        return Alert.alert(
+          "Logout Confirmation",
+          "Are you sure you want to logout?",
+          [
+            {
+              text: "Cancel",
+              onPress: () => console.log("Logout cancelled"),
+              style: "cancel",
+            },
+            {
+              text: "Logout",
+              onPress: () => {
+                // Clear user data, token, etc.
+                console.log("User logged out");
+                // Example: navigate to Login screen
+                // navigation.replace("Login");
+                dispatch(setToken(null));
+                dispatch(setUser({}));
+              },
+              style: "destructive",
+            },
+          ],
+          { cancelable: true }
+        );
+      }
+      if (item.id == "3") {
+        return Alert.alert(
+          "Delete Confirmation",
+          "Are you sure you want to delete your account?",
+          [
+            {
+              text: "Cancel",
+              onPress: () => console.log("Logout cancelled"),
+              style: "cancel",
+            },
+            {
+              text: "Delete",
+              onPress: () => {
+                // Clear user data, token, etc.
+                console.log("User logged out");
+                // Example: navigate to Login screen
+                // navigation.replace("Login");
+                dispatch(setToken(null));
+                dispatch(setUser({}));
+              },
+              style: "destructive",
+            },
+          ],
+          { cancelable: true }
+        );
+      }
+      setShowModal(true);
+      setModalType(() => (item.id == "1" ? "editProfile" : "changePassword"));
+    };
+    return (
+      <InfoSection
+        source={item?.icon}
+        title={item.title}
+        containerStyle={styles.infoSectionContainer}
+        onPress={handlePress}
+      />
+    );
+  };
 
   return (
     <MainContainer>
@@ -70,7 +147,10 @@ export const ProfileScreen = () => {
         <FlatList
           ListHeaderComponent={
             <>
-              <ProfileHeader name="John Doe" email="johndoe@gmail.com" />
+              <ProfileHeader
+                name={`${user.firstName} ${user?.lastName}`}
+                email={user?.email}
+              />
               <View
                 style={[{ paddingBottom: SD.hp(30), borderColor: "#868D94" }]}
               />
@@ -81,6 +161,11 @@ export const ProfileScreen = () => {
           renderItem={renderItem}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.flatListContent}
+        />
+        <GlobalModal
+          isVisible={showModal}
+          type={modalType}
+          onClose={() => setShowModal(false)}
         />
       </View>
     </MainContainer>

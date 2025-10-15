@@ -1,28 +1,56 @@
 import { Image, Pressable, StyleSheet, View } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTheme } from "../../../../hooks";
 import { ThemeColors } from "../../../../styles";
 import { SD } from "../../../../utils";
 import { CustomImage, Text } from "../../../../components";
 import { Images, NavigationService } from "../../../../config";
 import { EcommerceScreenNames } from "../../../../config/ScreenNames";
+import { useFavorites } from "../../../../graphql";
+import { useSelector } from "react-redux";
 
-export const ProductCard = () => {
+export const ProductCard = ({ data }: any) => {
   const { AppTheme }: any = useTheme();
   const styles = createStyles(AppTheme);
+  const { addFavorite, getFavorites } = useFavorites();
+  const { token } = useSelector((state: any) => state.auth);
   const [liked, setLiked] = useState(false);
-
+  const { node } = data || {};
+  const [price, setPrice]: any = useState(0);
   const handleOnPress = () => {
-    NavigationService.navigate(EcommerceScreenNames.ProductDetailsScreen);
+    NavigationService.navigate(EcommerceScreenNames.ProductDetailsScreen, {
+      id: node?.id,
+    });
   };
 
+  useEffect(() => {
+    setPrice(node?.variants?.edges[0]?.node);
+  }, [node]);
+
+  const handleFavorites = async () => {
+    try {
+      await addFavorite(token, node?.id);
+    } catch (error) {
+      console.log("handleFavorites: ", error);
+    }
+  };
   return (
     <Pressable style={styles.container} onPress={handleOnPress}>
       <View style={styles.imageView}>
-        <CustomImage source={Images.printer} style={styles.printerImage} />
+        <CustomImage
+          source={
+            node?.images
+              ? { uri: node?.images?.edges[0]?.node?.originalSrc }
+              : Images.printer
+          }
+          style={styles.printerImage}
+        />
         <Pressable
           style={styles.heartIconView}
-          onPress={() => setLiked((prev) => !prev)}
+          onPress={() => {
+            handleFavorites();
+            setLiked((prev) => !prev);
+          }}
         >
           <CustomImage
             source={Images.heart}
@@ -33,10 +61,10 @@ export const ProductCard = () => {
       <View style={styles.footerView}>
         <View>
           <Text size={14} regular>
-            Product Name
+            {node?.title}
           </Text>
           <Text size={14} bold topSpacing={5}>
-            $349.99
+            {price?.priceV2?.currencyCode} {price?.priceV2?.amount}
           </Text>
         </View>
         <Pressable style={styles.cartIconView}>
@@ -62,8 +90,8 @@ const createStyles = (colors: typeof ThemeColors) =>
     imageView: {
       flex: 1,
       // height: "70%",
-      backgroundColor: colors.Base,
-      borderRadius: 14,
+      // backgroundColor: colors.Base,
+      // borderRadius: 14,
       justifyContent: "center",
       alignItems: "center",
     },

@@ -4,9 +4,8 @@ import { CustomTouchable, Text } from "../../../../components";
 import { useTheme } from "../../../../hooks";
 import { SD } from "../../../../utils";
 
-export const Counter = ({ containerStyles }: any) => {
+export const Counter = ({ containerStyles, counter, setCounter }: any) => {
   const { AppTheme } = useTheme();
-  const [counter, setCounter] = useState(1);
 
   const handleIncrease = () => setCounter((prev) => prev + 1);
   const handleDecrease = () =>

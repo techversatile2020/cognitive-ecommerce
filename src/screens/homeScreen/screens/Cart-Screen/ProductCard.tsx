@@ -1,35 +1,55 @@
-import {
-  Image,
-  StyleSheet,
-  View,
-  ImageSourcePropType,
-  TouchableOpacity,
-  Pressable,
-} from "react-native";
-import React, { useState } from "react";
+import { Image, StyleSheet, View } from "react-native";
+import React, { useEffect, useState } from "react";
 import { useTheme } from "../../../../hooks";
-import { CardContainer, SectionContainer, Text } from "../../../../components";
+import { Loader, SectionContainer, Text } from "../../../../components";
 import { Images } from "../../../../config";
 import { SD } from "../../../../utils";
 import { Counter } from "../../../ecommerce/components";
+import { useCart } from "../../../../graphql";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface ProductCardProps {
   containerStyle?: object;
-  price: string;
-  title: string;
   model: string;
-  image: ImageSourcePropType;
+  data?: any;
+  refetchCart?: any;
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({
   containerStyle,
-  price,
-  title,
   model,
-  image,
+  data,
+  refetchCart,
 }) => {
   const { AppTheme } = useTheme();
-  const [selected, setSelected] = useState(true);
+  const { node } = data || {};
+  const [quantity, setQuantity] = useState(1);
+  const { updateCartLine } = useCart();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleQuantityChange = async (newQty) => {
+    setIsLoading(true);
+    try {
+      const cartId = await AsyncStorage.getItem("cartId");
+      if (!cartId) {
+        console.warn("⚠️ No active cart found");
+        return;
+      }
+
+      const updatedCart = await updateCartLine(cartId, node?.id, newQty);
+      if (updatedCart) {
+        setQuantity(newQty);
+        console.log("✅ Cart updated:", updatedCart);
+        await refetchCart();
+      } else {
+        console.warn("⚠️ Cart update failed:", updatedCart);
+      }
+    } catch (err) {
+      console.error("❌ Error updating cart:", err);
+    } finally {
+      setIsLoading(false); // ensures it always hides the loader
+    }
+  };
   const COLORS = {
     base: AppTheme.Base,
     lightBlue: AppTheme.lightBlue,
@@ -37,7 +57,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     grey: AppTheme.lightGrayTextColor,
   };
 
-  const handleSelected = () => setSelected((prev) => !prev);
+  useEffect(() => {
+    if (node?.quantity) {
+      setQuantity(node?.quantity);
+    } else {
+      setQuantity((prev) => prev);
+    }
+  }, [node?.quantity]);
+
   return (
     <SectionContainer
       containerStyles={[
@@ -48,48 +75,47 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         },
       ]}
     >
-      <CardContainer
-        customStyles={[styles.cardContainer, { backgroundColor: COLORS.base }]}
-      >
+      <View style={[styles.cardContainer]}>
         <View style={{ flexDirection: "row" }}>
-          <View
-            style={[styles.imageWrapper, { backgroundColor: COLORS.lightBlue }]}
-          >
-            <Image style={styles.image} source={image} resizeMode="contain" />
+          <View style={[styles.imageWrapper, { backgroundColor: COLORS.base }]}>
+            <Image
+              style={styles.image}
+              source={
+                node?.merchandise?.product?.featuredImage
+                  ? { uri: node?.merchandise?.product?.featuredImage?.url }
+                  : Images.printer
+              }
+              resizeMode="contain"
+            />
           </View>
 
           <View style={styles.detailsContainer}>
             <Text bottomSpacing={5} color={COLORS.black} bold size={14}>
-              {price}
+              {/* {price} */}
+              {node?.merchandise?.price?.currencyCode}
+              {node?.merchandise?.price?.amount}
             </Text>
             <Text bottomSpacing={5} color={COLORS.black} medium size={14}>
-              {title}
+              {/* {title} */}
+              {node?.merchandise?.product?.title}
             </Text>
-            {/* <Text color={COLORS.grey} size={11}>
+            <Text color={COLORS.grey} size={11}>
               {model}
-            </Text> */}
+            </Text>
           </View>
         </View>
         <View style={styles.counter}>
-          <Pressable
-            style={[
-              styles.optionSelector,
-              selected && { backgroundColor: "#28CF6C" },
-            ]}
-            onPress={handleSelected}
-          >
-            {selected && (
-              <Image source={Images.tick} style={styles.tickImage} />
-            )}
-          </Pressable>
           <Counter
             containerStyles={{
               width: "70%",
               height: SD.hp(40),
             }}
+            counter={quantity}
+            setCounter={handleQuantityChange}
           />
         </View>
-      </CardContainer>
+        <Loader visible={isLoading} />
+      </View>
     </SectionContainer>
   );
 };
@@ -99,13 +125,11 @@ const styles = StyleSheet.create({
     paddingVertical: SD.hp(10),
     paddingHorizontal: SD.wp(10),
     borderRadius: SD.wp(20),
-    // marginVertical: SD.hp(10),
   },
   cardContainer: {
     borderRadius: SD.hp(14),
     padding: SD.hp(7),
     flexDirection: "row",
-    // alignItems: "center",
     justifyContent: "space-between",
   },
   imageWrapper: {
@@ -121,7 +145,6 @@ const styles = StyleSheet.create({
   },
   detailsContainer: {
     marginLeft: SD.wp(10),
-    width: "30%",
     height: SD.hp(60),
     justifyContent: "center",
   },
@@ -136,11 +159,8 @@ const styles = StyleSheet.create({
   },
   counter: {
     alignItems: "flex-end",
-    justifyContent: "space-between",
-    // backgroundColor: "red",
     flex: 1,
-    alignContent: "space-between",
-    // height: "100%",
+    alignSelf: "flex-end",
   },
   optionSelector: {
     width: SD.wp(20),
@@ -155,7 +175,5 @@ const styles = StyleSheet.create({
     width: "60%",
     height: "60%",
     resizeMode: "contain",
-    // tintColor: "#28CF6C",
-    // backgroundColor: "red",
   },
 });

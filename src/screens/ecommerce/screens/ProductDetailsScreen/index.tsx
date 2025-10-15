@@ -1,9 +1,10 @@
 import { Pressable, StyleSheet, View } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTheme } from "../../../../hooks";
 import { ThemeColors } from "../../../../styles";
 import {
   CustomImage,
+  Loader,
   MainContainer,
   MainHeader,
   PrimaryButton,
@@ -12,14 +13,42 @@ import {
 import { SD } from "../../../../utils";
 import { Images } from "../../../../config";
 import { Counter } from "../../components";
+import { useCart, useProducts } from "../../../../graphql";
 
-export const ProductDetailsScreen = () => {
+export const ProductDetailsScreen = ({ route }: any) => {
   const { AppTheme }: any = useTheme();
   const styles = createStyles(AppTheme);
+  const { id } = route?.params;
+
   const [liked, setLiked] = useState(false);
+  const [printer, setPrinter]: any = useState({});
+  const [priceInfo, setPriceInfo]: any = useState({});
+  const [quantity, setQuantity] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const { getProductById } = useProducts();
+  const { addToCart, getCart, loading, error, cartData } = useCart();
+
+  const handleAddToCart = async () => {
+    await addToCart({
+      variantId: priceInfo?.id,
+      quantity: quantity,
+    });
+  };
+  useEffect(() => {
+    const fetchPrinterDetails = async () => {
+      setIsLoading(true);
+      let response = await getProductById(id);
+      console.log("prince.id => ", response);
+      setPrinter(response);
+      setPriceInfo(response?.variants?.edges[0]?.node);
+      setIsLoading(false);
+    };
+    fetchPrinterDetails();
+  }, [id]);
 
   return (
-    <MainContainer>
+    <MainContainer isFlatList>
       <MainHeader
         back
         title={"Product Details"}
@@ -28,25 +57,30 @@ export const ProductDetailsScreen = () => {
         }}
       />
       <View style={styles.imageViewContainer}>
-        <View style={styles.imageView}>
-          <CustomImage source={Images.printer} style={styles.printerImage} />
-          <Pressable
-            style={styles.heartIconView}
-            onPress={() => setLiked((prev) => !prev)}
-          >
-            <CustomImage
-              source={Images.heart}
-              style={[styles.heartIcon, liked && { tintColor: "#FF5151" }]}
-            />
-          </Pressable>
-        </View>
+        <CustomImage
+          source={
+            printer?.images
+              ? { uri: printer?.images?.edges[0]?.node?.originalSrc }
+              : Images.printer
+          }
+          style={styles.printerImage}
+        />
+        <Pressable
+          style={styles.heartIconView}
+          onPress={() => setLiked((prev) => !prev)}
+        >
+          <CustomImage
+            source={Images.heart}
+            style={[styles.heartIcon, liked && { tintColor: "#FF5151" }]}
+          />
+        </Pressable>
       </View>
       <View style={styles.infoSection}>
         <Text extraBold size={20}>
-          $349.99
+          {priceInfo?.priceV2?.currencyCode} {priceInfo?.priceV2?.amount}
         </Text>
         <Text semiBold size={20} topSpacing={5}>
-          Advantage DLX Printer
+          {printer?.title}
         </Text>
         <Text
           regular
@@ -57,16 +91,17 @@ export const ProductDetailsScreen = () => {
         >
           Model: DBD24/DBT24-2085-xxx
         </Text>
-        {[1, 2, 3].map((item, index) => {
-          return (
-            <View style={styles.listText} key={index}>
-              <View style={styles.dot} />
-              <Text regular size={14} color="#868D94">
-                Exceptional Ruggedness and Reliability
-              </Text>
-            </View>
-          );
-        })}
+
+        <Text regular size={14} color="#868D94">
+          <Text bold size={14} color="black">
+            Product Desctipion:
+          </Text>{" "}
+          {printer?.description}
+        </Text>
+
+        <View style={{ marginVertical: SD.hp(20) }}>
+          <ListOptionsCard title="Vendor" value={printer?.vendor} />
+        </View>
       </View>
       <View
         style={{
@@ -75,10 +110,45 @@ export const ProductDetailsScreen = () => {
           justifyContent: "space-between",
         }}
       >
-        <Counter />
-        <PrimaryButton title="Add to cart" customStyles={{ width: "47%" }} />
+        <Counter counter={quantity} setCounter={setQuantity} />
+        <PrimaryButton
+          title="Add to cart"
+          customStyles={{ width: "47%" }}
+          onPress={handleAddToCart}
+        />
       </View>
+      <Loader visible={isLoading} text="Fetching product details..." />
     </MainContainer>
+  );
+};
+
+const ListOptionsCard = ({
+  title,
+  value,
+}: {
+  title: string;
+  value: string;
+}) => {
+  const { AppTheme }: any = useTheme();
+  const styles = createStyles(AppTheme);
+  return (
+    <View style={styles.listText}>
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          columnGap: 10,
+        }}
+      >
+        <View style={styles.dot} />
+        <Text regular size={13} color={AppTheme.Black}>
+          {title}
+        </Text>
+      </View>
+      <Text regular size={13} color="#000000" style={{ opacity: 0.4 }}>
+        {value}
+      </Text>
+    </View>
   );
 };
 
@@ -90,6 +160,8 @@ const createStyles = (colors: typeof ThemeColors) =>
       padding: SD.wp(10),
       borderRadius: 14,
       marginTop: SD.hp(10),
+      alignItems: "center",
+      justifyContent: "center",
     },
     imageView: {
       backgroundColor: colors.Base,
@@ -129,11 +201,12 @@ const createStyles = (colors: typeof ThemeColors) =>
       alignItems: "center",
       columnGap: 10,
       marginTop: SD.hp(5),
+      justifyContent: "space-between",
     },
     dot: {
       width: SD.wp(5),
       height: SD.hp(5),
       borderRadius: 100,
-      backgroundColor: "#868D94",
+      backgroundColor: "black",
     },
   });

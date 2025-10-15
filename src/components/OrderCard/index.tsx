@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Image, Pressable, TouchableOpacity, View } from "react-native";
 import { SectionContainer } from "../section-container";
 import { CardContainer } from "../card-container";
@@ -8,46 +8,38 @@ import { useTheme } from "../../hooks";
 import Text from "../text";
 import { PrimaryButton } from "../primary-button";
 import { styles } from "./OrderCard.styles";
+import moment from "moment";
 
 interface OrderCardProps {
-  orderId?: string;
-  price?: string;
-  productName?: string;
-  status?: string;
-  date?: string;
-  imageSource?: any;
+  data?: any;
 }
 
-export const OrderCard: React.FC<OrderCardProps> = ({
-  orderId = "#12458",
-  price = "$349.99",
-  productName = "Advantage DLX",
-  status = "Delivered",
-  date = "25 Sept 2025",
-  imageSource = Images.printer,
-}) => {
+export const OrderCard: React.FC<OrderCardProps> = ({ data }) => {
   const { AppTheme } = useTheme();
+  const { node } = data || {};
+  const [productInfo, setProductInfo]: any = useState({});
+  console.log("data=>", node);
+
+  useEffect(() => {
+    setProductInfo(node?.lineItems?.edges[0]?.node);
+  }, [node]);
 
   return (
     <SectionContainer
       containerStyles={[styles.sectionContainer, { marginTop: SD.hp(8) }]}
     >
-      <CardContainer
-        customStyles={[
-          styles.cardContainer,
-          { backgroundColor: AppTheme.Base },
-        ]}
-      >
+      <View style={[styles.cardContainer]}>
         <View style={styles.topRow}>
           <View
-            style={[
-              styles.imageWrapper,
-              { backgroundColor: AppTheme.lightBlue },
-            ]}
+            style={[styles.imageWrapper, { backgroundColor: AppTheme.Base }]}
           >
             <Image
               style={styles.image}
-              source={imageSource}
+              source={
+                productInfo?.variant?.image
+                  ? { uri: productInfo?.variant?.image?.src }
+                  : Images.printer
+              }
               resizeMode="contain"
             />
           </View>
@@ -59,37 +51,34 @@ export const OrderCard: React.FC<OrderCardProps> = ({
               size={10}
               color={AppTheme.lightGrayTextColor}
             >
-              {`Order: ${orderId}`}
+              {`Order: ${node?.name}`}
             </Text>
             <Text bottomSpacing={2} size={14} bold color={AppTheme.Black}>
-              {price}
+              {/* {price} */}
+              {productInfo?.variant?.price?.currencyCode}{" "}
+              {productInfo?.variant?.price?.amount}
             </Text>
             <Text medium size={14} color={AppTheme.Black}>
-              {productName}
+              {productInfo?.title}
             </Text>
           </View>
 
           <View style={styles.statusContainer}>
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-                width: "85%",
-              }}
-            >
-              <Pressable
+            <View>
+              {/* <Pressable
                 style={[styles.optionSelector, { backgroundColor: "#28CF6C" }]}
               >
                 <Image source={Images.tick} style={styles.tickImage} />
-              </Pressable>
+              </Pressable> */}
 
-              <Text size={10} color={AppTheme.lightGrayTextColor}>
-                {status}
+              <Text size={10} color={AppTheme.lightGrayTextColor} right>
+                {/* {status} */}
+                {node?.fulfillmentStatus}
               </Text>
             </View>
             <Text size={10} color={AppTheme.lightGrayTextColor}>
-              {date}
+              {/* {date} */}
+              {moment(node?.processedAt).format("DD MMM YYYY")}
             </Text>
           </View>
         </View>
@@ -109,7 +98,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
             customStyles={styles.reorderButton}
           />
         </View>
-      </CardContainer>
+      </View>
     </SectionContainer>
   );
 };

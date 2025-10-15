@@ -7,8 +7,7 @@ import { Images } from "../../../../config";
 import { CustomTextInput } from "../../../../components";
 import { SD } from "../../../../utils";
 
-export const SearchBar = () => {
-  const [search, setSearch] = useState("");
+export const SearchBar = ({ search, setSearch }) => {
   const { AppTheme }: any = useTheme();
   const styles = createStyles(AppTheme);
   return (

@@ -6,13 +6,14 @@ import { CustomImage, Text } from "../../../../components";
 import { SD } from "../../../../utils";
 import { Images } from "../../../../config";
 
-export const Segments = ({ data }: any) => {
+export const Segments = ({ data, handleChange }: any) => {
   const { AppTheme }: any = useTheme();
   const styles = createStyles(AppTheme);
   const [selectedSegment, setSelectedSegment] = useState(data[0]?.id);
 
   const handleChangeSegment = (e: any) => {
     setSelectedSegment(e);
+    handleChange(e);
   };
 
   return (
@@ -22,9 +23,9 @@ export const Segments = ({ data }: any) => {
       style={{ flex: 1 }}
       horizontal
     >
-      <TouchableOpacity style={styles.filterIconContainer}>
+      {/* <TouchableOpacity style={styles.filterIconContainer}>
         <CustomImage source={Images.filter} style={styles.filterIcon} />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
       {data?.map((item, index) => {
         return (
           <SegmentCard
@@ -47,14 +48,14 @@ const SegmentCard = ({ onPress, data, isSelected }) => {
     <TouchableOpacity
       style={[
         styles.segmentCardContainer,
-        isSelected && { backgroundColor: AppTheme.Primary },
+        // isSelected && { backgroundColor: AppTheme.Primary },
       ]}
       onPress={() => onPress(id)}
     >
       <Text
         size={12}
         medium
-        color={isSelected ? AppTheme.Base : AppTheme.Black}
+        // color={isSelected ? AppTheme.Base : AppTheme.Black}
       >
         {title}
       </Text>
@@ -62,7 +63,7 @@ const SegmentCard = ({ onPress, data, isSelected }) => {
         source={Images.arrowDown}
         style={[
           styles.arrowDownIcon,
-          isSelected && { tintColor: AppTheme.Base },
+          // isSelected && { tintColor: AppTheme.Base },
         ]}
       />
     </TouchableOpacity>

@@ -3,11 +3,12 @@ import { StyleSheet, TextInput, View, TouchableOpacity } from "react-native";
 import {
   AuthContainer,
   CustomTextInput,
+  Loader,
   MainContainer,
   Text,
 } from "../../../../components";
 import { useTheme } from "../../../../hooks/useTheme";
-import { SD } from "../../../../utils";
+import { SD, Toast } from "../../../../utils";
 import { Fonts } from "../../../../styles";
 import { Images, NavigationService } from "../../../../config";
 import {
@@ -16,18 +17,12 @@ import {
   ScreenNames,
 } from "../../../../config/ScreenNames";
 import { useAuth } from "../../../../graphql";
-
-import { SHOPIFY_STORE_DOMAIN, STOREFRONT_ACCESS_TOKEN } from "@env";
+import { useDispatch } from "react-redux";
+import { setToken, setUser } from "../../../../redux/reducers/auth.slice";
 
 export const LoginScreen = () => {
-  console.log(
-    "SHOPIFY_STORE_DOMAIN",
-    SHOPIFY_STORE_DOMAIN,
-    "STOREFRONT_ACCESS_TOKEN",
-    STOREFRONT_ACCESS_TOKEN
-  );
-
   const { AppTheme } = useTheme();
+  const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -39,8 +34,8 @@ export const LoginScreen = () => {
   const [passwordError, setPasswordError] = useState("");
 
   const passwordRef = useRef<TextInput>(null);
-
-  const { login } = useAuth();
+  const [loading, setLoading] = useState(false);
+  const { login, getCustomer } = useAuth();
 
   const handleLogin = async () => {
     let valid = true;
@@ -64,33 +59,32 @@ export const LoginScreen = () => {
       setPasswordError("Password is required");
       valid = false;
     }
-    console.log("emailErrorpasswordError", emailError, passwordError);
     if (!valid) return;
+    setLoading(true);
 
     let responce = await login({
       email,
       password,
     });
 
-    console.log("responce = >", responce);
+    if (responce?.customerAccessToken?.accessToken) {
+      let getMe = await getCustomer(responce?.customerAccessToken?.accessToken);
+      if (getMe) {
+        console.log("In iF getMe => ", { getMe, responce });
+        setLoading(false);
+        dispatch(setUser(getMe));
+        dispatch(setToken(responce?.customerAccessToken?.accessToken));
+      }
+    } else {
+      console.log("!responce.customerAccessToken");
+      setLoading(false);
 
-    return;
-    NavigationService.reset_0(ScreenNames.MainScreen, {
-      state: {
-        index: 0,
-        routes: [{ name: BottomTabScreenNames.Home }],
-      },
-    });
-
-    console.log("response =-> ", response);
-
-    // ✅ Navigate only if both fields are valid
-    // NavigationService.reset_0(ScreenNames.MainScreen, {
-    //   state: {
-    //     index: 0,
-    //     routes: [{ name: BottomTabScreenNames.Home }],
-    //   },
-    // });
+      Toast.fail(
+        responce?.customerUserErrors[0]?.message,
+        "Login failed",
+        true
+      );
+    }
   };
 
   const handleSignupRedirect = () => {
@@ -182,6 +176,7 @@ export const LoginScreen = () => {
             </Text>
           </TouchableOpacity>
         </View>
+        <Loader visible={loading} text="Loading..." />
       </AuthContainer>
     </MainContainer>
   );

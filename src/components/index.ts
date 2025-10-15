@@ -19,6 +19,8 @@ import { ConnectionStatusModal } from "./connect-status-modal";
 import Loader from "./Loader";
 import { AuthContainer } from "./auth-container";
 import { ProductCard } from "./ProductCard";
+import GlobalModal from "./GlobalModal";
+import { BottomSheetModal } from "./BottomSheetModal";
 export {
   AuthContainer,
   BackHeader,
@@ -41,4 +43,6 @@ export {
   ConnectionStatusModal,
   ProductCard,
   Loader,
+  GlobalModal,
+  BottomSheetModal,
 };

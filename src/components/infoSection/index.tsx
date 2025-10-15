@@ -13,6 +13,7 @@ interface InfoSectionProps {
   containerStyle?: object;
   backgroundColor?: string;
   source?: ImageProps;
+  onPress?: () => void;
 }
 
 const InfoSection: React.FC<InfoSectionProps> = ({
@@ -21,12 +22,14 @@ const InfoSection: React.FC<InfoSectionProps> = ({
   innerContainerStyle,
   containerStyle,
   source,
+  onPress,
 }) => {
   const { AppTheme } = useTheme();
 
   return (
     <SectionContainer
       containerStyles={[styles.sectionContainer, containerStyle]}
+      onPress={onPress}
     >
       <View
         style={[
@@ -52,7 +55,7 @@ const InfoSection: React.FC<InfoSectionProps> = ({
           <Image
             source={source}
             resizeMode="contain"
-            style={styles.iconStyles}
+            style={[styles.iconStyles, { tintColor: AppTheme.Primary }]}
           />
         </View>
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, FlatList, useWindowDimensions } from "react-native";
 import { TabView, TabBar } from "react-native-tab-view";
 import { MainContainer, MainHeader, Text } from "../../../../components";
@@ -6,50 +6,36 @@ import { OrderCard } from "../../../../components/OrderCard";
 import { Images } from "../../../../config";
 import { useTheme } from "../../../../hooks";
 import { SD } from "../../../../utils";
+import { useOrders } from "../../../../graphql";
+import { useSelector } from "react-redux";
 
 export const OrdersScreen = () => {
   const { AppTheme } = useTheme();
   const layout = useWindowDimensions();
   const [index, setIndex] = useState(0);
+  const { getOrders, orders: ordersData } = useOrders();
+  const { token } = useSelector((state: any) => state.auth);
 
-  const [orders] = useState([
-    {
-      id: "#12458",
-      price: "$349.99",
-      productName: "Advantage DLX",
-      status: "Delivered",
-      date: "30 Sept 2025",
-      imageSource: Images.printer,
-    },
-    {
-      id: "#12459",
-      price: "$199.99",
-      productName: "Thermal 2000",
-      status: "Pending",
-      date: "2 Oct 2025",
-      imageSource: Images.printer,
-    },
-    {
-      id: "#12460",
-      price: "$249.99",
-      productName: "LaserJet Pro",
-      status: "Delivered",
-      date: "5 Oct 2025",
-      imageSource: Images.printer,
-    },
-  ]);
+  useEffect(() => {
+    getOrders(token);
+  }, [token]);
 
   const routes = [
     { key: "all", title: "All" },
-    { key: "delivered", title: "Delivered" },
-    { key: "pending", title: "Pending" },
+    { key: "unfulfilled", title: "Unfulfilled" },
+    { key: "fulfilled", title: "Fulfilled" },
   ];
 
   const renderOrders = (filter: string) => {
     const filtered =
       filter === "All"
-        ? orders
-        : orders.filter((item) => item.status === filter);
+        ? ordersData
+        : ordersData.filter((item) => {
+            return (
+              item?.node?.fulfillmentStatus?.toLowerCase() ==
+              filter?.toLowerCase()
+            );
+          });
 
     if (filtered.length === 0) {
       return (
@@ -61,21 +47,12 @@ export const OrdersScreen = () => {
 
     return (
       <FlatList
-        data={filtered}
+        data={filtered || []}
         keyExtractor={(item) => item.id}
         contentContainerStyle={{
           paddingTop: SD.hp(20),
         }}
-        renderItem={({ item }) => (
-          <OrderCard
-            orderId={item.id}
-            price={item.price}
-            productName={item.productName}
-            status={item.status}
-            date={item.date}
-            imageSource={item.imageSource}
-          />
-        )}
+        renderItem={({ item }) => <OrderCard data={item} />}
       />
     );
   };
@@ -84,10 +61,10 @@ export const OrdersScreen = () => {
     switch (route.key) {
       case "all":
         return renderOrders("All");
-      case "delivered":
-        return renderOrders("Delivered");
-      case "pending":
-        return renderOrders("Pending");
+      case "fulfilled":
+        return renderOrders("Fulfilled");
+      case "unfulfilled":
+        return renderOrders("Unfulfilled");
       default:
         return null;
     }

@@ -3,20 +3,23 @@ import { StyleSheet } from "react-native";
 import {
   AuthContainer,
   CustomTextInput,
+  Loader,
   MainContainer,
   Text,
 } from "../../../../components";
 import { useTheme } from "../../../../hooks/useTheme";
 import { SD } from "../../../../utils";
 import { Fonts } from "../../../../styles";
+import { useAuth } from "../../../../graphql";
 
 export const ForgotPassword = () => {
   const { AppTheme } = useTheme();
   const [email, setEmail] = useState("");
   const [emailFocused, setEmailFocused] = useState(false);
   const [emailError, setEmailError] = useState("");
-
-  const handleForgotPassword = () => {
+  const { recover } = useAuth();
+  const [loading, setLoading] = useState(false);
+  const handleForgotPassword = async () => {
     // Reset previous error
     setEmailError("");
 
@@ -27,6 +30,9 @@ export const ForgotPassword = () => {
 
     // ✅ Proceed with your reset password logic
     console.log("Forgot password requested for:", email);
+    setLoading(true);
+    await recover(email);
+    setLoading(false);
   };
 
   return (
@@ -70,6 +76,7 @@ export const ForgotPassword = () => {
           </Text>
         ) : null}
       </AuthContainer>
+      <Loader visible={loading} text="Sending reset link..." />
     </MainContainer>
   );
 };

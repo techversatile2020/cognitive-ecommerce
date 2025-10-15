@@ -12,8 +12,11 @@ import printerReducer, {
   removePrinterByIp,
 } from "./printer.slice";
 
+import authReducer from "./auth.slice";
+
 export const rootReducer = combineReducers({
   printer: printerReducer,
+  auth: authReducer,
 });
 
 export {

@@ -5,12 +5,20 @@ import {
   CUSTOMER_RECOVER,
   GET_CUSTOMER,
 } from "../queries/auth";
+import { Toast } from "../../utils";
+import { NavigationService } from "../../config";
+import { AuthScreenNames } from "../../config/ScreenNames";
+import { toast } from "../../utils/toast.utils";
+import { useDispatch, useSelector } from "react-redux";
+import { setUser } from "../../redux/reducers/auth.slice";
 
 export const useAuth = () => {
   const [signupMutation] = useMutation(CUSTOMER_CREATE);
   const [loginMutation] = useMutation(CUSTOMER_LOGIN);
   const [recoverMutation] = useMutation(CUSTOMER_RECOVER);
   const [getCustomerQuery] = useLazyQuery(GET_CUSTOMER);
+  const dispatch = useDispatch();
+  const { token } = useSelector((state: any) => state.auth);
 
   const signup = async (input) => {
     try {
@@ -39,16 +47,33 @@ export const useAuth = () => {
     }
   };
 
-  const recover = async (email) => {
-    const { data }: any = await recoverMutation({ variables: { email } });
-    return data.customerRecover;
+  const recover = async (email, fromSettings = false) => {
+    try {
+      const { data }: any = await recoverMutation({ variables: { email } });
+      console.log("data::", data);
+      if (!fromSettings) {
+        if (data?.customerRecover?.customerUserErrors?.length == 0) {
+          NavigationService.reset_0(AuthScreenNames.LoginScreen);
+        }
+      }
+      return data.customerRecover;
+    } catch (error) {
+      console.log("Error => ", error);
+    }
   };
 
-  const getCustomer = async (token) => {
-    const { data }: any = await getCustomerQuery({
-      variables: { customerAccessToken: token },
-    });
-    return data.customer;
+  const getCustomer = async (userToken = token) => {
+    try {
+      const { data }: any = await getCustomerQuery({
+        variables: { customerAccessToken: userToken },
+      });
+      if (data?.customer) {
+        dispatch(setUser(data?.customer));
+      }
+      return data.customer;
+    } catch (error) {
+      return error;
+    }
   };
 
   return { signup, login, recover, getCustomer };
