@@ -7,9 +7,11 @@ import { SD } from "../../../../utils";
 export const Counter = ({ containerStyles, counter, setCounter }: any) => {
   const { AppTheme } = useTheme();
 
-  const handleIncrease = () => setCounter((prev) => prev + 1);
-  const handleDecrease = () =>
-    setCounter((prev) => (prev == 1 ? prev : prev - 1));
+  // const handleIncrease = () => setCounter((prev) => prev + 1);
+  // const handleDecrease = () =>
+  //   setCounter((prev) => (prev == 1 ? prev : prev - 1));
+  const handleIncrease = () => setCounter(counter + 1);
+  const handleDecrease = () => setCounter(counter === 1 ? 1 : counter - 1);
   return (
     <View
       style={[

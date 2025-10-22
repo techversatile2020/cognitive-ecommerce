@@ -10,7 +10,7 @@ import {
   PrimaryButton,
   Text,
 } from "../../../../components";
-import { SD } from "../../../../utils";
+import { SD, Toast } from "../../../../utils";
 import { Images } from "../../../../config";
 import { Counter } from "../../components";
 import { useCart, useProducts } from "../../../../graphql";
@@ -27,13 +27,18 @@ export const ProductDetailsScreen = ({ route }: any) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const { getProductById } = useProducts();
-  const { addToCart, getCart, loading, error, cartData } = useCart();
+  const { addToCart, loading } = useCart();
 
   const handleAddToCart = async () => {
-    await addToCart({
+    setIsLoading(true);
+    let response = await addToCart({
       variantId: priceInfo?.id,
       quantity: quantity,
     });
+    if (response?.id) {
+      Toast.success("Product added to cart successfully!");
+    }
+    setIsLoading(false);
   };
   useEffect(() => {
     const fetchPrinterDetails = async () => {
@@ -117,7 +122,10 @@ export const ProductDetailsScreen = ({ route }: any) => {
           onPress={handleAddToCart}
         />
       </View>
-      <Loader visible={isLoading} text="Fetching product details..." />
+      <Loader
+        visible={isLoading || loading}
+        text="Fetching product details..."
+      />
     </MainContainer>
   );
 };

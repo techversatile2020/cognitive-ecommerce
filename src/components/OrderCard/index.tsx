@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Image, Pressable, TouchableOpacity, View } from "react-native";
+import { Image, TouchableOpacity, View } from "react-native";
 import { SectionContainer } from "../section-container";
-import { CardContainer } from "../card-container";
-import { SD } from "../../utils";
+import { SD, Toast } from "../../utils";
 import { Images } from "../../config";
 import { useTheme } from "../../hooks";
 import Text from "../text";
 import { PrimaryButton } from "../primary-button";
 import { styles } from "./OrderCard.styles";
 import moment from "moment";
+import { useCart } from "../../graphql";
+import Loader from "../Loader";
 
 interface OrderCardProps {
   data?: any;
@@ -18,7 +19,19 @@ export const OrderCard: React.FC<OrderCardProps> = ({ data }) => {
   const { AppTheme } = useTheme();
   const { node } = data || {};
   const [productInfo, setProductInfo]: any = useState({});
-  console.log("data=>", node);
+  const { addToCart, loading } = useCart();
+
+  const handleAddToCart = async () => {
+    let quantity = productInfo?.quantity || 1;
+    let variantId = productInfo?.variant?.id;
+    let response = await addToCart({
+      variantId,
+      quantity,
+    });
+    if (response?.id) {
+      Toast.success("Item added to cart");
+    }
+  };
 
   useEffect(() => {
     setProductInfo(node?.lineItems?.edges[0]?.node);
@@ -96,9 +109,11 @@ export const OrderCard: React.FC<OrderCardProps> = ({ data }) => {
             fontSize={12}
             title="Re-order"
             customStyles={styles.reorderButton}
+            onPress={handleAddToCart}
           />
         </View>
       </View>
+      <Loader visible={loading} fullScreen />
     </SectionContainer>
   );
 };

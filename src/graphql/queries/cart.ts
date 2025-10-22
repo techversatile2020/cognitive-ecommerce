@@ -87,6 +87,32 @@ export const GET_CART = gql`
       id
       checkoutUrl
       totalQuantity
+      cost {
+        subtotalAmount {
+          amount
+          currencyCode
+        }
+        totalAmount {
+          amount
+          currencyCode
+        }
+        totalDutyAmount {
+          amount
+          currencyCode
+        }
+        totalTaxAmount {
+          amount
+          currencyCode
+        }
+      }
+
+      # ✅ Applied discount or coupon codes
+      discountCodes {
+        code
+        applicable
+      }
+
+      # ✅ Cart line items
       lines(first: 10) {
         edges {
           node {
@@ -145,6 +171,54 @@ export const UPDATE_CART_LINE = gql`
             }
           }
         }
+      }
+    }
+  }
+`;
+
+export const REMOVE_CART_ITEM = gql`
+  mutation removeCartItem($cartId: ID!, $lineIds: [ID!]!) {
+    cartLinesRemove(cartId: $cartId, lineIds: $lineIds) {
+      cart {
+        id
+        lines(first: 10) {
+          edges {
+            node {
+              id
+              quantity
+            }
+          }
+        }
+      }
+      userErrors {
+        field
+        message
+      }
+    }
+  }
+`;
+
+export const APPLY_DISCOUNT_CODE = gql`
+  mutation cartDiscountCodesUpdate($cartId: ID!, $discountCodes: [String!]!) {
+    cartDiscountCodesUpdate(cartId: $cartId, discountCodes: $discountCodes) {
+      cart {
+        id
+        discountCodes {
+          code
+          applicable
+        }
+        cost {
+          subtotalAmount {
+            amount
+          }
+          totalAmount {
+            amount
+          }
+        }
+      }
+      userErrors {
+        field
+        message
       }
     }
   }

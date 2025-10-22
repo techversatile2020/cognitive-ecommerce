@@ -12,6 +12,7 @@ import { useAnalytics } from "./src/hooks";
 import { StackNavigator } from "./src/navigation";
 import { persistor, store } from "./src/redux";
 import { useEffect } from "react";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 const queryClient = new QueryClient();
 
@@ -27,7 +28,9 @@ const App = () => {
               <NavigationContainer
                 ref={(ref: any) => NavigationService.setTopLevelNavigator(ref)}
               >
-                <StackNavigator />
+                <GestureHandlerRootView>
+                  <StackNavigator />
+                </GestureHandlerRootView>
               </NavigationContainer>
               <Toast />
             </>

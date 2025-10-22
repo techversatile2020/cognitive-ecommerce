@@ -13,6 +13,7 @@ interface ProductCardProps {
   model: string;
   data?: any;
   refetchCart?: any;
+  sliding?: boolean;
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({
@@ -20,6 +21,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   model,
   data,
   refetchCart,
+  sliding,
 }) => {
   const { AppTheme } = useTheme();
   const { node } = data || {};
@@ -38,7 +40,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
       const updatedCart = await updateCartLine(cartId, node?.id, newQty);
       if (updatedCart) {
-        setQuantity(newQty);
+        // setQuantity(newQty);
         console.log("✅ Cart updated:", updatedCart);
         await refetchCart();
       } else {
@@ -125,6 +127,7 @@ const styles = StyleSheet.create({
     paddingVertical: SD.hp(10),
     paddingHorizontal: SD.wp(10),
     borderRadius: SD.wp(20),
+    height: SD.hp(100),
   },
   cardContainer: {
     borderRadius: SD.hp(14),

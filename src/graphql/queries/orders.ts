@@ -30,6 +30,7 @@ export const GET_ORDERS = gql`
                     currencyCode
                   }
                   variant {
+                    id
                     image {
                       src
                     }

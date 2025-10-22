@@ -65,6 +65,7 @@ const Images = {
   heart: require("./../../assets/icons/heart.png"),
   heartOutlined: require("./../../assets/icons/heart-outlined.png"),
   tick: require("./../../assets/icons/tick.png"),
+  trash: require("./../../assets/icons/trash.png"),
 };
 
 export default Images;

@@ -21,6 +21,7 @@ import { AuthContainer } from "./auth-container";
 import { ProductCard } from "./ProductCard";
 import GlobalModal from "./GlobalModal";
 import { BottomSheetModal } from "./BottomSheetModal";
+import { SwipeableProductCard } from "./SwipableProductCard";
 export {
   AuthContainer,
   BackHeader,
@@ -45,4 +46,5 @@ export {
   Loader,
   GlobalModal,
   BottomSheetModal,
+  SwipeableProductCard,
 };

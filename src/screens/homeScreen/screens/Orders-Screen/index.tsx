@@ -48,7 +48,7 @@ export const OrdersScreen = () => {
     return (
       <FlatList
         data={filtered || []}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.node.id}
         contentContainerStyle={{
           paddingTop: SD.hp(20),
         }}
